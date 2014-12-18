@@ -1,0 +1,19 @@
+<section data-ng-controller="TalksController" data-ng-init="find()">
+    <div class="page-header">
+        <h1>Talks</h1>
+    </div>
+    <div class="list-group">
+        <a data-ng-repeat="talk in talks" data-ng-href="#!/talks/{{talk._id}}" class="list-group-item">
+			<small class="list-group-item-text">
+				Posted on
+				<span data-ng-bind="talk.created | date:'medium'"></span>
+				by
+				<span data-ng-bind="talk.user.displayName"></span>
+			</small>
+			<h4 class="list-group-item-heading" data-ng-bind="talk.name"></h4>
+        </a>
+    </div>
+    <div class="alert alert-warning text-center" data-ng-hide="!talks.$resolved || talks.length">
+    	No Talks yet, why don't you <a href="/#!/talks/create">create one</a>?
+    </div>
+</section>
