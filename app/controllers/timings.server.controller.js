@@ -37,7 +37,7 @@ exports.read = function(req, res) {
  * Update a Timing
  */
 exports.update = function(req, res) {
-	var timing = req.timing ;
+	var timing = req.timing;
 
 	timing = _.extend(timing , req.body);
 
