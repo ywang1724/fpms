@@ -39,12 +39,12 @@ window.onload = function () {
         } else {
             // Ajax todo
             console.log(rookie.timings);
-            var fp = document.createElement('script');
+            /*var fp = document.createElement('script');
             fp.type = 'text/javascript';
             fp.async = true;
             fp.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
             var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(fp, s);
+            s.parentNode.insertBefore(fp, s);*/
         }
     }, 0);
 
