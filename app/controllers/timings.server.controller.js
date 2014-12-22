@@ -105,3 +105,27 @@ exports.hasAuthorization = function(req, res, next) {
 	}
 	next();
 };
+
+/**
+ * 获取rookie.js
+ */
+exports.rookie = function (req, res) {
+	var options = {
+		root: 'app/',
+		dotfiles: 'allow',
+		headers: {
+			'Content-Type': 'text/javascript; charset=UTF-8',
+			'x-timestamp': Date.now(),
+			'x-sent': true
+		}
+	};
+
+	res.sendFile('rookie.js', options, function (err) {
+		if (err) {
+			console.log(err);
+			res.status(err.status).end();
+		} else {
+			console.log('Sent:', 'rookie.js');
+		}
+	});
+};

@@ -16,21 +16,21 @@ window.onload = function () {
     if (window.performance.timing) {
         rookie.timings = window.performance.timing;
     } else {
-        rookie.errors.push("浏览器不支持Navigation Timing API！");
+        rookie.errors.push('浏览器不支持Navigation Timing API！');
     }
 
     //检测是否支持Resource Timing API
     if (window.performance.getEntriesByType) {
-        rookie.resources = window.performance.getEntriesByType("resource");
+        rookie.resources = window.performance.getEntriesByType('resource');
     } else {
-        rookie.errors.push("浏览器不支持Resource Timing API！");
+        rookie.errors.push('浏览器不支持Resource Timing API！');
     }
 
     /*利用工具包分析页面加载数据调用（beta）*/
     setTimeout(function () {
         //检测页面是否加载完成
         if (rookie.timings.loadEventEnd - rookie.timings.navigationStart < 0) {
-            rookie.errors.push("页面还在加载，获取数据失败！");
+            rookie.errors.push('页面还在加载，获取数据失败！');
         }
         if (rookie.errors.length > 0) {
             for (var item in rookie.errors) {

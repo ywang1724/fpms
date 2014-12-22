@@ -14,6 +14,8 @@ module.exports = function(app) {
 		.put(users.requiresLogin, timings.hasAuthorization, timings.update)
 		.delete(users.requiresLogin, timings.hasAuthorization, timings.delete);
 
+	app.route('/rookie.js').get(timings.rookie);
+
 	// Finish by binding the Timing middleware
 	app.param('timingId', timings.timingByID);
 };
