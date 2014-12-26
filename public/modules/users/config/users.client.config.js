@@ -28,3 +28,12 @@ angular.module('users').config(['$httpProvider',
 		]);
 	}
 ]);
+
+// Configuring the Users module
+angular.module('users').run(['Menus',
+	function(Menus) {
+		// Set top bar menu items
+		Menus.addMenuItem('topbar', '用户', 'users', 'dropdown', '/articles(/create)?', 'false', ['admin']);
+		Menus.addSubMenuItem('topbar', 'users', '用户列表', 'users');
+	}
+]);

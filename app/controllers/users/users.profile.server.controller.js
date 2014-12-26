@@ -54,3 +54,20 @@ exports.update = function(req, res) {
 exports.me = function(req, res) {
 	res.json(req.user || null);
 };
+
+/**
+ * List of Users
+ */
+exports.list = function(req, res) {
+	if (req.user.roles[0] === 'admin') {
+		User.find().sort('-created').populate.exec(function(err, users) {
+			if (err) {
+				return res.status(400).send({
+					message: errorHandler.getErrorMessage(err)
+				});
+			} else {
+				res.json(users);
+			}
+		});
+	}
+};

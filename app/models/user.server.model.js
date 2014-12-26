@@ -88,6 +88,10 @@ var UserSchema = new Schema({
 	},
 	resetPasswordExpires: {
 		type: Date
+	},
+	isValid: {
+		type: Boolean,
+		required: 'IsValid is required'
 	}
 });
 
