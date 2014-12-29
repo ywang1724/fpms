@@ -25,21 +25,11 @@ var validateLocalStrategyPassword = function(password) {
  * User Schema
  */
 var UserSchema = new Schema({
-	firstName: {
-		type: String,
-		trim: true,
-		default: '',
-		validate: [validateLocalStrategyProperty, '请填写您的名']
-	},
-	lastName: {
-		type: String,
-		trim: true,
-		default: '',
-		validate: [validateLocalStrategyProperty, '请填写您的姓']
-	},
 	displayName: {
 		type: String,
-		trim: true
+		trim: true,
+		default: '',
+		validate: [validateLocalStrategyProperty, '请填写您的显示名']
 	},
 	email: {
 		type: String,
@@ -51,7 +41,7 @@ var UserSchema = new Schema({
 	username: {
 		type: String,
 		unique: 'testing error message',
-		required: 'Please fill in a username',
+		required: '请填写您的账号',
 		trim: true
 	},
 	password: {
@@ -91,6 +81,7 @@ var UserSchema = new Schema({
 	},
 	isValid: {
 		type: Boolean,
+		default: false,
 		required: 'IsValid is required'
 	}
 });

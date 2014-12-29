@@ -19,9 +19,6 @@ var user, timing;
 describe('Timing Model Unit Tests:', function() {
 	beforeEach(function(done) {
 		user = new User({
-			firstName: 'Full',
-			lastName: 'Name',
-			displayName: 'Full Name',
 			email: 'test@test.com',
 			username: 'username',
 			password: 'password'

@@ -654,8 +654,8 @@ angular.module('users').controller('PasswordController', ['$scope', '$stateParam
 ]);
 'use strict';
 
-angular.module('users', ['datatables']).controller('SettingsController', ['$scope', '$http', '$location', 'Users', 'Authentication',
-    function ($scope, $http, $location, Users, Authentication, DTOptionsBuilder, DTColumnBuilder) {
+angular.module('users').controller('SettingsController', ['$scope', '$http', '$location', 'Users', 'Authentication',
+    function ($scope, $http, $location, Users, Authentication) {
         $scope.user = Authentication.user;
 
         // If user is not signed in then redirect back home
@@ -694,16 +694,6 @@ angular.module('users', ['datatables']).controller('SettingsController', ['$scop
         $scope.find = function() {
             $scope.users = Users.query();
         };
-
-       /* $scope.dtOptions = DTOptionsBuilder
-            .fromSource('data.json')
-            // Add Bootstrap compatibility
-            .withBootstrap();
-        $scope.dtColumns = [
-            DTColumnBuilder.newColumn('id').withTitle('ID').withClass('text-danger'),
-            DTColumnBuilder.newColumn('firstName').withTitle('First name'),
-            DTColumnBuilder.newColumn('lastName').withTitle('Last name')
-        ];*/
 
     }
 ]);

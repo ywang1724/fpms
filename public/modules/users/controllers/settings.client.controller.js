@@ -41,15 +41,5 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
             $scope.users = Users.query();
         };
 
-       /* $scope.dtOptions = DTOptionsBuilder
-            .fromSource('data.json')
-            // Add Bootstrap compatibility
-            .withBootstrap();
-        $scope.dtColumns = [
-            DTColumnBuilder.newColumn('id').withTitle('ID').withClass('text-danger'),
-            DTColumnBuilder.newColumn('firstName').withTitle('First name'),
-            DTColumnBuilder.newColumn('lastName').withTitle('Last name')
-        ];*/
-
     }
 ]);
