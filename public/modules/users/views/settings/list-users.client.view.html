@@ -12,7 +12,27 @@
             </small>
         </a>
     </div>
+
+    <!--<table datatable="" dt-options="dtOptions" dt-columns="dtColumns" class="table table-striped table-bordered"></table>-->
+
+    <table datatable="ng" class="row-border hover">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>FirstName</th>
+            <th>LastName</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-ng-repeat="user in users">
+            <td>{{ user.id }}</td>
+            <td>{{ user.firstName }}</td>
+            <td>{{ user.lastName }}</td>
+        </tr>
+        </tbody>
+    </table>
+
     <div class="alert alert-warning text-center" data-ng-if="users.$resolved && !users.length">
-        No users yet.
+        没有任何用户。
     </div>
 </section>
