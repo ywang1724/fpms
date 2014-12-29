@@ -13,8 +13,6 @@
     "angular-sanitize": "~1.2",
     "angular-bootstrap": "~0.11.2",
     "angular-ui-utils": "~0.1.1",
-    "angular-ui-router": "~0.2.11",
-    "highcharts": "~4.0.4",
-    "datatables": "~1.10.4"
+    "angular-ui-router": "~0.2.11"
   }
 }

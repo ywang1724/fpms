@@ -126,6 +126,12 @@ module.exports = function(grunt) {
 			},
 			secure: {
 				NODE_ENV: 'secure'
+			},
+			dev: {
+				NODE_ENV: 'development'
+			},
+			prod: {
+				NODE_ENV: 'production'
 			}
 		},
 		mochaTest: {
@@ -174,4 +180,7 @@ module.exports = function(grunt) {
 
 	// Test task.
 	grunt.registerTask('test', ['env:test', 'mochaTest', 'karma:unit']);
+
+	// Run the project in production mode
+	grunt.registerTask('prod', ['build', 'env:prod', 'concurrent:default']);
 };
