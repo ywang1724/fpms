@@ -33,7 +33,6 @@ angular.module('users').config(['$httpProvider',
 angular.module('users').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', '用户', 'users', 'dropdown', '/articles(/create)?', 'false', ['admin']);
-		Menus.addSubMenuItem('topbar', 'users', '用户列表', 'users');
+		Menus.addMenuItem('topbar', '用户列表', 'users', 'item', '/users', 'false', ['admin']);
 	}
 ]);

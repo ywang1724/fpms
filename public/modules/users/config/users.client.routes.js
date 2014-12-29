@@ -39,7 +39,7 @@ angular.module('users').config(['$stateProvider',
 		}).
 		state('listUsers', {
 			url: '/users',
-			templateUrl: 'modules/articles/views/list-articles.client.view.html'
+			templateUrl: 'modules/users/views/settings/list-users.client.view.html'
 		});
 	}
 ]);

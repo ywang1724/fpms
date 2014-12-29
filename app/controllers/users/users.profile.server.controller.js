@@ -60,7 +60,7 @@ exports.me = function(req, res) {
  */
 exports.list = function(req, res) {
 	if (req.user.roles[0] === 'admin') {
-		User.find().sort('-created').populate.exec(function(err, users) {
+		User.find().sort('-created').exec(function(err, users) {
 			if (err) {
 				return res.status(400).send({
 					message: errorHandler.getErrorMessage(err)
