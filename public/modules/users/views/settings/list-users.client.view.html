@@ -2,36 +2,30 @@
     <div class="page-header">
         <h1>用户列表</h1>
     </div>
-    <div class="list-group">
-        <a data-ng-repeat="user in users" class="list-group-item">
-            <small class="list-group-item-text">
-                Posted on
-                <span data-ng-bind="user.created | date:'mediumDate'"></span>
-                by
-                <span data-ng-bind="user.displayName"></span>
-            </small>
-        </a>
-    </div>
-
-    <!--<table datatable="" dt-options="dtOptions" dt-columns="dtColumns" class="table table-striped table-bordered"></table>-->
-
-    <table datatable="ng" class="row-border hover">
+    <table datatable="ng" dt-options="dtOptions" class="table table-striped table-bordered">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>displayName</th>
-            <th>email</th>
+            <th>序号</th>
+            <th>账号</th>
+            <th>显示名</th>
+            <th>邮箱</th>
+            <th>创建时间</th>
+            <th>上次修改时间</th>
+            <th>是否有效</th>
         </tr>
         </thead>
         <tbody>
         <tr data-ng-repeat="user in users">
-            <td>{{ user.id }}</td>
+            <td>num</td>
+            <td>{{ user.username }}</td>
             <td>{{ user.displayName }}</td>
             <td>{{ user.email }}</td>
+            <td>{{ user.created | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+            <td>{{ user.updated | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+            <td><input type="checkbox" ng-model="user.isValid" ng-change="change()"/></td>
         </tr>
         </tbody>
     </table>
-
     <div class="alert alert-warning text-center" data-ng-if="users.$resolved && !users.length">
         没有任何用户。
     </div>

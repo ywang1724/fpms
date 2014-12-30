@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('users').controller('SettingsController', ['$scope', '$http', '$location', 'Users', 'Authentication',
-    function ($scope, $http, $location, Users, Authentication) {
+angular.module('users').controller('SettingsController', ['$scope', '$http', '$location', 'Users', 'Authentication', 'DTOptionsBuilder',
+    function ($scope, $http, $location, Users, Authentication, DTOptionsBuilder) {
         $scope.user = Authentication.user;
 
         // If user is not signed in then redirect back home
@@ -41,5 +41,13 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
             $scope.users = Users.query();
         };
 
+        $scope.dtOptions = DTOptionsBuilder
+            .newOptions()
+            // Add Bootstrap compatibility
+            .withBootstrap();
+
+        $scope.change = function() {
+            $scope.counter++;
+        };
     }
 ]);
