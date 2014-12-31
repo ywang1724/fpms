@@ -15,6 +15,7 @@ module.exports = {
 			css: [
 				'public/lib/bootstrap/dist/css/bootstrap.css',
 				'public/lib/bootstrap/dist/css/bootstrap-theme.css',
+				'public/lib/datatables/media/css/jquery.dataTables.css'
 			],
 			js: [
 				'public/lib/jquery/dist/jquery.js',
