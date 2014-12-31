@@ -79,10 +79,10 @@ var UserSchema = new Schema({
 	resetPasswordExpires: {
 		type: Date
 	},
-	isValid: {
+	isActive: {
 		type: Boolean,
 		default: false,
-		required: 'IsValid is required'
+		required: 'IsActive is required'
 	}
 });
 

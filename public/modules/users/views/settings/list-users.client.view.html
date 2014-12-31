@@ -20,11 +20,17 @@
             <td>{{ user.email }}</td>
             <td>{{ user.created | date:'yyyy-MM-dd HH:mm:ss'}}</td>
             <td>{{ user.updated | date:'yyyy-MM-dd HH:mm:ss' }}</td>
-            <td><input type="checkbox" ng-model="user.isValid" ng-change="change()"/></td>
+            <td><input type="checkbox" ng-model="user.isActive" ng-change="change(user)"/></td>
         </tr>
         </tbody>
     </table>
     <div class="alert alert-warning text-center" data-ng-if="users.$resolved && !users.length">
         没有任何用户。
+    </div>
+    <div data-ng-show="success" class="text-center text-success">
+        <strong>成功修改账号的激活标识</strong>
+    </div>
+    <div data-ng-show="error" class="text-center text-danger">
+        <strong data-ng-bind="error"></strong>
     </div>
 </section>

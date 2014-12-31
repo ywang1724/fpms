@@ -19,6 +19,11 @@ exports.update = function(req, res) {
 
 	// For security measurement we remove the roles from the req.body object
 	delete req.body.roles;
+	if (user.roles[0] === 'admin') {
+		user = User.findById(req.body._id);
+	} else {
+		delete req.body.isActive;
+	}
 
 	if (user) {
 		// Merge existing user
@@ -59,7 +64,7 @@ exports.me = function(req, res) {
  */
 exports.list = function(req, res) {
 	if (req.user.roles[0] === 'admin') {
-		User.find().sort('-created').exec(function(err, users) {
+		User.find().exec(function(err, users) {
 			if (err) {
 				return res.status(400).send({
 					message: errorHandler.getErrorMessage(err)
