@@ -6,21 +6,29 @@
         <thead>
         <tr>
             <th>账号</th>
+            <th>角色</th>
             <th>显示名</th>
             <th>邮箱</th>
             <th>创建时间</th>
             <th>上次修改时间</th>
-            <th>是否有效</th>
+            <th>是否激活</th>
         </tr>
         </thead>
         <tbody>
         <tr data-ng-repeat="user in users">
             <td>{{ user.username }}</td>
+            <td data-ng-switch="user.roles[0]">
+                <span data-ng-switch-when="user">普通用户</span>
+                <span data-ng-switch-when="admin">管理员</span>
+            </td>
             <td>{{ user.displayName }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.created | date:'yyyy-MM-dd HH:mm:ss'}}</td>
             <td>{{ user.updated | date:'yyyy-MM-dd HH:mm:ss' }}</td>
-            <td><input type="checkbox" ng-model="user.isActive" ng-change="change(user)"/></td>
+            <td data-ng-switch="user.roles[0]">
+                <input type="checkbox" data-ng-switch-when="user" data-ng-model="user.isActive" data-ng-change="change(user)"/>
+                <input type="checkbox" data-ng-switch-when="admin" data-ng-model="user.isActive" disabled="true"/>
+            </td>
         </tr>
         </tbody>
     </table>
