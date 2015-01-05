@@ -4,7 +4,7 @@
 var ApplicationConfiguration = (function() {
 	// Init module configuration options
 	var applicationModuleName = 'fpms';
-	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',  'ui.router', 'ui.bootstrap', 'ui.utils'];
+	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',  'ui.router', 'ui.bootstrap', 'ui.utils', 'datatables'];
 
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {
@@ -21,6 +21,7 @@ var ApplicationConfiguration = (function() {
 		registerModule: registerModule
 	};
 })();
+
 'use strict';
 
 //Start by defining the main module and adding the module dependencies
@@ -585,11 +586,7 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
 
 		$scope.signup = function() {
 			$http.post('/auth/signup', $scope.credentials).success(function(response) {
-				// If successful we assign the response to the global user model
-				$scope.authentication.user = response;
-
-				// And redirect to the index page
-				$location.path('/');
+				$scope.success = true;
 			}).error(function(response) {
 				$scope.error = response.message;
 			});
@@ -608,6 +605,7 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
 		};
 	}
 ]);
+
 'use strict';
 
 angular.module('users').controller('PasswordController', ['$scope', '$stateParams', '$http', '$location', 'Authentication',
@@ -654,8 +652,8 @@ angular.module('users').controller('PasswordController', ['$scope', '$stateParam
 ]);
 'use strict';
 
-angular.module('users').controller('SettingsController', ['$scope', '$http', '$location', 'Users', 'Authentication',
-    function ($scope, $http, $location, Users, Authentication) {
+angular.module('users').controller('SettingsController', ['$scope', '$http', '$location', 'Users', 'Authentication', 'DTOptionsBuilder',
+    function ($scope, $http, $location, Users, Authentication, DTOptionsBuilder) {
         $scope.user = Authentication.user;
 
         // If user is not signed in then redirect back home
@@ -691,10 +689,37 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
             });
         };
 
-        $scope.find = function() {
+        $scope.find = function () {
             $scope.users = Users.query();
         };
 
+        $scope.dtOptions = DTOptionsBuilder
+            .newOptions()
+            .withLanguage({
+                'sLengthMenu': '每页显示 _MENU_ 条数据',
+                'sInfo': '从 _START_ 到 _END_ /共 _TOTAL_ 条数据',
+                'sInfoEmpty': '没有数据',
+                'sInfoFiltered': '(从 _MAX_ 条数据中检索)',
+                'sZeroRecords': '没有检索到数据',
+                'sSearch': '检索:',
+                'oPaginate': {
+                    'sFirst': '首页',
+                    'sPrevious': '上一页',
+                    'sNext': '下一页',
+                    'sLast': '末页'
+                }
+            })
+            // Add Bootstrap compatibility
+            .withBootstrap();
+
+        $scope.change = function (user) {
+            $scope.success = $scope.error = null;
+            user.$update(function () {
+                $scope.success = true;
+            }, function (errorResponse) {
+                $scope.error = errorResponse.data.message;
+            });
+        };
     }
 ]);
 
