@@ -27,6 +27,9 @@
 					<button type="submit" class="btn btn-large btn-primary">注册</button>&nbsp; 或者&nbsp;
 					<a href="/#!/signin" class="show-signup">登录</a>
 				</div>
+				<div data-ng-show="success" class="text-center text-success">
+					<strong>您已成功注册账号！待管理员审核并激活后即可使用。</strong>
+				</div>
 				<div data-ng-show="error" class="text-center text-danger">
 					<strong data-ng-bind="error"></strong>
 				</div>

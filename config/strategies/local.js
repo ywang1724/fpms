@@ -22,12 +22,17 @@ module.exports = function() {
 				}
 				if (!user) {
 					return done(null, false, {
-						message: 'Unknown user or invalid password'
+						message: '未知账号或无效密码'
 					});
 				}
 				if (!user.authenticate(password)) {
 					return done(null, false, {
-						message: 'Unknown user or invalid password'
+						message: '未知账号或无效密码'
+					});
+				}
+				if (!user.isActive) {
+					return done(null, false, {
+						message: '该账号未激活'
 					});
 				}
 

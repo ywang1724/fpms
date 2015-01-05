@@ -22,7 +22,7 @@ exports.update = function (req, res) {
 
     if (user) {
         if (user.roles[0] === 'admin' && user._id.toString() !== req.body._id) {
-            User.findById(req.body._id, function (err, obj) {
+            User.findById(req.body._id, '-password -salt', function (err, obj) {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getErrorMessage(err)
@@ -37,13 +37,7 @@ exports.update = function (req, res) {
                                 message: errorHandler.getErrorMessage(err)
                             });
                         } else {
-                            req.login(req.user, function (err) {
-                                if (err) {
-                                    res.status(400).send(err);
-                                } else {
-                                    res.json(user);
-                                }
-                            });
+                            res.json(user);
                         }
                     });
                 }
@@ -89,7 +83,7 @@ exports.me = function (req, res) {
  */
 exports.list = function (req, res) {
     if (req.user.roles[0] === 'admin') {
-        User.find().exec(function (err, users) {
+        User.find(null, '-password -salt').exec(function (err, users) {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
