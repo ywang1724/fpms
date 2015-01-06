@@ -44,6 +44,10 @@ angular.element(document).ready(function() {
 });
 'use strict';
 
+// Use applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('apps');
+'use strict';
+
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('articles');
 'use strict';
@@ -58,6 +62,121 @@ ApplicationConfiguration.registerModule('timings');
 
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('users');
+'use strict';
+
+// Configuring the Articles module
+angular.module('apps').run(['Menus',
+	function(Menus) {
+		// Set top bar menu items
+		Menus.addMenuItem('topbar', 'Apps', 'apps', 'dropdown', '/apps(/create)?');
+		Menus.addSubMenuItem('topbar', 'apps', 'List Apps', 'apps');
+		Menus.addSubMenuItem('topbar', 'apps', 'New App', 'apps/create');
+	}
+]);
+'use strict';
+
+//Setting up route
+angular.module('apps').config(['$stateProvider',
+	function($stateProvider) {
+		// Apps state routing
+		$stateProvider.
+		state('listApps', {
+			url: '/apps',
+			templateUrl: 'modules/apps/views/list-apps.client.view.html'
+		}).
+		state('createApp', {
+			url: '/apps/create',
+			templateUrl: 'modules/apps/views/create-app.client.view.html'
+		}).
+		state('viewApp', {
+			url: '/apps/:appId',
+			templateUrl: 'modules/apps/views/view-app.client.view.html'
+		}).
+		state('editApp', {
+			url: '/apps/:appId/edit',
+			templateUrl: 'modules/apps/views/edit-app.client.view.html'
+		});
+	}
+]);
+'use strict';
+
+// Apps controller
+angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
+	function($scope, $stateParams, $location, Authentication, Apps) {
+		$scope.authentication = Authentication;
+
+		// Create new App
+		$scope.create = function() {
+			// Create new App object
+			var app = new Apps ({
+				name: this.name
+			});
+
+			// Redirect after save
+			app.$save(function(response) {
+				$location.path('apps/' + response._id);
+
+				// Clear form fields
+				$scope.name = '';
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+			});
+		};
+
+		// Remove existing App
+		$scope.remove = function(app) {
+			if ( app ) { 
+				app.$remove();
+
+				for (var i in $scope.apps) {
+					if ($scope.apps [i] === app) {
+						$scope.apps.splice(i, 1);
+					}
+				}
+			} else {
+				$scope.app.$remove(function() {
+					$location.path('apps');
+				});
+			}
+		};
+
+		// Update existing App
+		$scope.update = function() {
+			var app = $scope.app;
+
+			app.$update(function() {
+				$location.path('apps/' + app._id);
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+			});
+		};
+
+		// Find a list of Apps
+		$scope.find = function() {
+			$scope.apps = Apps.query();
+		};
+
+		// Find existing App
+		$scope.findOne = function() {
+			$scope.app = Apps.get({ 
+				appId: $stateParams.appId
+			});
+		};
+	}
+]);
+'use strict';
+
+//Apps service used to communicate Apps REST endpoints
+angular.module('apps').factory('Apps', ['$resource',
+	function($resource) {
+		return $resource('apps/:appId', { appId: '@_id'
+		}, {
+			update: {
+				method: 'PUT'
+			}
+		});
+	}
+]);
 'use strict';
 
 // Configuring the Articles module
