@@ -33,7 +33,7 @@ exports.forgot = function(req, res, next) {
 				}, '-salt -password', function(err, user) {
 					if (!user) {
 						return res.status(400).send({
-							message: 'No account with that username has been found'
+							message: '此账号不存在'
 						});
 					} else if (user.provider !== 'local') {
 						return res.status(400).send({
@@ -50,7 +50,7 @@ exports.forgot = function(req, res, next) {
 				});
 			} else {
 				return res.status(400).send({
-					message: 'Username field must not be blank'
+					message: '账号不能为空'
 				});
 			}
 		},
@@ -69,13 +69,13 @@ exports.forgot = function(req, res, next) {
 			var mailOptions = {
 				to: user.email,
 				from: config.mailer.from,
-				subject: 'Password Reset',
+				subject: '重置密码',
 				html: emailHTML
 			};
 			smtpTransport.sendMail(mailOptions, function(err) {
 				if (!err) {
 					res.send({
-						message: 'An email has been sent to ' + user.email + ' with further instructions.'
+						message: '重置密码的邮件已发送到' + user.email
 					});
 				}
 
@@ -147,12 +147,12 @@ exports.reset = function(req, res, next) {
 						});
 					} else {
 						return res.status(400).send({
-							message: 'Passwords do not match'
+							message: '密码不匹配'
 						});
 					}
 				} else {
 					return res.status(400).send({
-						message: 'Password reset token is invalid or has expired.'
+						message: '密码重置口令无效或者已过期'
 					});
 				}
 			});
@@ -171,7 +171,7 @@ exports.reset = function(req, res, next) {
 			var mailOptions = {
 				to: user.email,
 				from: config.mailer.from,
-				subject: 'Your password has been changed',
+				subject: '您的密码已修改',
 				html: emailHTML
 			};
 
@@ -210,7 +210,7 @@ exports.changePassword = function(req, res) {
 											res.status(400).send(err);
 										} else {
 											res.send({
-												message: 'Password changed successfully'
+												message: '密码修改成功'
 											});
 										}
 									});
@@ -218,28 +218,28 @@ exports.changePassword = function(req, res) {
 							});
 						} else {
 							res.status(400).send({
-								message: 'Passwords do not match'
+								message: '密码不匹配'
 							});
 						}
 					} else {
 						res.status(400).send({
-							message: 'Current password is incorrect'
+							message: '当前密码错误'
 						});
 					}
 				} else {
 					res.status(400).send({
-						message: 'User is not found'
+						message: '用户不存在'
 					});
 				}
 			});
 		} else {
 			res.status(400).send({
-				message: 'Please provide a new password'
+				message: '请提供一个新密码'
 			});
 		}
 	} else {
 		res.status(400).send({
-			message: 'User is not signed in'
+			message: '用户未登录'
 		});
 	}
 };

@@ -1,5 +1,7 @@
 'use strict';
 
+var env = require('./../../env.json');
+
 module.exports = {
 	db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://' + (process.env.DB_1_PORT_27017_TCP_ADDR || 'localhost') + '/fpms',
 	assets: {
@@ -28,13 +30,14 @@ module.exports = {
 		js: 'public/dist/application.min.js'
 	},
 	mailer: {
-		from: process.env.MAILER_FROM || 'MAILER_FROM',
+		from: env.MAILER_FROM || 'MAILER_FROM',
 		options: {
-			service: process.env.MAILER_SERVICE_PROVIDER || 'MAILER_SERVICE_PROVIDER',
+			service: env.MAILER_SERVICE_PROVIDER || 'MAILER_SERVICE_PROVIDER',
 			auth: {
-				user: process.env.MAILER_EMAIL_ID || 'MAILER_EMAIL_ID',
-				pass: process.env.MAILER_PASSWORD || 'MAILER_PASSWORD'
-			}
+				user: env.MAILER_EMAIL_ID || 'MAILER_EMAIL_ID',
+				pass: env.MAILER_PASSWORD || 'MAILER_PASSWORD'
+			},
+			host: env.MAILER_HOST || 'MAILER_HOST'
 		}
 	}
 };
