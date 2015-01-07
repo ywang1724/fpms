@@ -4,12 +4,16 @@
 angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
 	function($scope, $stateParams, $location, Authentication, Apps) {
 		$scope.authentication = Authentication;
+		$scope.type = 'java';
+		$scope.types = ['java', 'node.js'];
 
 		// Create new App
 		$scope.create = function() {
 			// Create new App object
 			var app = new Apps ({
-				name: this.name
+				name: this.name,
+				type: this.type,
+				server: this.server
 			});
 
 			// Redirect after save
@@ -18,6 +22,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
 				// Clear form fields
 				$scope.name = '';
+				$scope.type = 'java';
+				$scope.server = '';
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});

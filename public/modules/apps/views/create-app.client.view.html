@@ -1,18 +1,37 @@
 <section data-ng-controller="AppsController">
-    <div class="page-header">
-        <h1>New App</h1>
+    <div class="page-header text-center">
+        <h1>添加新应用</h1>
     </div>
-    <div class="col-md-12">
-        <form class="form-horizontal" data-ng-submit="create()" novalidate>
+    <div class="col-xs-offset-2 col-xs-8 col-md-offset-5 col-md-2">
+        <form name="appForm" class="form-horizontal" data-ng-submit="create()" novalidate>
             <fieldset>
-                <div class="form-group">
-                    <label class="control-label" for="name">Name</label>
+                <div class="form-group"
+                     ng-class="{ 'has-error': appForm.name.$dirty && appForm.name.$invalid }">
+                    <label class="control-label" for="name">名称</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="name" id="name" class="form-control" placeholder="Name" required>
+                        <input name="name" type="text" data-ng-model="name" id="name" class="form-control"
+                               placeholder="名称" required>
                     </div>
                 </div>
-                <div class="form-group">
-                    <input type="submit" class="btn btn-default">
+                <div class="form-group"
+                     ng-class="{ 'has-error': appForm.type.$dirty && appForm.type.$invalid }">
+                    <label class="control-label" for="type">类型</label>
+                    <div class="controls">
+                        <select id="type" name="type" data-ng-model="type" ng-options="type for type in types"
+                                class="form-control" required>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group"
+                     ng-class="{ 'has-error': appForm.server.$dirty && appForm.server.$invalid }">
+                    <label class="control-label" for="server">服务器地址</label>
+                    <div class="controls">
+                        <input name="server" type="text" data-ng-model="server" id="server" class="form-control"
+                               placeholder="服务器地址" required>
+                    </div>
+                </div>
+                <div class="form-group text-center">
+                    <input type="submit" class="btn btn-primary">
                 </div>
 				<div data-ng-show="error" class="text-danger">
 					<strong data-ng-bind="error"></strong>
