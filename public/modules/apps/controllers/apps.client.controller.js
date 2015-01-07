@@ -1,11 +1,12 @@
 'use strict';
 
 // Apps controller
-angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
-	function($scope, $stateParams, $location, Authentication, Apps) {
+angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps', 'DTOptionsBuilder',
+	function($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder) {
 		$scope.authentication = Authentication;
 		$scope.type = 'java';
 		$scope.types = ['java', 'node.js'];
+		$scope.showName = Authentication.user.roles[0] === 'admin' ? true : false;
 
 		// Create new App
 		$scope.create = function() {
@@ -68,5 +69,24 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 				appId: $stateParams.appId
 			});
 		};
+
+		$scope.dtOptions = DTOptionsBuilder
+			.newOptions()
+			.withLanguage({
+				'sLengthMenu': '每页显示 _MENU_ 条数据',
+				'sInfo': '从 _START_ 到 _END_ /共 _TOTAL_ 条数据',
+				'sInfoEmpty': '没有数据',
+				'sInfoFiltered': '(从 _MAX_ 条数据中检索)',
+				'sZeroRecords': '没有检索到数据',
+				'sSearch': '检索:',
+				'oPaginate': {
+					'sFirst': '首页',
+					'sPrevious': '上一页',
+					'sNext': '下一页',
+					'sLast': '末页'
+				}
+			})
+			// Add Bootstrap compatibility
+			.withBootstrap();
 	}
 ]);
