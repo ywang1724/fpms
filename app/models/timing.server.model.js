@@ -10,19 +10,20 @@ var mongoose = require('mongoose'),
  * Timing Schema
  */
 var TimingSchema = new Schema({
-	name: {
-		type: String,
-		default: '',
-		required: 'Please fill Timing name',
-		trim: true
-	},
-	created: {
-		type: Date,
-		default: Date.now
-	},
-	user: {
+	app: {
 		type: Schema.ObjectId,
-		ref: 'User'
+		ref: 'App',
+		required: '请添加您的应用名称'
+	},
+	navTiming: {
+		type: Schema.ObjectId,
+		ref: 'NavTiming'
+	},
+	resTimings: {
+		type: [{
+			type: Schema.ObjectId,
+			ref: 'ResTiming'
+		}]
 	}
 });
 
