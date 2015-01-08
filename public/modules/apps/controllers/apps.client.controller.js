@@ -99,5 +99,9 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 		$scope.removeErr = function() {
 			$scope.error = false;
 		};
+
+		$scope.back = function() {
+			window.history.back();
+		};
 	}
 ]);

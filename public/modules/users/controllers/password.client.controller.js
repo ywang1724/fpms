@@ -40,5 +40,9 @@ angular.module('users').controller('PasswordController', ['$scope', '$stateParam
 				$scope.error = response.message;
 			});
 		};
+
+		$scope.back = function() {
+			window.history.back();
+		};
 	}
 ]);

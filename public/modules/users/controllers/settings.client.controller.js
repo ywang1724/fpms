@@ -68,5 +68,9 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
                 $scope.error = errorResponse.data.message;
             });
         };
+
+        $scope.back = function() {
+            window.history.back();
+        };
     }
 ]);

@@ -33,6 +33,7 @@
                 </div>
                 <div class="form-group text-center">
                     <input type="submit" value="更新" class="btn btn-primary" ng-disabled="!canUpdate()">
+                    <input type="button" value="取消" class="btn btn-default" ng-click="back()">
                 </div>
 				<div data-ng-show="error" class="text-danger">
 					<strong data-ng-bind="error"></strong>

@@ -3,11 +3,14 @@
 		<h1 data-ng-bind="app.name"></h1>
 	</div>
 	<div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == app.user._id))">
-		<a class="btn btn-primary" href="/#!/apps/{{app._id}}/edit">
+		<a title="设置" class="btn btn-primary" href="/#!/apps/{{app._id}}/edit">
 			<i class="glyphicon glyphicon-edit"></i>
 		</a>
-		<a class="btn btn-primary" data-ng-click="remove();">
+		<a title="删除" class="btn btn-primary" data-ng-click="remove();">
 			<i class="glyphicon glyphicon-trash"></i>
+		</a>
+		<a title="返回" class="btn btn-primary" data-ng-click="back();">
+			<i class="glyphicon glyphicon-share-alt"></i>
 		</a>
 	</div>
 	<small>
