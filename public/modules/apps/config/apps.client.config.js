@@ -1,6 +1,6 @@
 'use strict';
 
-// Configuring the Articles module
+// Configuring the Apps module
 angular.module('apps').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
