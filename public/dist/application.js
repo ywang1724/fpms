@@ -68,11 +68,14 @@ ApplicationConfiguration.registerModule('users');
 angular.module('apps').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Apps', 'apps', 'dropdown', '/apps(/create)?');
-		Menus.addSubMenuItem('topbar', 'apps', 'List Apps', 'apps');
-		Menus.addSubMenuItem('topbar', 'apps', 'New App', 'apps/create');
+		Menus.addMenuItem('topbar', '我的应用', 'apps', 'dropdown', '/apps(/create)?', 'false', ['user']);
+		Menus.addSubMenuItem('topbar', 'apps', '应用列表', 'apps');
+		Menus.addSubMenuItem('topbar', 'apps', '添加应用', 'apps/create');
+
+		Menus.addMenuItem('topbar', '应用列表', 'apps', 'item', '/apps', 'false', ['admin']);
 	}
 ]);
+
 'use strict';
 
 //Setting up route
@@ -101,15 +104,23 @@ angular.module('apps').config(['$stateProvider',
 'use strict';
 
 // Apps controller
-angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
-	function($scope, $stateParams, $location, Authentication, Apps) {
+angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps', 'DTOptionsBuilder',
+	function($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder) {
 		$scope.authentication = Authentication;
+
+		//可从后台动态获取数据，以后有时间完成
+		$scope.type = 'java';
+		$scope.types = ['java', 'node.js'];
+
+		$scope.showName = Authentication.user.roles[0] === 'admin' ? true : false;
 
 		// Create new App
 		$scope.create = function() {
 			// Create new App object
 			var app = new Apps ({
-				name: this.name
+				name: this.name,
+				type: this.type,
+				server: this.server
 			});
 
 			// Redirect after save
@@ -118,6 +129,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
 				// Clear form fields
 				$scope.name = '';
+				$scope.type = 'java';
+				$scope.server = '';
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
@@ -158,12 +171,44 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
 		// Find existing App
 		$scope.findOne = function() {
-			$scope.app = Apps.get({ 
+			$scope.app = Apps.get({
 				appId: $stateParams.appId
 			});
 		};
+
+		$scope.dtOptions = DTOptionsBuilder
+			.newOptions()
+			.withLanguage({
+				'sLengthMenu': '每页显示 _MENU_ 条数据',
+				'sInfo': '从 _START_ 到 _END_ /共 _TOTAL_ 条数据',
+				'sInfoEmpty': '没有数据',
+				'sInfoFiltered': '(从 _MAX_ 条数据中检索)',
+				'sZeroRecords': '没有检索到数据',
+				'sSearch': '检索:',
+				'oPaginate': {
+					'sFirst': '首页',
+					'sPrevious': '上一页',
+					'sNext': '下一页',
+					'sLast': '末页'
+				}
+			})
+			// Add Bootstrap compatibility
+			.withBootstrap();
+
+		$scope.canUpdate = function() {
+			return $scope.appForm.$valid;
+		};
+
+		$scope.removeErr = function() {
+			$scope.error = false;
+		};
+
+		$scope.back = function() {
+			window.history.back();
+		};
 	}
 ]);
+
 'use strict';
 
 //Apps service used to communicate Apps REST endpoints
@@ -767,8 +812,13 @@ angular.module('users').controller('PasswordController', ['$scope', '$stateParam
 				$scope.error = response.message;
 			});
 		};
+
+		$scope.back = function() {
+			window.history.back();
+		};
 	}
 ]);
+
 'use strict';
 
 angular.module('users').controller('SettingsController', ['$scope', '$http', '$location', 'Users', 'Authentication', 'DTOptionsBuilder',
@@ -838,6 +888,10 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
             }, function (errorResponse) {
                 $scope.error = errorResponse.data.message;
             });
+        };
+
+        $scope.back = function() {
+            window.history.back();
         };
     }
 ]);
