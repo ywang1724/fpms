@@ -2,11 +2,11 @@
 	<div class="page-header">
 		<h1 data-ng-bind="app.name"></h1>
 	</div>
-	<div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == app.user._id))">
-		<a title="设置" class="btn btn-primary" href="/#!/apps/{{app._id}}/edit">
+	<div class="pull-right" data-ng-show="(authentication.user)">
+		<a title="设置" class="btn btn-primary" href="/#!/apps/{{app._id}}/edit" data-ng-show="(authentication.user._id == app.user._id)">
 			<i class="glyphicon glyphicon-edit"></i>
 		</a>
-		<a title="删除" class="btn btn-primary" data-ng-click="remove();">
+		<a title="删除" class="btn btn-primary" data-ng-click="remove();" data-ng-show="(authentication.user._id == app.user._id)">
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<a title="返回" class="btn btn-primary" data-ng-click="back();">
