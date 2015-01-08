@@ -4,8 +4,11 @@
 angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps', 'DTOptionsBuilder',
 	function($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder) {
 		$scope.authentication = Authentication;
+
+		//可从后台动态获取数据，以后有时间完成
 		$scope.type = 'java';
 		$scope.types = ['java', 'node.js'];
+
 		$scope.showName = Authentication.user.roles[0] === 'admin' ? true : false;
 
 		// Create new App
@@ -65,7 +68,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
 		// Find existing App
 		$scope.findOne = function() {
-			$scope.app = Apps.get({ 
+			$scope.app = Apps.get({
 				appId: $stateParams.appId
 			});
 		};
@@ -88,5 +91,13 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 			})
 			// Add Bootstrap compatibility
 			.withBootstrap();
+
+		$scope.canUpdate = function() {
+			return $scope.appForm.$valid;
+		};
+
+		$scope.removeErr = function() {
+			$scope.error = false;
+		};
 	}
 ]);

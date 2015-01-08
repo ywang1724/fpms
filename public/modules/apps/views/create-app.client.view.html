@@ -2,7 +2,7 @@
     <div class="page-header text-center">
         <h1>添加新应用</h1>
     </div>
-    <div class="col-xs-offset-2 col-xs-8 col-md-offset-5 col-md-2">
+    <div class="col-xs-offset-2 col-xs-8 col-md-offset-4 col-md-4">
         <form name="appForm" class="form-horizontal" data-ng-submit="create()" novalidate>
             <fieldset>
                 <div class="form-group"
@@ -10,7 +10,7 @@
                     <label class="control-label" for="name">名称</label>
                     <div class="controls">
                         <input name="name" type="text" data-ng-model="name" id="name" class="form-control"
-                               placeholder="名称" required>
+                               placeholder="请填写您的应用名称" data-ng-change="removeErr()" required>
                     </div>
                 </div>
                 <div class="form-group"
@@ -27,7 +27,7 @@
                     <label class="control-label" for="server">服务器地址</label>
                     <div class="controls">
                         <input name="server" type="text" data-ng-model="server" id="server" class="form-control"
-                               placeholder="服务器地址" required>
+                               placeholder="请填写您的应用所在服务器地址IPv4" data-ng-change="removeErr()" required>
                     </div>
                 </div>
                 <div class="form-group text-center">

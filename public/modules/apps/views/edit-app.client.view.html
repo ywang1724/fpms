@@ -1,18 +1,38 @@
 <section data-ng-controller="AppsController" data-ng-init="findOne()">
-    <div class="page-header">
-        <h1>Edit App</h1>
+    <div class="page-header text-center">
+        <h1>设置</h1>
     </div>
-    <div class="col-md-12">
-        <form class="form-horizontal" data-ng-submit="update()" novalidate>
+    <div class="col-xs-offset-2 col-xs-8 col-md-offset-4 col-md-4">
+        <form name="appForm" class="form-horizontal" data-ng-submit="update()" novalidate>
             <fieldset>
-                <div class="form-group">
-                    <label class="control-label" for="name">Name</label>
+                <div class="form-group"
+                     ng-class="{ 'has-error': appForm.name.$invalid }">
+                    <label class="control-label" for="name">名称</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="app.name" id="name" class="form-control" placeholder="Name" required>
+                        <input name="name" type="text" data-ng-model="app.name" id="name" class="form-control"
+                               placeholder="请填写您的应用名称" data-ng-change="removeErr()" required>
                     </div>
                 </div>
-                <div class="form-group">
-                    <input type="submit" value="Update" class="btn btn-default">
+                <div class="form-group"
+                     ng-class="{ 'has-error': appForm.type.$invalid }">
+                    <label class="control-label" for="type">类型</label>
+                    <div class="controls">
+                        <select id="type" name="type" data-ng-model="app.type" class="form-control" required>
+                            <option value="java" ng-selected="app.type=='java'">java</option>
+                            <option value="node.js" ng-selected="app.type=='node.js'">node.js</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group"
+                     ng-class="{ 'has-error': appForm.server.$invalid }">
+                    <label class="control-label" for="server">服务器地址</label>
+                    <div class="controls">
+                        <input name="server" type="text" data-ng-model="app.server" id="server" class="form-control"
+                               placeholder="请填写您的应用所在服务器地址IPv4" data-ng-change="removeErr()" required>
+                    </div>
+                </div>
+                <div class="form-group text-center">
+                    <input type="submit" value="更新" class="btn btn-primary" ng-disabled="!canUpdate()">
                 </div>
 				<div data-ng-show="error" class="text-danger">
 					<strong data-ng-bind="error"></strong>

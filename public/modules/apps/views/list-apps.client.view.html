@@ -14,7 +14,7 @@
         </thead>
         <tbody>
         <tr data-ng-repeat="app in apps">
-            <td>{{ app.name }}</td>
+            <td><a data-ng-href="#!/apps/{{app._id}}">{{ app.name }}</a></td>
             <td data-ng-show="showName">{{ app.user.displayName }}</td>
             <td>{{ app.type }}</td>
             <td>{{ app.server }}</td>
