@@ -15,6 +15,6 @@ angular.module('apps').directive('myConfirmClick', [
                     }
                 });
             }
-        }
+        };
     }
 ]);

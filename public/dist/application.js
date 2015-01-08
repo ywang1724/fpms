@@ -4,7 +4,8 @@
 var ApplicationConfiguration = (function() {
 	// Init module configuration options
 	var applicationModuleName = 'fpms';
-	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',  'ui.router', 'ui.bootstrap', 'ui.utils', 'datatables'];
+	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',
+		'ui.router', 'ui.bootstrap', 'ui.utils', 'datatables'];
 
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {
@@ -60,7 +61,7 @@ ApplicationConfiguration.registerModule('timings');
 ApplicationConfiguration.registerModule('users');
 'use strict';
 
-// Configuring the Articles module
+// Configuring the Apps module
 angular.module('apps').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
@@ -203,6 +204,27 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 			window.history.back();
 		};
 	}
+]);
+
+'use strict';
+
+// My Apps directive
+angular.module('apps').directive('myConfirmClick', [
+    function () {
+        return {
+            priority: -1,
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                element.bind('click', function (e) {
+                    var message = attrs.myConfirmClick;
+                    if (message && !confirm(message)) {
+                        e.stopImmediatePropagation();
+                        e.preventDefault();
+                    }
+                });
+            }
+        };
+    }
 ]);
 
 'use strict';
