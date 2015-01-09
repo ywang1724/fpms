@@ -24,6 +24,10 @@ var TimingSchema = new Schema({
 			type: Schema.ObjectId,
 			ref: 'ResTiming'
 		}]
+	},
+	page: {
+		type: String,
+		required: '请添加您的采集数据所属页面'
 	}
 });
 

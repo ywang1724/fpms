@@ -12,16 +12,18 @@ var mongoose = require('mongoose'),
  * Create a Timing
  */
 exports.create = function(req, res) {
-	var timing = new Timing(req.body);
-	timing.user = req.user;
+	var index = req.url.indexOf('?');
+	var rookie = decodeURI(req.url.substring(index + 1));
+	console.log(rookie);
+	var timing = new Timing();
+	timing.app = req.app;
+	timing.navTiming = req.body.navTiming;
+	timing.resTimings = req.body.resTimings;
+	timing.page = req.body.page;
 
 	timing.save(function(err) {
 		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(timing);
+			console.log(errorHandler.getErrorMessage(err));
 		}
 	});
 };
