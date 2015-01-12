@@ -6,22 +6,42 @@
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
 	Timing = mongoose.model('Timing'),
+	NavTiming = mongoose.model('NavTiming'),
+	ResTiming = mongoose.model('ResTiming'),
+	Q = require('q'),
 	_ = require('lodash');
 
 /**
  * Create a Timing
  */
 exports.create = function(req, res) {
-	var index = req.url.indexOf('?');
-	var rookie = decodeURI(req.url.substring(index + 1));
-	console.log(rookie);
-	var timing = new Timing();
-	timing.app = req.app;
-	timing.navTiming = req.body.navTiming;
-	timing.resTimings = req.body.resTimings;
-	timing.page = req.body.page;
+	var rookie = JSON.parse(decodeURI(req.url.substring(req.url.indexOf('?') + 1)));
 
-	timing.save(function(err) {
+	var promise1 = NavTiming.create(rookie.navTiming, function(err, saved) {
+		if (err) {
+			console.log(errorHandler.getErrorMessage(err));
+		} else {
+			rookie.navTiming = saved;
+		}
+	});
+	var promise2 = ResTiming.create(rookie.resTimings, function(err) {
+		if (err) {
+			console.log(errorHandler.getErrorMessage(err));
+		} else {
+			rookie.resTimings = [];
+			for (var i = 1; i < arguments.length; i++) {
+				rookie.resTimings.push(arguments[i]);
+			}
+		}
+	});
+
+	Q.all([promise1, promise2]).then(function() {
+		new Timing(rookie).save(function(err) {
+			if (err) {
+				console.log(errorHandler.getErrorMessage(err));
+			}
+		});
+	}, function(err) {
 		if (err) {
 			console.log(errorHandler.getErrorMessage(err));
 		}

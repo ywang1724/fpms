@@ -7,7 +7,7 @@ window.onload = function () {
 
     /*定义变量*/
     var rookie = {
-        errors: []
+        errs: []
     };
 
     /*浏览器支持检测*/
@@ -16,14 +16,14 @@ window.onload = function () {
     if (window.performance.timing) {
         rookie.navTiming = window.performance.timing;
     } else {
-        rookie.errors.push('浏览器不支持Navigation Timing API！');
+        rookie.errs.push('浏览器不支持Navigation Timing API！');
     }
 
     //检测是否支持Resource Timing API
     if (window.performance.getEntriesByType) {
         rookie.resTimings = window.performance.getEntriesByType('resource');
     } else {
-        rookie.errors.push('浏览器不支持Resource Timing API！');
+        rookie.errs.push('浏览器不支持Resource Timing API！');
     }
 
     var pathname = window.location.pathname;
@@ -34,11 +34,11 @@ window.onload = function () {
     setTimeout(function () {
         //检测页面是否加载完成
         if (rookie.navTiming.loadEventEnd - rookie.navTiming.navigationStart < 0) {
-            rookie.errors.push('页面还在加载，获取数据失败！');
+            rookie.errs.push('页面还在加载，获取数据失败！');
         }
-        if (rookie.errors.length > 0) {
-            for (var item in rookie.errors) {
-                alert(rookie.errors[item]);
+        if (rookie.errs.length > 0) {
+            for (var item in rookie.errs) {
+                alert(rookie.errs[item]);
             }
         } else {
             // send data to server todo

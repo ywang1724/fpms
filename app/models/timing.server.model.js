@@ -12,8 +12,8 @@ var mongoose = require('mongoose'),
 var TimingSchema = new Schema({
 	app: {
 		type: Schema.ObjectId,
-		ref: 'App',
-		required: '请添加您的应用名称'
+		ref: 'App'
+		//required: '请添加您的应用名称'
 	},
 	navTiming: {
 		type: Schema.ObjectId,
@@ -28,6 +28,11 @@ var TimingSchema = new Schema({
 	page: {
 		type: String,
 		required: '请添加您的采集数据所属页面'
+	},
+	errs: {
+		type: [{
+			type: String
+		}]
 	}
 });
 
