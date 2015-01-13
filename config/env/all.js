@@ -10,6 +10,13 @@ module.exports = {
 	templateEngine: 'swig',
 	sessionSecret: 'FPMS',
 	sessionCollection: 'sessions',
+	sessionCookie: {
+		path: '/',
+		httpOnly: true,
+		secure: false,
+		maxAge: 1200000
+	},
+	sessionName: 'connect.sid',
 	assets: {
 		lib: {
 			css: [

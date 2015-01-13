@@ -8,6 +8,7 @@ var mongoose = require('mongoose'),
 	Timing = mongoose.model('Timing'),
 	NavTiming = mongoose.model('NavTiming'),
 	ResTiming = mongoose.model('ResTiming'),
+	App = mongoose.model('App'),
 	Q = require('q'),
 	_ = require('lodash');
 
@@ -34,13 +35,21 @@ exports.create = function(req, res) {
 			}
 		}
 	});
+	var promise3 = App.findById(req.session.appId, function (err, app) {
+		if (err) {
+			console.log(errorHandler.getErrorMessage(err));
+		} else {
+			rookie.app = app;
+		}
+	});
 
-	Q.all([promise1, promise2]).then(function() {
+	Q.all([promise1, promise2, promise3]).then(function() {
 		new Timing(rookie).save(function(err) {
 			if (err) {
 				console.log(errorHandler.getErrorMessage(err));
 			}
 		});
+		res.sendStatus(200);
 	}, function(err) {
 		if (err) {
 			console.log(errorHandler.getErrorMessage(err));
@@ -141,7 +150,7 @@ exports.rookie = function (req, res) {
 			'x-sent': true
 		}
 	};
-
+	req.session.appId = req.app._id;
 	res.sendFile('rookie.js', options, function (err) {
 		if (err) {
 			console.log(err);

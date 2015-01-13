@@ -15,7 +15,7 @@ module.exports = function(app) {
 		.put(users.requiresLogin, timings.hasAuthorization, timings.update)
 		.delete(users.requiresLogin, timings.hasAuthorization, timings.delete);*/
 
-	app.route('/rookie.js').get(timings.rookie);
+	app.route('/rookie.js/:appId').get(timings.rookie);
 	app.route('/_fp.gif').get(timings.create);
 
 	app.route('/timings/:appId')
