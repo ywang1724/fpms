@@ -142,7 +142,7 @@ exports.hasAuthorization = function (req, res, next) {
  */
 exports.rookie = function (req, res) {
     var options = {
-            root: 'app/',
+            root: 'app/static/dist/',
             dotfiles: 'allow',
             headers: {
                 'Content-Type': 'text/javascript; charset=UTF-8',
