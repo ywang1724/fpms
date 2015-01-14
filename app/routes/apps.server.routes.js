@@ -6,11 +6,11 @@ module.exports = function(app) {
 
 	// Apps Routes
 	app.route('/apps')
-		.get(apps.list)
+		.get(users.requiresLogin, apps.list)
 		.post(users.requiresLogin, apps.create);
 
 	app.route('/apps/:appId')
-		.get(apps.read)
+		.get(users.requiresLogin, apps.read)
 		.put(users.requiresLogin, apps.hasAuthorization, apps.update)
 		.delete(users.requiresLogin, apps.hasAuthorization, apps.delete);
 
