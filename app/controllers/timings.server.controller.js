@@ -16,43 +16,67 @@ var mongoose = require('mongoose'),
  * Create a Timing
  */
 exports.create = function (req, res) {
-    var rookie = JSON.parse(decodeURI(req.url.substring(req.url.indexOf('?') + 1)));
+    if (req.session.appId) {
+        var rookie = JSON.parse(decodeURI(req.url.substring(req.url.indexOf('?') + 1)));
 
-    var promise1 = NavTiming.create(rookie.navTiming, function (err, saved) {
-        if (err) {
-            console.log(errorHandler.getErrorMessage(err));
-        } else {
-            rookie.navTiming = saved;
-        }
-    });
-    var promise2 = ResTiming.create(rookie.resTimings, function (err) {
-        if (err) {
-            console.log(errorHandler.getErrorMessage(err));
-        } else {
-            rookie.resTimings = [];
-            for (var i = 1; i < arguments.length; i++) {
-                rookie.resTimings.push(arguments[i]);
+        var promise1 = NavTiming.create(rookie.navTiming, function (err, saved) {
+            if (err) {
+                console.log(errorHandler.getErrorMessage(err));
+            } else {
+                rookie.navTiming = saved;
             }
-        }
-    });
-    var promise3 = App.findById(req.session.appId).exec(function (err, app) {
-        if (err) {
-            console.log(errorHandler.getErrorMessage(err));
-        } else {
-            rookie.app = app;
-        }
-    });
+        });
+        var promise2 = ResTiming.create(rookie.resTimings, function (err) {
+            if (err) {
+                console.log(errorHandler.getErrorMessage(err));
+            } else {
+                rookie.resTimings = [];
+                for (var i = 1; i < arguments.length; i++) {
+                    rookie.resTimings.push(arguments[i]);
+                }
+            }
+        });
+        var promise3 = App.findById(req.session.appId).exec(function (err, app) {
+            if (err) {
+                console.log(errorHandler.getErrorMessage(err));
+            } else {
+                rookie.app = app;
+            }
+        });
 
-    Q.all([promise1, promise2, promise3]).then(function () {
-        new Timing(rookie).save(function (err) {
+        Q.all([promise1, promise2, promise3]).then(function () {
+            new Timing(rookie).save(function (err) {
+                if (err) {
+                    console.log(errorHandler.getErrorMessage(err));
+                }
+            });
+        }, function (err) {
             if (err) {
                 console.log(errorHandler.getErrorMessage(err));
             }
         });
-        res.sendStatus(200);
-    }, function (err) {
+    }
+
+    var options = {
+            root: 'app/static/img/',
+            dotfiles: 'allow',
+            headers: {
+                'Content-Type': 'image/gif',
+                'Pragma': 'no-cache',
+                'Cache-Control': 'private, no-cache, no-cache=Set-Cookie, proxy-revalidate'
+            }
+        },
+        fileName = '_fp.gif';
+    res.sendFile(fileName, options, function (err) {
         if (err) {
-            console.log(errorHandler.getErrorMessage(err));
+            if (err.code === 'ECONNABORT' && res.statusCode === 304) {
+                console.log('304 cache hit for ' + fileName);
+                return;
+            }
+            console.log(err);
+            res.status(err.status).end();
+        } else {
+            console.log('Sent:', fileName);
         }
     });
 };
