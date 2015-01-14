@@ -58,7 +58,7 @@ exports.create = function (req, res) {
     }
 
     var options = {
-            root: 'app/static/img/',
+            root: 'static/img/',
             dotfiles: 'allow',
             headers: {
                 'Content-Type': 'image/gif',
@@ -166,7 +166,7 @@ exports.hasAuthorization = function (req, res, next) {
  */
 exports.rookie = function (req, res) {
     var options = {
-            root: 'app/static/dist/',
+            root: 'static/dist/',
             dotfiles: 'allow',
             headers: {
                 'Content-Type': 'text/javascript; charset=UTF-8',

@@ -53,10 +53,6 @@ ApplicationConfiguration.registerModule('apps');
 ApplicationConfiguration.registerModule('core');
 'use strict';
 
-// Use applicaion configuration module to register a new module
-ApplicationConfiguration.registerModule('timings');
-'use strict';
-
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('users');
 'use strict';
@@ -448,121 +444,6 @@ angular.module('core').service('Menus', [
 
 		//Adding the topbar menu
 		this.addMenu('topbar');
-	}
-]);
-'use strict';
-
-// Configuring the Articles module
-angular.module('timings').run(['Menus',
-	function(Menus) {
-		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Timings', 'timings', 'dropdown', '/timings(/create)?');
-		Menus.addSubMenuItem('topbar', 'timings', 'List Timings', 'timings');
-		Menus.addSubMenuItem('topbar', 'timings', 'New Timing', 'timings/create');
-	}
-]);
-'use strict';
-
-//Setting up route
-angular.module('timings').config(['$stateProvider',
-	function($stateProvider) {
-		// Timings state routing
-		$stateProvider.
-		state('listTimings', {
-			url: '/timings',
-			templateUrl: 'modules/timings/views/list-timings.client.view.html'
-		}).
-		state('createTiming', {
-			url: '/timings/create',
-			templateUrl: 'modules/timings/views/create-timing.client.view.html'
-		}).
-		state('viewTiming', {
-			url: '/timings/:timingId',
-			templateUrl: 'modules/timings/views/view-timing.client.view.html'
-		}).
-		state('editTiming', {
-			url: '/timings/:timingId/edit',
-			templateUrl: 'modules/timings/views/edit-timing.client.view.html'
-		});
-	}
-]);
-'use strict';
-
-// Timings controller
-angular.module('timings').controller('TimingsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Timings',
-	function($scope, $stateParams, $location, Authentication, Timings) {
-		$scope.authentication = Authentication;
-
-		// Create new Timing
-		$scope.create = function() {
-			// Create new Timing object
-			var timing = new Timings ({
-				name: this.name
-			});
-
-			// Redirect after save
-			timing.$save(function(response) {
-				$location.path('timings/' + response._id);
-
-				// Clear form fields
-				$scope.name = '';
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
-
-		// Remove existing Timing
-		$scope.remove = function(timing) {
-			if ( timing ) { 
-				timing.$remove();
-
-				for (var i in $scope.timings) {
-					if ($scope.timings [i] === timing) {
-						$scope.timings.splice(i, 1);
-					}
-				}
-			} else {
-				$scope.timing.$remove(function() {
-					$location.path('timings');
-				});
-			}
-		};
-
-		// Update existing Timing
-		$scope.update = function() {
-			var timing = $scope.timing;
-
-			timing.$update(function() {
-				$location.path('timings/' + timing._id);
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
-
-		// Find a list of Timings
-		$scope.find = function() {
-			$scope.timings = Timings.query();
-		};
-
-		// Find existing Timing
-		$scope.findOne = function() {
-			$scope.timing = Timings.get({ 
-				timingId: $stateParams.timingId
-			});
-		};
-	}
-]);
-'use strict';
-
-//Timings service used to communicate Timings REST endpoints
-angular.module('timings').factory('Timings', ['$resource',
-	function($resource) {
-		return $resource('timings/:timingId', { timingId: '@_id'
-		}, {
-			update: {
-				method: 'PUT'
-			}
-		});
 	}
 ]);
 'use strict';
