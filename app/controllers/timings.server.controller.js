@@ -154,7 +154,7 @@ exports.rookie = function (req, res) {
     req.session.appId = req.app._id;
     res.sendFile(fileName, options, function (err) {
         if (err) {
-            if (err.code === "ECONNABORT" && res.statusCode == 304) {
+            if (err.code === 'ECONNABORT' && res.statusCode === 304) {
                 console.log('304 cache hit for ' + fileName);
                 return;
             }
