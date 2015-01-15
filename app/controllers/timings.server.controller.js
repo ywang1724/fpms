@@ -17,46 +17,45 @@ var mongoose = require('mongoose'),
  */
 exports.create = function (req, res) {
     if (req.session.appId) {
-        var rookie = JSON.parse(decodeURI(req.url.substring(req.url.indexOf('?') + 1)));
-
-        var promise1 = NavTiming.create(rookie.navTiming, function (err, saved) {
+        App.findById(req.session.appId).exec(function (err, app) {
             if (err) {
                 console.log(errorHandler.getErrorMessage(err));
             } else {
-                rookie.navTiming = saved;
-            }
-        });
-        var promise2 = ResTiming.create(rookie.resTimings, function (err) {
-            if (err) {
-                console.log(errorHandler.getErrorMessage(err));
-            } else {
-                rookie.resTimings = [];
-                for (var i = 1; i < arguments.length; i++) {
-                    rookie.resTimings.push(arguments[i]);
+                if (app.server === req._remoteAddress) {
+                    var rookie = JSON.parse(decodeURI(req.url.substring(req.url.indexOf('?') + 1)));
+                    var promise1 = NavTiming.create(rookie.navTiming, function (err, saved) {
+                        if (err) {
+                            console.log(errorHandler.getErrorMessage(err));
+                        } else {
+                            rookie.navTiming = saved;
+                        }
+                    });
+                    var promise2 = ResTiming.create(rookie.resTimings, function (err) {
+                        if (err) {
+                            console.log(errorHandler.getErrorMessage(err));
+                        } else {
+                            rookie.resTimings = [];
+                            for (var i = 1; i < arguments.length; i++) {
+                                rookie.resTimings.push(arguments[i]);
+                            }
+                        }
+                    });
+                    rookie.app = app;
+                    Q.all([promise1, promise2]).then(function () {
+                        new Timing(rookie).save(function (err) {
+                            if (err) {
+                                console.log(errorHandler.getErrorMessage(err));
+                            }
+                        });
+                    }, function (err) {
+                        if (err) {
+                            console.log(errorHandler.getErrorMessage(err));
+                        }
+                    });
                 }
-            }
-        });
-        var promise3 = App.findById(req.session.appId).exec(function (err, app) {
-            if (err) {
-                console.log(errorHandler.getErrorMessage(err));
-            } else {
-                rookie.app = app;
-            }
-        });
-
-        Q.all([promise1, promise2, promise3]).then(function () {
-            new Timing(rookie).save(function (err) {
-                if (err) {
-                    console.log(errorHandler.getErrorMessage(err));
-                }
-            });
-        }, function (err) {
-            if (err) {
-                console.log(errorHandler.getErrorMessage(err));
             }
         });
     }
-
     var options = {
             root: 'static/img/',
             dotfiles: 'allow',
