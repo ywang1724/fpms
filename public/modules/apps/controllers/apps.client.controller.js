@@ -10,7 +10,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 		$scope.types = ['java', 'node.js'];
 
 		$scope.showName = Authentication.user.roles[0] === 'admin' ? true : false;
-		$scope.script = '<script type="text/javascript" src="http://192.168.88.177:3000/rookie.js"></script>';
+		$scope.script = '<script type="text/javascript" src="http://192.168.88.177:3000/rookie.js/' + $stateParams.appId + '"></script>';
 
 		// Create new App
 		$scope.create = function() {
