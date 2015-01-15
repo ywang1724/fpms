@@ -89,42 +89,6 @@ exports.read = function (req, res) {
 };
 
 /**
- * Update a Timing
- */
-exports.update = function (req, res) {
-    var timing = req.timing;
-
-    timing = _.extend(timing, req.body);
-
-    timing.save(function (err) {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        } else {
-            res.jsonp(timing);
-        }
-    });
-};
-
-/**
- * Delete an Timing
- */
-exports.delete = function (req, res) {
-    var timing = req.timing;
-
-    timing.remove(function (err) {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        } else {
-            res.jsonp(timing);
-        }
-    });
-};
-
-/**
  * List of Timings
  */
 exports.list = function (req, res) {
@@ -143,22 +107,12 @@ exports.list = function (req, res) {
  * Timing middleware
  */
 exports.timingByID = function (req, res, next, id) {
-    Timing.findById(id).populate('user', 'displayName').exec(function (err, timing) {
+    Timing.findById(id).populate('app', 'name').exec(function (err, timing) {
         if (err) return next(err);
         if (!timing) return next(new Error('Failed to load Timing ' + id));
         req.timing = timing;
         next();
     });
-};
-
-/**
- * Timing authorization middleware
- */
-exports.hasAuthorization = function (req, res, next) {
-    if (req.timing.user.id !== req.user.id) {
-        return res.status(403).send('User is not authorized');
-    }
-    next();
 };
 
 /**
