@@ -119,7 +119,7 @@ exports.timingByID = function (req, res, next, id) {
  */
 exports.rookie = function (req, res) {
     var options = {
-            root: 'static/dist/',
+            root: process.env.NODE_ENV === 'production' ? 'static/dist/' : 'static/js/',
             dotfiles: 'allow',
             headers: {
                 'Content-Type': 'text/javascript; charset=UTF-8',
