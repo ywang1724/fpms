@@ -1,4 +1,4 @@
-<section data-ng-controller="AppsController" data-ng-init="findOne()">
+<section data-ng-controller="AppsController" ng-init="findOne()">
 	<div class="page-header">
 		<h1 data-ng-bind="app.name"></h1>
 	</div>
@@ -17,12 +17,24 @@
 	请复制以下代码到您需采集数据的所属页面html代码的body底部：<br>
 	<p><span>{{script}}</span></p>
 	<br>
+	<table datatable="ng" dt-options="dtOptions" class="table table-striped table-bordered" data-ng-if="pages.length">
+		<thead>
+		<tr>
+			<th>名称</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr data-ng-repeat="page in pages">
+			<td><a data-ng-href="#!/pages/{{page._id}}">{{ page.name }}</a></td>
+		</tr>
+		</tbody>
+	</table>
 	<small>
 		<em class="text-muted">
-			Posted on
-			<span data-ng-bind="app.created | date:'mediumDate'"></span>
-			by
+			由
 			<span data-ng-bind="app.user.displayName"></span>
+			创建于
+			<span data-ng-bind="app.created | date:'mediumDate'"></span>
 		</em>
 	</small>
 </section>

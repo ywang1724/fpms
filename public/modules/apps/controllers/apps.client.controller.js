@@ -1,8 +1,9 @@
 'use strict';
 
 // Apps controller
-angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps', 'DTOptionsBuilder',
-    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder) {
+angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
+    'DTOptionsBuilder', '$http',
+    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http) {
         $scope.authentication = Authentication;
 
         //可从后台动态获取数据，以后有时间完成
@@ -12,7 +13,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         if (Authentication.user) {
             $scope.showName = Authentication.user.roles[0] === 'admin' ? true : false;
         }
-        $scope.script = '<script type="text/javascript" src="http://192.168.88.177:3000/rookie.js/' + $stateParams.appId + '"></script>';
+        $scope.script = '<script type="text/javascript" src="http://192.168.88.177:3000/rookie.js/' + $stateParams.appId
+                        + '"></script>';
 
         // Create new App
         $scope.create = function () {
@@ -74,6 +76,10 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             $scope.app = Apps.get({
                 appId: $stateParams.appId
             });
+            $http.get('pages/' + $stateParams.appId).
+                success(function(data) {
+                    $scope.pages = data;
+                });
         };
 
         $scope.dtOptions = DTOptionsBuilder

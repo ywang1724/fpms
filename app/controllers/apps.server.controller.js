@@ -6,6 +6,7 @@
 var mongoose = require('mongoose'),
     errorHandler = require('./errors.server.controller'),
     App = mongoose.model('App'),
+    Page = mongoose.model('Page'),
     _ = require('lodash');
 
 /**
@@ -116,4 +117,19 @@ exports.hasAuthorization = function (req, res, next) {
         return res.status(403).send('User is not authorized');
     }
     next();
+};
+
+/**
+ * List of Pages
+ */
+exports.pageList = function (req, res) {
+    Page.find({app: req.app.id}).exec(function (err, pages) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(pages);
+        }
+    });
 };

@@ -14,6 +14,10 @@ module.exports = function(app) {
 		.put(users.requiresLogin, apps.hasAuthorization, apps.update)
 		.delete(users.requiresLogin, apps.hasAuthorization, apps.delete);
 
+	// Pages Routes
+	app.route('/pages/:appId')
+		.get(users.requiresLogin, apps.pageList);
+
 	// Finish by binding the App middleware
 	app.param('appId', apps.appByID);
 };
