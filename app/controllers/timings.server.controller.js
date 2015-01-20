@@ -9,6 +9,7 @@ var mongoose = require('mongoose'),
     NavTiming = mongoose.model('NavTiming'),
     ResTiming = mongoose.model('ResTiming'),
     App = mongoose.model('App'),
+    Page = mongoose.model('Page'),
     Q = require('q'),
     _ = require('lodash');
 
@@ -22,34 +23,42 @@ exports.create = function (req, res) {
                 console.log(errorHandler.getErrorMessage(err));
             } else {
                 if (app.server === req._remoteAddress) {
-                    var rookie = JSON.parse(decodeURI(req.url.substring(req.url.indexOf('?') + 1)));
-                    var promise1 = NavTiming.create(rookie.navTiming, function (err, saved) {
+                    var rookie = JSON.parse(decodeURI(req.url.substring(req.url.indexOf('?') + 1))),
+                        page = {};
+                    Page.findOneAndUpdate({app: app, name: rookie.page}, {upsert: true}).exec(function (err, obj) {
                         if (err) {
                             console.log(errorHandler.getErrorMessage(err));
                         } else {
-                            rookie.navTiming = saved;
-                        }
-                    });
-                    var promise2 = ResTiming.create(rookie.resTimings, function (err) {
-                        if (err) {
-                            console.log(errorHandler.getErrorMessage(err));
-                        } else {
-                            rookie.resTimings = [];
-                            for (var i = 1; i < arguments.length; i++) {
-                                rookie.resTimings.push(arguments[i]);
-                            }
-                        }
-                    });
-                    rookie.app = app;
-                    Q.all([promise1, promise2]).then(function () {
-                        new Timing(rookie).save(function (err) {
-                            if (err) {
-                                console.log(errorHandler.getErrorMessage(err));
-                            }
-                        });
-                    }, function (err) {
-                        if (err) {
-                            console.log(errorHandler.getErrorMessage(err));
+                            page = obj;
+                            var promise1 = NavTiming.create(rookie.navTiming, function (err, saved) {
+                                if (err) {
+                                    console.log(errorHandler.getErrorMessage(err));
+                                } else {
+                                    rookie.navTiming = saved;
+                                }
+                            });
+                            var promise2 = ResTiming.create(rookie.resTimings, function (err) {
+                                if (err) {
+                                    console.log(errorHandler.getErrorMessage(err));
+                                } else {
+                                    rookie.resTimings = [];
+                                    for (var i = 1; i < arguments.length; i++) {
+                                        rookie.resTimings.push(arguments[i]);
+                                    }
+                                }
+                            });
+                            rookie.page = page;
+                            Q.all([promise1, promise2]).then(function () {
+                                new Timing(rookie).save(function (err) {
+                                    if (err) {
+                                        console.log(errorHandler.getErrorMessage(err));
+                                    }
+                                });
+                            }, function (err) {
+                                if (err) {
+                                    console.log(errorHandler.getErrorMessage(err));
+                                }
+                            });
                         }
                     });
                 }

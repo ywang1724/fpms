@@ -10,8 +10,17 @@ var mongoose = require('mongoose'),
  * Page Schema
  */
 var PageSchema = new Schema({
-	// Page model fields   
-	// ...
+	name: {
+		type: String,
+		default: '',
+		required: '请填写页面名称',
+		trim: true
+	},
+	app: {
+		type: Schema.ObjectId,
+		ref: 'App',
+		required: '请添加您的应用名称'
+	}
 });
 
 mongoose.model('Page', PageSchema);

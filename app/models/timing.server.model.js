@@ -10,11 +10,6 @@ var mongoose = require('mongoose'),
  * Timing Schema
  */
 var TimingSchema = new Schema({
-	app: {
-		type: Schema.ObjectId,
-		ref: 'App',
-		required: '请添加您的应用名称'
-	},
 	navTiming: {
 		type: Schema.ObjectId,
 		ref: 'NavTiming'
@@ -26,7 +21,8 @@ var TimingSchema = new Schema({
 		}]
 	},
 	page: {
-		type: String,
+		type: Schema.ObjectId,
+		ref: 'Page',
 		required: '请添加您的采集数据所属页面'
 	},
 	errs: {
