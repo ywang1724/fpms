@@ -16,3 +16,6 @@
 .cursor {
 	cursor: pointer;
 }
+.myTable {
+	border-collapse: collapse !important;
+}
