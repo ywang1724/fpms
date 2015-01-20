@@ -25,7 +25,7 @@ exports.create = function (req, res) {
                 if (app.server === req._remoteAddress) {
                     var rookie = JSON.parse(decodeURI(req.url.substring(req.url.indexOf('?') + 1))),
                         page = {};
-                    Page.findOneAndUpdate({app: app, name: rookie.page}, {upsert: true}).exec(function (err, obj) {
+                    Page.findOneAndUpdate({app: app, name: rookie.page}, page, {upsert: true}).exec(function (err, obj) {
                         if (err) {
                             console.log(errorHandler.getErrorMessage(err));
                         } else {
