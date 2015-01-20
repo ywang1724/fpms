@@ -16,7 +16,7 @@ module.exports = {
 		path: '/',
 		httpOnly: true,
 		secure: false,
-		maxAge: 1200000
+		maxAge: 3600000
 	},
 	sessionName: 'connect.sid',
 	assets: {
