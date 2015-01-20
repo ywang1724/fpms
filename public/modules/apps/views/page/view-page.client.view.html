@@ -1,0 +1,31 @@
+<section data-ng-controller="AppsController" data-ng-init="find()">
+    <div class="page-header">
+        <h1>应用列表</h1>
+    </div>
+    <table datatable="ng" dt-options="dtOptions" class="table table-striped table-bordered" data-ng-if="apps.length">
+        <thead>
+        <tr>
+            <th>名称</th>
+            <th data-ng-show="showName">用户名</th>
+            <th>类型</th>
+            <th>服务器地址</th>
+            <th>创建时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-ng-repeat="app in apps">
+            <td><a data-ng-href="#!/apps/{{app._id}}">{{ app.name }}</a></td>
+            <td data-ng-show="showName">{{ app.user.displayName }}</td>
+            <td>{{ app.type }}</td>
+            <td>{{ app.server }}</td>
+            <td>{{ app.created | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="alert alert-warning text-center" data-ng-if="apps.$resolved && !apps.length">
+        没有任何应用。
+    </div>
+    <div data-ng-show="error" class="text-center text-danger">
+        <strong data-ng-bind="error"></strong>
+    </div>
+</section>
