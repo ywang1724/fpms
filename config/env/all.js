@@ -40,7 +40,8 @@ module.exports = {
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
 				'public/lib/angular-datatables/dist/angular-datatables.js',
                 'public/lib/angular-strap/dist/angular-strap.js',
-                'public/lib/angular-strap/dist/angular-strap.tpl.js'
+                'public/lib/angular-strap/dist/angular-strap.tpl.js',
+                'public/lib/angular-i18n/angular-locale_zh-cn.js'
 			]
 		},
 		css: [
