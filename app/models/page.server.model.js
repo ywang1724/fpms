@@ -10,7 +10,7 @@ var mongoose = require('mongoose'),
  * Page Schema
  */
 var PageSchema = new Schema({
-	name: {
+	pathname: {
 		type: String,
 		default: '',
 		required: '请填写页面名称',

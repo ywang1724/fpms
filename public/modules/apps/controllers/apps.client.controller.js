@@ -79,6 +79,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             $http.get('pages/' + $stateParams.appId).
                 success(function(data) {
                     $scope.pages = data;
+                    $scope.selectPage = $scope.pages[0];
                 });
         };
 

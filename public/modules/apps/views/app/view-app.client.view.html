@@ -2,34 +2,45 @@
 	<div class="page-header">
 		<h1 data-ng-bind="app.name"></h1>
 	</div>
-	<div class="pull-right" data-ng-show="(authentication.user)">
-		<a title="返回" class="btn btn-primary btn-sm" data-ng-click="back();">
-			<i class="glyphicon glyphicon-arrow-left"></i>
-		</a>
-		<a title="设置" class="btn btn-primary btn-sm" href="/#!/apps/{{app._id}}/edit" data-ng-show="(authentication.user._id == app.user._id)">
-			<i class="glyphicon glyphicon-edit"></i>
-		</a>
-		<a title="删除" class="btn btn-primary btn-sm" data-ng-click="remove();"
-		   data-ng-show="(authentication.user._id == app.user._id)" my-confirm-click="您确定要删除吗？">
-			<i class="glyphicon glyphicon-trash"></i>
-		</a>
-	</div>
-	请复制以下代码到您需采集数据的所属页面html代码的body底部：<br>
-	<p><span>{{script}}</span></p>
-	<br>
-	<table datatable="ng" dt-options="dtOptions" class="table table-striped table-bordered table-hover myTable"
-           data-ng-if="pages.length">
-		<thead>
-		<tr>
-			<th>名称</th>
-		</tr>
-		</thead>
-		<tbody>
-		<tr data-ng-repeat="page in pages">
-			<td><a data-ng-href="#!/pages/{{page._id}}">{{ page.name }}</a></td>
-		</tr>
-		</tbody>
-	</table>
+    <div class="pull-right" data-ng-show="(authentication.user)">
+        <a title="返回" class="btn btn-primary btn-sm" data-ng-click="back();">
+            <i class="glyphicon glyphicon-arrow-left"></i>
+        </a>
+        <a title="设置" class="btn btn-primary btn-sm" href="/#!/apps/{{app._id}}/edit" data-ng-show="(authentication.user._id == app.user._id)">
+            <i class="glyphicon glyphicon-edit"></i>
+        </a>
+        <a title="删除" class="btn btn-primary btn-sm" data-ng-click="remove();"
+           data-ng-show="(authentication.user._id == app.user._id)" my-confirm-click="您确定要删除吗？">
+            <i class="glyphicon glyphicon-trash"></i>
+        </a>
+    </div>
+    请复制以下代码到您需采集数据的所属页面html代码的body底部：<br>
+    <p><span>{{script}}</span></p>
+    <br>
+    <div class="panel panel-success">
+        <div class="panel-heading">页面总体概况
+            <div class="pull-right">
+                <select name="selectPage" data-ng-model="selectPage" ng-options="page.pathname for page in pages"
+                        required>
+                </select>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table datatable="ng" dt-options="dtOptions" class="table table-striped table-bordered table-hover myTable"
+                   data-ng-if="pages.length">
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-ng-repeat="page in pages">
+                        <td><a data-ng-href="#!/pages/{{page._id}}">{{ page.pathname }}</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 	<small>
 		<em class="text-muted">
 			由

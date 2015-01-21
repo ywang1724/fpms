@@ -26,9 +26,11 @@ window.onload = function () {
         rookie.errs.push('浏览器不支持Resource Timing API！');
     }
 
-    var pathname = window.location.pathname;
+    /*var pathname = window.location.pathname;
     var lastIndex = pathname.lastIndexOf('/');
     rookie.page = pathname.substring(lastIndex + 1);
+    rookie.path = pathname.substring(0, lastIndex + 1);*/
+    rookie.pathname = window.location.pathname;
 
     /*利用工具包分析页面加载数据调用（beta）*/
     setTimeout(function () {
