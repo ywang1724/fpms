@@ -113,5 +113,10 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         $scope.back = function () {
             window.history.back();
         };
+
+        $scope.selectedDate = "2015-01-21T07:21:44.213Z"; // <- [object Date]
+        $scope.selectedDateAsNumber = 509414400000; // <- [object Number]
+        $scope.fromDate = "2015-01-04T07:21:44.213Z"; // <- [object Undefined]
+        $scope.untilDate = Date.now(); // <- [object Undefined]
     }
 ]);
