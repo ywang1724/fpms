@@ -11,3 +11,9 @@ angular.module('apps').run(['Menus',
 		Menus.addMenuItem('topbar', '应用列表', 'apps', 'item', '/apps', 'false', ['admin']);
 	}
 ]);
+
+angular.module('apps').config(function($datepickerProvider) {
+    angular.extend($datepickerProvider.defaults, {
+        dateFormat: 'yyyy-MM-dd'
+    });
+});

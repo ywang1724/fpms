@@ -114,9 +114,9 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             window.history.back();
         };
 
-        $scope.selectedDate = "2015-01-21T07:21:44.213Z"; // <- [object Date]
-        $scope.selectedDateAsNumber = 509414400000; // <- [object Number]
-        $scope.fromDate = "2015-01-04T07:21:44.213Z"; // <- [object Undefined]
-        $scope.untilDate = Date.now(); // <- [object Undefined]
+        // 日期范围初始化
+        $scope.nowDate = Date.now();
+        $scope.fromDate = Date.now() - 1296000000; //往前15天
+        $scope.untilDate = Date.now();
     }
 ]);

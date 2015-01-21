@@ -27,13 +27,11 @@
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <label class="control-label"><i class="fa fa-calendar"></i> <i class="fa fa-arrows-h"></i> <i class="fa fa-calendar"></i> Date range <small>(dynamic)</small></label><br>
-                <div class="form-group col-xs-6">
-                    <input class="form-control" ng-model="fromDate" data-max-date="{{untilDate}}" placeholder="From" bs-datepicker type="text">
-                </div>
-                <div class="form-group col-xs-6">
-                    <input class="form-control" ng-model="untilDate" data-min-date="{{fromDate}}" placeholder="Until" bs-datepicker type="text">
-                </div>
+                <label class="control-label">日期范围：</label>
+                <input ng-model="fromDate" data-max-date="{{untilDate}}" placeholder="开始日期" bs-datepicker type="text">
+                至
+                <input ng-model="untilDate" data-min-date="{{fromDate}}" data-max-date="{{nowDate}}"
+                       placeholder="截止日期" bs-datepicker type="text">
             </div>
             <table datatable="ng" dt-options="dtOptions" class="table table-striped table-bordered table-hover myTable"
                    data-ng-if="pages.length">
