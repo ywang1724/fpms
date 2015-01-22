@@ -14,7 +14,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             $scope.showName = Authentication.user.roles[0] === 'admin' ? true : false;
         }
         $scope.script = '<script type="text/javascript" src="http://192.168.88.177:3000/rookie.js/' + $stateParams.appId
-                        + '"></script>';
+        + '"></script>';
 
         // Create new App
         $scope.create = function () {
@@ -77,9 +77,43 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 appId: $stateParams.appId
             });
             $http.get('pages/' + $stateParams.appId).
-                success(function(data) {
+                success(function (data) {
                     $scope.pages = data;
                     $scope.selectPage = $scope.pages[0];
+                    // 日期范围初始化
+                    $scope.nowDate = Date.now();
+                    $scope.fromDate = Date.now() - 1296000000; //往前15天
+                    $scope.untilDate = Date.now();
+                    $scope.chartTypes = ['line', 'bar', 'pie'];
+                    $scope.selectChartType = $scope.chartTypes[0];
+                    $http.get('timings', {
+                        params: {
+                            pageId: $scope.selectPage._id,
+                            fromDate: new Date($scope.fromDate),
+                            untilDate: new Date($scope.untilDate)
+                        }
+                    }).success(function (data) {
+                        $scope.timings = data;
+                    });
+
+                    $scope.chartConfig = {
+                        options: {
+                            chart: {
+                                type: $scope.selectChartType
+                            }
+                        },
+                        series: [{
+                            data: [10, 15, 12, 8, 7, 1, 1, 19, 15, ($scope.untilDate - $scope.fromDate) / 1000000000]
+                        }],
+                        title: {
+                            text: $scope.untilDate - $scope.fromDate
+                        },
+                        loading: false
+                    };
+                    $scope.refrashChart = function () {
+                        this.chartConfig.options.chart.type = $scope.selectChartType;
+                        this.chartConfig.series[0].data = [10, 15, 12, 8, 7, 1, 1, 19, 15, 10];
+                    }
                 });
         };
 
@@ -112,28 +146,6 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
         $scope.back = function () {
             window.history.back();
-        };
-
-        // 日期范围初始化
-        $scope.nowDate = Date.now();
-        $scope.fromDate = Date.now() - 1296000000; //往前15天
-        $scope.untilDate = Date.now();
-
-        $scope.chartConfig = {
-            options: {
-                chart: {
-                    type: 'line',
-                    zoomType: 'x'
-                }
-            },
-            series: [{
-                data: [10, 15, 12, 8, 7, 1, 1, 19, 15, 10]
-            }],
-            title: {
-                text: 'Hello'
-            },
-            xAxis: {currentMin: 0, currentMax: 10, minRange: 1},
-            loading: false
         };
     }
 ]);

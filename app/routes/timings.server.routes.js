@@ -7,16 +7,13 @@ module.exports = function(app) {
 
 	// Timings Routes
 	app.route('/timings')
-		.get(timings.list);
+		.get(users.requiresLogin, timings.list);
 
 	app.route('/timings/:timingId')
-		.get(timings.read);
+		.get(users.requiresLogin, timings.read);
 
 	app.route('/rookie.js/:appId').get(timings.rookie);
 	app.route('/_fp.gif').get(timings.create);
-
-	app.route('/timings/:appId')
-		.post(timings.create);
 
 	// Finish by binding the Timing middleware
 	app.param('timingId', timings.timingByID);

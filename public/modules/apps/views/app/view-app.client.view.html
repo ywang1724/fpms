@@ -16,36 +16,26 @@
     </div>
     请复制以下代码到您需采集数据的所属页面html代码的body底部：<br>
     <p><span>{{script}}</span></p>
-    <br>
     <div class="panel panel-success">
-        <div class="panel-heading">页面总体概况
-            <div class="pull-right">
-                <select name="selectPage" data-ng-model="selectPage" ng-options="page.pathname for page in pages"
-                        required>
-                </select>
-            </div>
-        </div>
+        <div class="panel-heading">页面总体概况</div>
         <div class="panel-body">
             <div class="form-group">
+                <label class="control-label">页面：</label>
+                <select class="btn btn-default" name="selectPage" data-ng-model="selectPage"
+                        ng-options="page.pathname for page in pages" bs-select>
+                </select>
                 <label class="control-label">日期范围：</label>
-                <input ng-model="fromDate" data-max-date="{{untilDate}}" placeholder="开始日期" bs-datepicker type="text">
+                <input class="btn btn-default" ng-model="fromDate" data-max-date="{{untilDate}}" placeholder="开始日期"
+                       bs-datepicker type="text">
                 至
-                <input ng-model="untilDate" data-min-date="{{fromDate}}" data-max-date="{{nowDate}}"
+                <input class="btn btn-default" ng-model="untilDate" data-min-date="{{fromDate}}" data-max-date="{{nowDate}}"
                        placeholder="截止日期" bs-datepicker type="text">
+                <label class="control-label">图表类型：</label>
+                <select class="btn btn-default" name="selectChartType" data-ng-model="selectChartType"
+                        ng-options="chartType for chartType in chartTypes" bs-select>
+                </select>
+                <input type="button" value="刷新" class="btn btn-success" ng-click="refrashChart()">
             </div>
-            <table datatable="ng" dt-options="dtOptions" class="table table-striped table-bordered table-hover myTable"
-                   data-ng-if="pages.length">
-                <thead>
-                    <tr>
-                        <th>名称</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr data-ng-repeat="page in pages">
-                        <td><a data-ng-href="#!/pages/{{page._id}}">{{ page.pathname }}</a></td>
-                    </tr>
-                </tbody>
-            </table>
             <highchart id="chart1" config="chartConfig"></highchart>
         </div>
     </div>

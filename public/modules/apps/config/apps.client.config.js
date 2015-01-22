@@ -17,3 +17,9 @@ angular.module('apps').config(function($datepickerProvider) {
         dateFormat: 'yyyy-MM-dd'
     });
 });
+
+angular.module('apps').config(function($selectProvider) {
+    angular.extend($selectProvider.defaults, {
+        animation: 'am-flip-x'
+    });
+});

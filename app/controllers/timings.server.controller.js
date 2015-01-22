@@ -100,7 +100,7 @@ exports.read = function (req, res) {
  * List of Timings
  */
 exports.list = function (req, res) {
-    Timing.find().sort('-created').populate('user', 'displayName').exec(function (err, timings) {
+    Timing.find().sort('created').populate('navTiming').exec(function (err, timings) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)

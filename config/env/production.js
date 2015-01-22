@@ -7,6 +7,8 @@ module.exports = {
 			css: [
 				'public/lib/bootstrap/dist/css/bootstrap.min.css',
 				'public/lib/bootstrap/dist/css/bootstrap-theme.min.css',
+                'public/lib/bootstrap-additions/dist/bootstrap-additions.min.css',
+                'public/lib/angular-motion/dist/angular-motion.min.css',
 				'public/lib/datatables/media/css/jquery.dataTables.min.css'
 			],
 			js: [
