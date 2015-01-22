@@ -24,7 +24,9 @@ module.exports = {
 				'public/lib/angular-datatables/dist/angular-datatables.min.js',
                 'public/lib/angular-strap/dist/angular-strap.min.js',
                 'public/lib/angular-strap/dist/angular-strap.tpl.min.js',
-                'public/lib/angular-i18n/angular-locale_zh-cn.js'
+                'public/lib/angular-i18n/angular-locale_zh-cn.js',
+                'public/lib/highcharts/highcharts.js',
+                'public/lib/highcharts-ng/dist/highcharts-ng.min.js'
 			]
 		},
 		css: 'public/dist/application.min.css',
