@@ -96,8 +96,9 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 fromDate: new Date($scope.fromDate),
                                 untilDate: new Date(trueDate)
                             }
-                        }).success(function (data) {
-                            $scope.timings = data;
+                        }).success(function (result) {
+                            $scope.chartConfig.options.chart.type = $scope.selectChartType;
+                            $scope.chartConfig.series[0].data = result.data;
                         });
                     };
                     getTimings();
@@ -105,22 +106,20 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                     $scope.chartConfig = {
                         options: {
                             chart: {
-                                type: $scope.selectChartType
+                                type: ''
                             }
                         },
+                        xAxis: {
+                            type: 'datetime'
+                        },
                         series: [{
-                            data: [10, 15, 12, 8, 7, 1, 1, 19, 15, ($scope.untilDate - $scope.fromDate) / 1000000000]
+                            data: []
                         }],
                         title: {
-                            text: $scope.untilDate - $scope.fromDate
-                        },
-                        loading: false
+                            text: '页面加载时间'
+                        }
                     };
-                    $scope.refrashChart = function () {
-                        getTimings();
-                        this.chartConfig.options.chart.type = $scope.selectChartType;
-                        this.chartConfig.series[0].data = [10, 15, 12, 8, 7, 1, 1, 19, 15, 10];
-                    }
+                    $scope.refrashChart = getTimings;
                 });
         };
 

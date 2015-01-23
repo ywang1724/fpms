@@ -25,7 +25,8 @@ exports.create = function (req, res) {
                 if (app.server === req._remoteAddress) {
                     var rookie = JSON.parse(decodeURI(req.url.substring(req.url.indexOf('?') + 1))),
                         page = {};
-                    Page.findOneAndUpdate({app: app, pathname: rookie.pathname}, page, {upsert: true}).exec(function (err, obj) {
+                    Page.findOneAndUpdate({app: app, pathname: rookie.pathname}, page, {upsert: true})
+                        .exec(function (err, obj) {
                         if (err) {
                             console.log(errorHandler.getErrorMessage(err));
                         } else {
@@ -35,6 +36,7 @@ exports.create = function (req, res) {
                                     console.log(errorHandler.getErrorMessage(err));
                                 } else {
                                     rookie.navTiming = saved;
+                                    rookie.totalTime = saved.loadEventEnd - saved.navigationStart;
                                 }
                             });
                             var promise2 = ResTiming.create(rookie.resTimings, function (err) {
@@ -102,14 +104,36 @@ exports.read = function (req, res) {
 exports.list = function (req, res) {
     Timing.find({
         page: req.param('pageId'),
-        created: {$gte: new Date(req.param('fromDate')), $lt: new Date(req.param('untilDate'))}
+        created: { $gte: new Date(req.param('fromDate')), $lt: new Date(req.param('untilDate')) }
     }).sort('created').populate('navTiming').exec(function (err, timings) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
         } else {
-            res.jsonp(timings);
+            var result = {
+                    data: []
+                },
+                buckets = {},
+                key,
+                num = 0;
+            for (var i = 0; i < timings.length; i++) {
+                var currentKey = Date.UTC(timings[i].created.getFullYear(), timings[i].created.getMonth(),
+                    timings[i].created.getDate()).toString(),
+                    value = timings[i].navTiming.loadEventEnd - timings[i].navTiming.navigationStart;
+                if (buckets[currentKey]) {
+                    buckets[currentKey] = value + buckets[currentKey];
+                    num++;
+                } else {
+                    if (num > 0) {
+                        result.data.push([Number(key), buckets[key] / num]);
+                    }
+                    key = currentKey;
+                    num = 1;
+                    buckets[currentKey] = value;
+                }
+            }
+            res.jsonp(result);
         }
     });
 };
