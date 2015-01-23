@@ -81,20 +81,26 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                     $scope.pages = data;
                     $scope.selectPage = $scope.pages[0];
                     // 日期范围初始化
-                    $scope.nowDate = Date.now();
-                    $scope.fromDate = Date.now() - 1296000000; //往前15天
-                    $scope.untilDate = Date.now();
+                    var now = new Date();
+                    $scope.nowDate = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+                    $scope.fromDate = $scope.nowDate - 1296000000; //往前15天
+                    $scope.untilDate = new Date($scope.nowDate);
                     $scope.chartTypes = ['line', 'bar', 'pie'];
                     $scope.selectChartType = $scope.chartTypes[0];
-                    $http.get('timings', {
-                        params: {
-                            pageId: $scope.selectPage._id,
-                            fromDate: new Date($scope.fromDate),
-                            untilDate: new Date($scope.untilDate)
-                        }
-                    }).success(function (data) {
-                        $scope.timings = data;
-                    });
+
+                    var getTimings = function () {
+                        var trueDate = Date.parse($scope.untilDate) + 86400000;
+                        $http.get('timings', {
+                            params: {
+                                pageId: $scope.selectPage._id,
+                                fromDate: new Date($scope.fromDate),
+                                untilDate: new Date(trueDate)
+                            }
+                        }).success(function (data) {
+                            $scope.timings = data;
+                        });
+                    };
+                    getTimings();
 
                     $scope.chartConfig = {
                         options: {
@@ -111,6 +117,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                         loading: false
                     };
                     $scope.refrashChart = function () {
+                        getTimings();
                         this.chartConfig.options.chart.type = $scope.selectChartType;
                         this.chartConfig.series[0].data = [10, 15, 12, 8, 7, 1, 1, 19, 15, 10];
                     }
