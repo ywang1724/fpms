@@ -107,16 +107,41 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                         options: {
                             chart: {
                                 type: ''
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            tooltip: {
+                                xDateFormat: '%Y-%m-%d',
+                                valueSuffix: ' ms'
                             }
                         },
+                        credits: {
+                            enabled: false
+                        },
                         xAxis: {
-                            type: 'datetime'
+                            title: {
+                                text: '日期',
+                                align: 'high'
+                            },
+                            type: 'datetime',
+                            dateTimeLabelFormats: {
+                                day: '%m.%d'
+                            },
+                            tickInterval: 86400000 //一天
+                        },
+                        yAxis: {
+                            title: {
+                                text: '时间（ms）',
+                                align: 'high'
+                            }
                         },
                         series: [{
+                            name: '总时间',
                             data: []
                         }],
                         title: {
-                            text: '页面加载时间'
+                            text: '页面加载总时间'
                         }
                     };
                     $scope.refrashChart = getTimings;
