@@ -133,6 +133,7 @@ exports.list = function (req, res) {
                     buckets[currentKey] = value;
                 }
             }
+            result.data.push([Number(key), buckets[key] / num]);
             res.jsonp(result);
         }
     });
