@@ -13,8 +13,12 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         if (Authentication.user) {
             $scope.showName = Authentication.user.roles[0] === 'admin' ? true : false;
         }
-        $scope.script = '<script type="text/javascript" src="http://192.168.88.177:3000/rookie.js/' + $stateParams.appId
-        + '"></script>';
+        $scope.script = '<script type="text/javascript">var fp = document.createElement("script");' +
+                        'fp.type = "text/javascript";' +
+                        'fp.async = true;' +
+                        'fp.src = "http://192.168.88.8:3000/rookie.js/' + $stateParams.appId + '";' +
+                        'var s = document.getElementsByTagName("script")[0];' +
+                        's.parentNode.insertBefore(fp, s);</script>';
 
         // Create new App
         $scope.create = function () {
@@ -139,11 +143,11 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 }
                             },
                             series: [{
-                                name: '总时间',
+                                name: '平均总时间',
                                 data: []
                             }],
                             title: {
-                                text: '页面加载总时间'
+                                text: '页面加载平均总时间'
                             }
                         };
                         $scope.refrashChart = getTimings;

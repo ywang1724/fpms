@@ -1,7 +1,4 @@
 <section data-ng-controller="AppsController" ng-init="findOne()">
-	<div class="page-header">
-		<h1 data-ng-bind="app.name"></h1>
-	</div>
     <div class="pull-right" data-ng-show="(authentication.user)">
         <a title="返回" class="btn btn-primary btn-sm" data-ng-click="back();">
             <i class="glyphicon glyphicon-arrow-left"></i>
@@ -14,8 +11,15 @@
             <i class="glyphicon glyphicon-trash"></i>
         </a>
     </div>
-    请复制以下代码到您需采集数据的所属页面html代码的body底部：<br>
-    <p><span>{{script}}</span></p>
+	<div class="page-header">
+		<h1 data-ng-bind="app.name"></h1>
+	</div>
+    <div class="panel panel-info">
+        <div class="panel-heading">请复制以下代码到您需采集数据的所属页面html代码的body底部：</div>
+        <div class="panel-body">
+            {{script}}
+        </div>
+    </div>
     <div class="panel panel-success">
         <div class="panel-heading">页面总体概况</div>
         <div class="panel-body">
