@@ -78,73 +78,78 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             });
             $http.get('pages/' + $stateParams.appId).
                 success(function (data) {
-                    $scope.pages = data;
-                    $scope.selectPage = $scope.pages[0];
-                    // 日期范围初始化
-                    var now = new Date();
-                    $scope.nowDate = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
-                    $scope.fromDate = $scope.nowDate - 1296000000; //往前15天
-                    $scope.untilDate = new Date($scope.nowDate);
-                    $scope.chartTypes = ['line', 'bar', 'pie'];
-                    $scope.selectChartType = $scope.chartTypes[0];
+                    if (data.length) {
+                        $scope.showChart = true;
+                        $scope.pages = data;
+                        $scope.selectPage = $scope.pages[0];
+                        // 日期范围初始化
+                        var now = new Date();
+                        $scope.nowDate = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+                        $scope.fromDate = $scope.nowDate - 1296000000; //往前15天
+                        $scope.untilDate = new Date($scope.nowDate);
+                        $scope.chartTypes = ['line', 'bar', 'pie'];
+                        $scope.selectChartType = $scope.chartTypes[0];
 
-                    var getTimings = function () {
-                        var trueDate = Date.parse($scope.untilDate) + 86400000;
-                        $http.get('timings', {
-                            params: {
-                                pageId: $scope.selectPage._id,
-                                fromDate: new Date($scope.fromDate),
-                                untilDate: new Date(trueDate)
-                            }
-                        }).success(function (result) {
-                            $scope.chartConfig.options.chart.type = $scope.selectChartType;
-                            $scope.chartConfig.series[0].data = result.data;
-                        });
-                    };
-                    getTimings();
+                        var getTimings = function () {
+                            var trueDate = Date.parse($scope.untilDate) + 86400000;
+                            $http.get('timings', {
+                                params: {
+                                    pageId: $scope.selectPage._id,
+                                    fromDate: new Date($scope.fromDate),
+                                    untilDate: new Date(trueDate)
+                                }
+                            }).success(function (result) {
+                                $scope.chartConfig.options.chart.type = $scope.selectChartType;
+                                $scope.chartConfig.series[0].data = result.data;
+                            });
+                        };
+                        getTimings();
 
-                    $scope.chartConfig = {
-                        options: {
-                            chart: {
-                                type: ''
+                        $scope.chartConfig = {
+                            options: {
+                                chart: {
+                                    type: ''
+                                },
+                                legend: {
+                                    enabled: false
+                                },
+                                tooltip: {
+                                    xDateFormat: '%Y-%m-%d',
+                                    valueSuffix: ' ms'
+                                }
                             },
-                            legend: {
+                            credits: {
                                 enabled: false
                             },
-                            tooltip: {
-                                xDateFormat: '%Y-%m-%d',
-                                valueSuffix: ' ms'
-                            }
-                        },
-                        credits: {
-                            enabled: false
-                        },
-                        xAxis: {
-                            title: {
-                                text: '日期',
-                                align: 'high'
+                            xAxis: {
+                                title: {
+                                    text: '日期',
+                                    align: 'high'
+                                },
+                                type: 'datetime',
+                                dateTimeLabelFormats: {
+                                    day: '%m.%d'
+                                },
+                                tickInterval: 86400000 //一天
                             },
-                            type: 'datetime',
-                            dateTimeLabelFormats: {
-                                day: '%m.%d'
+                            yAxis: {
+                                title: {
+                                    text: '时间（ms）',
+                                    align: 'high'
+                                }
                             },
-                            tickInterval: 86400000 //一天
-                        },
-                        yAxis: {
+                            series: [{
+                                name: '总时间',
+                                data: []
+                            }],
                             title: {
-                                text: '时间（ms）',
-                                align: 'high'
+                                text: '页面加载总时间'
                             }
-                        },
-                        series: [{
-                            name: '总时间',
-                            data: []
-                        }],
-                        title: {
-                            text: '页面加载总时间'
-                        }
-                    };
-                    $scope.refrashChart = getTimings;
+                        };
+                        $scope.refrashChart = getTimings;
+                    } else {
+                        $scope.showChart = false;
+                    }
                 });
         };
 

@@ -21,22 +21,22 @@
         <div class="panel-body">
             <div class="form-group">
                 <label class="control-label">页面：</label>
-                <select class="btn btn-default" name="selectPage" data-ng-model="selectPage"
-                        ng-options="page.pathname for page in pages" bs-select>
-                </select>
+                <button class="btn btn-default" name="selectPage" data-ng-model="selectPage" placeholder="暂无监控页面"
+                        ng-options="page.pathname for page in pages" bs-select ng-disabled="!showChart">
+                </button>
                 <label class="control-label">日期范围：</label>
                 <input class="btn btn-default" ng-model="fromDate" data-max-date="{{untilDate}}" placeholder="开始日期"
-                       bs-datepicker type="text">
+                       bs-datepicker type="text" ng-disabled="!showChart">
                 至
                 <input class="btn btn-default" ng-model="untilDate" data-min-date="{{fromDate}}" data-max-date="{{nowDate}}"
-                       placeholder="截止日期" bs-datepicker type="text">
+                       placeholder="截止日期" bs-datepicker type="text" ng-disabled="!showChart">
                 <label class="control-label">图表类型：</label>
-                <select class="btn btn-default" name="selectChartType" data-ng-model="selectChartType"
-                        ng-options="chartType for chartType in chartTypes" bs-select>
-                </select>
-                <input type="button" value="刷新" class="btn btn-success" ng-click="refrashChart()">
+                <button class="btn btn-default" name="selectChartType" data-ng-model="selectChartType" ng-disabled="!showChart"
+                        ng-options="chartType for chartType in chartTypes" placeholder="暂无选择" bs-select>
+                </button>
+                <input type="button" value="刷新" class="btn btn-success" ng-click="refrashChart()" ng-disabled="!showChart">
             </div>
-            <highchart id="chart1" config="chartConfig"></highchart>
+            <highchart id="chart1" config="chartConfig" data-ng-show="showChart"></highchart>
         </div>
     </div>
 	<small>
