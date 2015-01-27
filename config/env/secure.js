@@ -1,8 +1,11 @@
 'use strict';
 
+var env = require('./../../env.json');
+
 module.exports = {
 	port: 443,
-	db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://localhost/fpms',
+	db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://' + env.DB_USERNAME + ':' + env.DB_PASSWORD +
+        '@localhost/fpms',
 	assets: {
 		lib: {
 			css: [
