@@ -45,6 +45,7 @@ module.exports = {
                 'public/lib/angular-strap/dist/angular-strap.tpl.js',
                 'public/lib/angular-i18n/angular-locale_zh-cn.js',
                 'public/lib/highcharts/highcharts.src.js',
+                'public/lib/highcharts/modules/exporting.src.js',
                 'public/lib/highcharts-ng/dist/highcharts-ng.js'
 			]
 		},
