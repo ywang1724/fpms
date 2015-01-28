@@ -16,7 +16,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         $scope.script = '<script type="text/javascript">var fp = document.createElement("script");' +
                         'fp.type = "text/javascript";' +
                         'fp.async = true;' +
-                        'fp.src = "http://192.168.88.8:3000/rookie.js/' + $stateParams.appId + '";' +
+                        'fp.src = "http://' + $location.host() + ':' + $location.port() + '/rookie.js/' +
+                            $stateParams.appId + '";' +
                         'var s = document.getElementsByTagName("script")[0];' +
                         's.parentNode.insertBefore(fp, s);</script>';
 
