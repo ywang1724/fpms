@@ -121,6 +121,14 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 tooltip: {
                                     xDateFormat: '%Y-%m-%d',
                                     valueSuffix: ' ms'
+                                },
+                                lang: {
+                                    contextButtonTitle: '导出',
+                                    printChart: '打印图表',
+                                    downloadJPEG: '下载JPEG',
+                                    downloadPDF: '下载PDF',
+                                    downloadPNG: '下载PNG',
+                                    downloadSVG: '下载SVG'
                                 }
                             },
                             credits: {
@@ -148,7 +156,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 data: []
                             }],
                             title: {
-                                text: '页面加载平均总时间'
+                                text: '页面总体概况'
                             }
                         };
                         $scope.refrashChart = getTimings;
