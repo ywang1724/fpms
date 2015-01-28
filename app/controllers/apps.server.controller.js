@@ -60,7 +60,27 @@ exports.update = function (req, res) {
  * Delete an App
  */
 exports.delete = function (req, res) {
-    var app = req.app;
+    var app = req.app,
+        tfCallback = function (err, timings) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                for (var j = 0; j < timings.length; j++) {
+                    NavTiming.findById(timings[j].navTiming).remove(errCallback);
+                    ResTiming.find({_id: {$in: timings[j].resTimings}}).remove(errCallback);
+                    timings[j].remove();
+                }
+            }
+        },
+        errCallback = function (err) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            }
+        };
 
     Page.find({app: req.app.id}).exec(function (err, pages) {
         if (err) {
@@ -69,31 +89,7 @@ exports.delete = function (req, res) {
             });
         } else {
             for (var i = 0; i < pages.length; i++) {
-                Timing.find({page: pages[i].id}).exec(function (err, timings) {
-                    if (err) {
-                        return res.status(400).send({
-                            message: errorHandler.getErrorMessage(err)
-                        });
-                    } else {
-                        for (var j = 0; j < timings.length; j++) {
-                            NavTiming.findById(timings[j].navTiming).remove(function (err) {
-                                if (err) {
-                                    return res.status(400).send({
-                                        message: errorHandler.getErrorMessage(err)
-                                    });
-                                }
-                            });
-                            ResTiming.find({_id: {$in: timings[j].resTimings}}).remove(function (err) {
-                                if (err) {
-                                    return res.status(400).send({
-                                        message: errorHandler.getErrorMessage(err)
-                                    });
-                                }
-                            });
-                            timings[j].remove();
-                        }
-                    }
-                });
+                Timing.find({page: pages[i].id}).exec(tfCallback);
                 pages[i].remove();
             }
         }

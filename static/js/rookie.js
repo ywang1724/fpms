@@ -43,14 +43,6 @@ window.onload = function () {
                 alert(rookie.errs[item]);
             }
         } else {
-            // send data to server todo
-            /*var fp = document.createElement('script');
-            fp.type = 'text/javascript';
-            fp.async = true;
-            fp.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.192.168.88.177:3000/rookie.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(fp, s);*/
-
             //通过Image对象请求后端脚本
             var img = new Image(1, 1);
             img.src = 'http://192.168.88.8:3000/_fp.gif?' + JSON.stringify(rookie);
