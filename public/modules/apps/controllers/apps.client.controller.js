@@ -92,8 +92,6 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                         $scope.nowDate = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
                         $scope.fromDate = $scope.nowDate - 1296000000; //往前15天
                         $scope.untilDate = new Date($scope.nowDate);
-                        $scope.chartTypes = ['line', 'bar', 'pie'];
-                        $scope.selectChartType = $scope.chartTypes[0];
 
                         var getTimings = function () {
                             var trueDate = Date.parse($scope.untilDate) + 86400000;
@@ -104,23 +102,17 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     untilDate: new Date(trueDate)
                                 }
                             }).success(function (result) {
-                                $scope.chartConfig.options.chart.type = $scope.selectChartType;
-                                $scope.chartConfig.series[0].data = result.data;
+                                $scope.chartConfig.series[0].data = result.numData;
+                                $scope.chartConfig.series[1].data = result.timingData;
                             });
                         };
                         getTimings();
 
                         $scope.chartConfig = {
                             options: {
-                                chart: {
-                                    type: ''
-                                },
-                                legend: {
-                                    enabled: false
-                                },
                                 tooltip: {
                                     xDateFormat: '%Y-%m-%d',
-                                    valueSuffix: ' ms'
+                                    shared: true
                                 },
                                 lang: {
                                     contextButtonTitle: '导出',
@@ -145,14 +137,28 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 },
                                 tickInterval: 86400000 //一天
                             },
-                            yAxis: {
+                            yAxis: [{
                                 title: {
-                                    text: '时间（ms）',
-                                    align: 'high'
+                                    text: '平均总时间（ms）'
                                 }
-                            },
+                            }, {
+                                title: {
+                                    text: '请求总数'
+                                },
+                                allowDecimals: false,
+                                opposite: true
+                            }],
                             series: [{
+                                name: '请求总数',
+                                type: 'column',
+                                yAxis: 1,
+                                data: []
+                            }, {
                                 name: '平均总时间',
+                                type: 'spline',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
                                 data: []
                             }],
                             title: {

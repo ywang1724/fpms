@@ -34,10 +34,6 @@
                 至
                 <input class="btn btn-default" ng-model="untilDate" data-min-date="{{fromDate}}" data-max-date="{{nowDate}}"
                        placeholder="截止日期" bs-datepicker type="text" ng-disabled="!showChart">
-                <label class="control-label">图表类型：</label>
-                <button class="btn btn-default" name="selectChartType" data-ng-model="selectChartType" ng-disabled="!showChart"
-                        ng-options="chartType for chartType in chartTypes" placeholder="暂无选择" bs-select>
-                </button>
                 <input type="button" value="刷新" class="btn btn-success" ng-click="refrashChart()" ng-disabled="!showChart">
             </div>
             <highchart id="chart1" config="chartConfig" data-ng-show="showChart"></highchart>

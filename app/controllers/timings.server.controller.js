@@ -112,7 +112,8 @@ exports.list = function (req, res) {
             });
         } else {
             var result = {
-                    data: []
+                    timingData: [],
+                    numData: []
                 },
                 buckets = {},
                 key,
@@ -126,14 +127,16 @@ exports.list = function (req, res) {
                     num++;
                 } else {
                     if (num > 0) {
-                        result.data.push([Number(key), buckets[key] / num]);
+                        result.timingData.push([Number(key), buckets[key] / num]);
+                        result.numData.push([Number(key), num]);
                     }
                     key = currentKey;
                     num = 1;
                     buckets[currentKey] = value;
                 }
             }
-            result.data.push([Number(key), buckets[key] / num]);
+            result.timingData.push([Number(key), buckets[key] / num]);
+            result.numData.push([Number(key), num]);
             res.jsonp(result);
         }
     });
