@@ -139,11 +139,27 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                             },
                             yAxis: [{
                                 title: {
-                                    text: '平均总时间（ms）'
+                                    text: '平均总时间（ms）',
+                                    style: {
+                                        color: Highcharts.getOptions().colors[1]
+                                    }
+                                },
+                                labels: {
+                                    style: {
+                                        color: Highcharts.getOptions().colors[1]
+                                    }
                                 }
                             }, {
                                 title: {
-                                    text: '请求总数'
+                                    text: '请求总数',
+                                    style: {
+                                        color: Highcharts.getOptions().colors[0]
+                                    }
+                                },
+                                labels: {
+                                    style: {
+                                        color: Highcharts.getOptions().colors[0]
+                                    }
                                 },
                                 allowDecimals: false,
                                 opposite: true
