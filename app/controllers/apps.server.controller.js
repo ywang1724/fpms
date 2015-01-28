@@ -7,6 +7,9 @@ var mongoose = require('mongoose'),
     errorHandler = require('./errors.server.controller'),
     App = mongoose.model('App'),
     Page = mongoose.model('Page'),
+    Timing = mongoose.model('Timing'),
+    NavTiming = mongoose.model('NavTiming'),
+    ResTiming = mongoose.model('ResTiming'),
     _ = require('lodash');
 
 /**
@@ -59,6 +62,42 @@ exports.update = function (req, res) {
 exports.delete = function (req, res) {
     var app = req.app;
 
+    Page.find({app: req.app.id}).exec(function (err, pages) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            for (var i = 0; i < pages.length; i++) {
+                Timing.find({page: pages[i].id}).exec(function (err, timings) {
+                    if (err) {
+                        return res.status(400).send({
+                            message: errorHandler.getErrorMessage(err)
+                        });
+                    } else {
+                        for (var j = 0; j < timings.length; j++) {
+                            NavTiming.findById(timings[j].navTiming).remove(function (err) {
+                                if (err) {
+                                    return res.status(400).send({
+                                        message: errorHandler.getErrorMessage(err)
+                                    });
+                                }
+                            });
+                            ResTiming.find({_id: {$in: timings[j].resTimings}}).remove(function (err) {
+                                if (err) {
+                                    return res.status(400).send({
+                                        message: errorHandler.getErrorMessage(err)
+                                    });
+                                }
+                            });
+                            timings[j].remove();
+                        }
+                    }
+                });
+                pages[i].remove();
+            }
+        }
+    });
     app.remove(function (err) {
         if (err) {
             return res.status(400).send({
