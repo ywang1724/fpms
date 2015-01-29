@@ -25,7 +25,7 @@ exports.userByID = function(req, res, next, id) {
  * Require login routing middleware
  */
 exports.requiresLogin = function(req, res, next) {
-	if (!req.isAuthenticated()) {
+	if (!req.isAuthenticated() || !req.user.isActive) {
 		return res.status(401).send({
 			'提示信息': '用户未登录'
 		});
