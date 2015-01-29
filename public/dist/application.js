@@ -125,7 +125,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         $scope.script = '<script type="text/javascript">var fp = document.createElement("script");' +
                         'fp.type = "text/javascript";' +
                         'fp.async = true;' +
-                        'fp.src = "http://192.168.88.8:3000/rookie.js/' + $stateParams.appId + '";' +
+                        'fp.src = "http://' + $location.host() + ':' + $location.port() + '/rookie.js/' +
+                            $stateParams.appId + '";' +
                         'var s = document.getElementsByTagName("script")[0];' +
                         's.parentNode.insertBefore(fp, s);</script>';
 
@@ -189,6 +190,16 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             $scope.app = Apps.get({
                 appId: $stateParams.appId
             });
+            Highcharts.setOptions({
+                lang: {
+                    contextButtonTitle: '导出',
+                    printChart: '打印图表',
+                    downloadJPEG: '下载JPEG',
+                    downloadPDF: '下载PDF',
+                    downloadPNG: '下载PNG',
+                    downloadSVG: '下载SVG'
+                }
+            });
             $http.get('pages/' + $stateParams.appId).
                 success(function (data) {
                     if (data.length) {
@@ -200,8 +211,6 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                         $scope.nowDate = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
                         $scope.fromDate = $scope.nowDate - 1296000000; //往前15天
                         $scope.untilDate = new Date($scope.nowDate);
-                        $scope.chartTypes = ['line', 'bar', 'pie'];
-                        $scope.selectChartType = $scope.chartTypes[0];
 
                         var getTimings = function () {
                             var trueDate = Date.parse($scope.untilDate) + 86400000;
@@ -212,24 +221,30 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     untilDate: new Date(trueDate)
                                 }
                             }).success(function (result) {
-                                $scope.chartConfig.options.chart.type = $scope.selectChartType;
-                                $scope.chartConfig.series[0].data = result.data;
+                                $scope.chartConfig.series[0].data = result.numData;
+                                $scope.chartConfig.series[1].data = result.timingData;
                             });
                         };
                         getTimings();
 
                         $scope.chartConfig = {
                             options: {
-                                chart: {
-                                    type: ''
-                                },
-                                legend: {
-                                    enabled: false
-                                },
                                 tooltip: {
                                     xDateFormat: '%Y-%m-%d',
-                                    valueSuffix: ' ms'
+                                    shared: true
                                 }
+                                //plotOptions: {
+                                //    series: {
+                                //        cursor: 'pointer',
+                                //        point: {
+                                //            events: {
+                                //                click: function () {
+                                //                    alert('Category: ' + this.category + ', value: ' + this.y);
+                                //                }
+                                //            }
+                                //        }
+                                //    }
+                                //}
                             },
                             credits: {
                                 enabled: false
@@ -245,18 +260,48 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 },
                                 tickInterval: 86400000 //一天
                             },
-                            yAxis: {
+                            yAxis: [{
                                 title: {
-                                    text: '时间（ms）',
-                                    align: 'high'
+                                    text: '平均总时间（ms）',
+                                    style: {
+                                        color: Highcharts.getOptions().colors[1]
+                                    }
+                                },
+                                labels: {
+                                    style: {
+                                        color: Highcharts.getOptions().colors[1]
+                                    }
                                 }
-                            },
+                            }, {
+                                title: {
+                                    text: '请求总数',
+                                    style: {
+                                        color: Highcharts.getOptions().colors[0]
+                                    }
+                                },
+                                labels: {
+                                    style: {
+                                        color: Highcharts.getOptions().colors[0]
+                                    }
+                                },
+                                allowDecimals: false,
+                                opposite: true
+                            }],
                             series: [{
+                                name: '请求总数',
+                                type: 'column',
+                                yAxis: 1,
+                                data: []
+                            }, {
                                 name: '平均总时间',
+                                type: 'spline',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
                                 data: []
                             }],
                             title: {
-                                text: '页面加载平均总时间'
+                                text: '页面总体概况'
                             }
                         };
                         $scope.refrashChart = getTimings;
