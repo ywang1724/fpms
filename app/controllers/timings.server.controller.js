@@ -138,7 +138,7 @@ exports.statisticList = function (req, res) {
                     num++;
                 } else {
                     if (num > 0) {
-                        result.timingData.push([Number(key), buckets[key] / num]);
+                        result.timingData.push([Number(key), Number((buckets[key] / num).toFixed(2))]);
                         result.numData.push([Number(key), num]);
                     }
                     key = currentKey;
@@ -146,7 +146,7 @@ exports.statisticList = function (req, res) {
                     buckets[currentKey] = pageLoad;
                 }
             }
-            result.timingData.push([Number(key), buckets[key] / num]);
+            result.timingData.push([Number(key), Number((buckets[key] / num).toFixed(2))]);
             result.numData.push([Number(key), num]);
             result.statisticData.pageLoad = (result.statisticData.pageLoad / result.statisticData.sum).toFixed(2);
             result.statisticData.network = (result.statisticData.network / result.statisticData.sum).toFixed(2);
