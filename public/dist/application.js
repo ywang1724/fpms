@@ -202,6 +202,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             });
             $http.get('pages/' + $stateParams.appId).
                 success(function (data) {
+                    $scope.pagesNum = data.length || 0;
                     if (data.length) {
                         $scope.showChart = true;
                         $scope.pages = data;
@@ -223,6 +224,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                             }).success(function (result) {
                                 $scope.chartConfig.series[0].data = result.numData;
                                 $scope.chartConfig.series[1].data = result.timingData;
+                                $scope.statisticData = result.statisticData;
                             });
                         };
                         getTimings();
@@ -232,19 +234,19 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 tooltip: {
                                     xDateFormat: '%Y-%m-%d',
                                     shared: true
+                                },
+                                plotOptions: {
+                                    series: {
+                                        cursor: 'pointer',
+                                        point: {
+                                            events: {
+                                                click: function () {
+                                                    alert('Category: ' + this.category + ', value: ' + this.y);
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
-                                //plotOptions: {
-                                //    series: {
-                                //        cursor: 'pointer',
-                                //        point: {
-                                //            events: {
-                                //                click: function () {
-                                //                    alert('Category: ' + this.category + ', value: ' + this.y);
-                                //                }
-                                //            }
-                                //        }
-                                //    }
-                                //}
                             },
                             credits: {
                                 enabled: false
