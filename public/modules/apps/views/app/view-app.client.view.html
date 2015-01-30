@@ -17,13 +17,13 @@
     <div class="panel panel-info">
         <div class="panel-heading">请复制以下代码到您需采集数据的所属页面html代码的body底部：</div>
         <div class="panel-body">
-            {{script}}
+            <code>{{script}}</code>
         </div>
     </div>
     <div class="panel panel-success">
         <div class="panel-heading">应用总体概况</div>
         <div class="panel-body">
-            目前{{app.name}}的{{pagesNum}}个页面正在进行监控。
+            <div class="text-center text-danger">目前{{app.name}}的<span class="large">{{pagesNum}}</span>个页面正在进行监控。</div>
             <div data-ng-show="showChart">
                 <div class="form-group">
                     <label class="control-label">页面：</label>
