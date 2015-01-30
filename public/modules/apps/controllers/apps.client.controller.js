@@ -81,8 +81,19 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             $scope.app = Apps.get({
                 appId: $stateParams.appId
             });
+            Highcharts.setOptions({
+                lang: {
+                    contextButtonTitle: '导出',
+                    printChart: '打印图表',
+                    downloadJPEG: '下载JPEG',
+                    downloadPDF: '下载PDF',
+                    downloadPNG: '下载PNG',
+                    downloadSVG: '下载SVG'
+                }
+            });
             $http.get('pages/' + $stateParams.appId).
                 success(function (data) {
+                    $scope.pagesNum = data.length || 0;
                     if (data.length) {
                         $scope.showChart = true;
                         $scope.pages = data;
@@ -104,6 +115,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                             }).success(function (result) {
                                 $scope.chartConfig.series[0].data = result.numData;
                                 $scope.chartConfig.series[1].data = result.timingData;
+                                $scope.statisticData = result.statisticData;
                             });
                         };
                         getTimings();
@@ -114,13 +126,17 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     xDateFormat: '%Y-%m-%d',
                                     shared: true
                                 },
-                                lang: {
-                                    contextButtonTitle: '导出',
-                                    printChart: '打印图表',
-                                    downloadJPEG: '下载JPEG',
-                                    downloadPDF: '下载PDF',
-                                    downloadPNG: '下载PNG',
-                                    downloadSVG: '下载SVG'
+                                plotOptions: {
+                                    series: {
+                                        cursor: 'pointer',
+                                        point: {
+                                            events: {
+                                                click: function () {
+                                                    alert('Category: ' + this.category + ', value: ' + this.y);
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             },
                             credits: {

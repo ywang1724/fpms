@@ -7,7 +7,7 @@ module.exports = function(app) {
 
 	// Timings Routes
 	app.route('/timings')
-		.get(users.requiresLogin, timings.list);
+		.get(users.requiresLogin, timings.statisticList);
 
 	app.route('/timings/:timingId')
 		.get(users.requiresLogin, timings.read);

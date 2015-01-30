@@ -101,7 +101,7 @@ exports.read = function (req, res) {
 /**
  * List of Timings
  */
-exports.list = function (req, res) {
+exports.statisticList = function (req, res) {
     Timing.find({
         page: req.param('pageId'),
         created: { $gte: new Date(req.param('fromDate')), $lt: new Date(req.param('untilDate')) }
@@ -113,7 +113,14 @@ exports.list = function (req, res) {
         } else {
             var result = {
                     timingData: [],
-                    numData: []
+                    numData: [],
+                    statisticData: {
+                        sum: timings.length,
+                        pageLoad: 0,
+                        network: 0,
+                        backend: 0,
+                        frontend: 0
+                    }
                 },
                 buckets = {},
                 key,
@@ -121,9 +128,13 @@ exports.list = function (req, res) {
             for (var i = 0; i < timings.length; i++) {
                 var currentKey = Date.UTC(timings[i].created.getFullYear(), timings[i].created.getMonth(),
                     timings[i].created.getDate()).toString(),
-                    value = timings[i].navTiming.loadEventEnd - timings[i].navTiming.navigationStart;
+                    pageLoad = timings[i].navTiming.loadEventEnd - timings[i].navTiming.navigationStart;
+                result.statisticData.pageLoad += pageLoad;
+                result.statisticData.network += timings[i].navTiming.connectEnd - timings[i].navTiming.navigationStart;
+                result.statisticData.backend += timings[i].navTiming.responseEnd - timings[i].navTiming.requestStart;
+                result.statisticData.frontend += timings[i].navTiming.loadEventEnd - timings[i].navTiming.domLoading;
                 if (buckets[currentKey]) {
-                    buckets[currentKey] = value + buckets[currentKey];
+                    buckets[currentKey] = pageLoad + buckets[currentKey];
                     num++;
                 } else {
                     if (num > 0) {
@@ -132,11 +143,15 @@ exports.list = function (req, res) {
                     }
                     key = currentKey;
                     num = 1;
-                    buckets[currentKey] = value;
+                    buckets[currentKey] = pageLoad;
                 }
             }
             result.timingData.push([Number(key), buckets[key] / num]);
             result.numData.push([Number(key), num]);
+            result.statisticData.pageLoad = (result.statisticData.pageLoad / result.statisticData.sum).toFixed(2);
+            result.statisticData.network = (result.statisticData.network / result.statisticData.sum).toFixed(2);
+            result.statisticData.backend = (result.statisticData.backend / result.statisticData.sum).toFixed(2);
+            result.statisticData.frontend = (result.statisticData.frontend / result.statisticData.sum).toFixed(2);
             res.jsonp(result);
         }
     });
