@@ -241,7 +241,14 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                         point: {
                                             events: {
                                                 click: function () {
-                                                    alert('Category: ' + this.category + ', value: ' + this.y);
+                                                    $http.get('timings', {
+                                                        params: {
+                                                            pageId: $scope.selectPage._id,
+                                                            dateNumber: this.category
+                                                        }
+                                                    }).success(function (result) {
+                                                        $scope.details = result.data;
+                                                    });
                                                 }
                                             }
                                         }
