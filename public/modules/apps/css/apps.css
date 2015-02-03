@@ -9,3 +9,9 @@
     font-weight: bold;
     line-height: 38px;
 }
+
+caption {
+    caption-side: bottom;
+    margin-top: 0.5em;
+    text-align: center;
+}

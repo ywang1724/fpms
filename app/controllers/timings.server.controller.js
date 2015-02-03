@@ -102,59 +102,91 @@ exports.read = function (req, res) {
  * List of Timings
  */
 exports.statisticList = function (req, res) {
-    Timing.find({
-        page: req.param('pageId'),
-        created: { $gte: new Date(req.param('fromDate')), $lt: new Date(req.param('untilDate')) }
-    }).sort('created').populate('navTiming').exec(function (err, timings) {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        } else {
-            var result = {
-                    timingData: [],
-                    numData: [],
-                    statisticData: {
-                        sum: timings.length,
-                        pageLoad: 0,
-                        network: 0,
-                        backend: 0,
-                        frontend: 0
-                    }
-                },
-                buckets = {},
-                key,
-                num = 0;
-            for (var i = 0; i < timings.length; i++) {
-                var currentKey = Date.UTC(timings[i].created.getFullYear(), timings[i].created.getMonth(),
-                    timings[i].created.getDate()).toString(),
-                    pageLoad = timings[i].navTiming.loadEventEnd - timings[i].navTiming.navigationStart;
-                result.statisticData.pageLoad += pageLoad;
-                result.statisticData.network += timings[i].navTiming.connectEnd - timings[i].navTiming.navigationStart;
-                result.statisticData.backend += timings[i].navTiming.responseEnd - timings[i].navTiming.requestStart;
-                result.statisticData.frontend += timings[i].navTiming.loadEventEnd - timings[i].navTiming.domLoading;
-                if (buckets[currentKey]) {
-                    buckets[currentKey] = pageLoad + buckets[currentKey];
-                    num++;
-                } else {
-                    if (num > 0) {
-                        result.timingData.push([Number(key), Number((buckets[key] / num).toFixed(2))]);
-                        result.numData.push([Number(key), num]);
-                    }
-                    key = currentKey;
-                    num = 1;
-                    buckets[currentKey] = pageLoad;
+    if (req.param('dateNumber')) {
+        Timing.find({
+            page: req.param('pageId'),
+            created: { $gte: new Date(Number(req.param('dateNumber'))), $lt: new Date(Number(req.param('dateNumber')) + 86400000) }
+        }).sort('created').populate('navTiming').exec(function (err, timings) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                var result = {
+                        data: []
+                    };
+                for (var i = 0; i < timings.length; i++) {
+                    var item = {};
+                    item.created = timings[i].created;
+                    item.pageLoad = timings[i].navTiming.loadEventEnd - timings[i].navTiming.navigationStart;
+                    item.network = timings[i].navTiming.connectEnd - timings[i].navTiming.navigationStart;
+                    item.backend = timings[i].navTiming.responseEnd - timings[i].navTiming.requestStart;
+                    item.frontend = timings[i].navTiming.loadEventEnd - timings[i].navTiming.domLoading;
+                    item.redirect = timings[i].navTiming.redirectEnd - timings[i].navTiming.redirectStart;
+                    item.dns = timings[i].navTiming.domainLookupEnd - timings[i].navTiming.domainLookupStart;
+                    item.connect = timings[i].navTiming.connectEnd - timings[i].navTiming.connectStart;
+                    item.processing = timings[i].navTiming.domComplete - timings[i].navTiming.domLoading;
+                    item.onLoad = timings[i].navTiming.loadEventEnd - timings[i].navTiming.loadEventStart;
+                    result.data.push(item);
                 }
+                res.jsonp(result);
             }
-            result.timingData.push([Number(key), Number((buckets[key] / num).toFixed(2))]);
-            result.numData.push([Number(key), num]);
-            result.statisticData.pageLoad = (result.statisticData.pageLoad / result.statisticData.sum).toFixed(2);
-            result.statisticData.network = (result.statisticData.network / result.statisticData.sum).toFixed(2);
-            result.statisticData.backend = (result.statisticData.backend / result.statisticData.sum).toFixed(2);
-            result.statisticData.frontend = (result.statisticData.frontend / result.statisticData.sum).toFixed(2);
-            res.jsonp(result);
-        }
-    });
+        });
+    } else {
+        Timing.find({
+            page: req.param('pageId'),
+            created: { $gte: new Date(req.param('fromDate')), $lt: new Date(req.param('untilDate')) }
+        }).sort('created').populate('navTiming').exec(function (err, timings) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                var result = {
+                        timingData: [],
+                        numData: [],
+                        statisticData: {
+                            sum: timings.length,
+                            pageLoad: 0,
+                            network: 0,
+                            backend: 0,
+                            frontend: 0
+                        }
+                    },
+                    buckets = {},
+                    key,
+                    num = 0;
+                for (var i = 0; i < timings.length; i++) {
+                    var currentKey = Date.UTC(timings[i].created.getFullYear(), timings[i].created.getMonth(),
+                            timings[i].created.getDate()).toString(),
+                        pageLoad = timings[i].navTiming.loadEventEnd - timings[i].navTiming.navigationStart;
+                    result.statisticData.pageLoad += pageLoad;
+                    result.statisticData.network += timings[i].navTiming.connectEnd - timings[i].navTiming.navigationStart;
+                    result.statisticData.backend += timings[i].navTiming.responseEnd - timings[i].navTiming.requestStart;
+                    result.statisticData.frontend += timings[i].navTiming.loadEventEnd - timings[i].navTiming.domLoading;
+                    if (buckets[currentKey]) {
+                        buckets[currentKey] = pageLoad + buckets[currentKey];
+                        num++;
+                    } else {
+                        if (num > 0) {
+                            result.timingData.push([Number(key), Number((buckets[key] / num).toFixed(2))]);
+                            result.numData.push([Number(key), num]);
+                        }
+                        key = currentKey;
+                        num = 1;
+                        buckets[currentKey] = pageLoad;
+                    }
+                }
+                result.timingData.push([Number(key), Number((buckets[key] / num).toFixed(2))]);
+                result.numData.push([Number(key), num]);
+                result.statisticData.pageLoad = (result.statisticData.pageLoad / result.statisticData.sum).toFixed(2);
+                result.statisticData.network = (result.statisticData.network / result.statisticData.sum).toFixed(2);
+                result.statisticData.backend = (result.statisticData.backend / result.statisticData.sum).toFixed(2);
+                result.statisticData.frontend = (result.statisticData.frontend / result.statisticData.sum).toFixed(2);
+                res.jsonp(result);
+            }
+        });
+    }
 };
 
 /**
