@@ -117,6 +117,7 @@ exports.statisticList = function (req, res) {
                     };
                 for (var i = 0; i < timings.length; i++) {
                     var item = {};
+                    item.id = timings[i]._id;
                     item.created = timings[i].created;
                     item.pageLoad = timings[i].navTiming.loadEventEnd - timings[i].navTiming.navigationStart;
                     item.network = timings[i].navTiming.connectEnd - timings[i].navTiming.navigationStart;
