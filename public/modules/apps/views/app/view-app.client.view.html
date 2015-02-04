@@ -73,47 +73,46 @@
                     </div>
                 </div>
                 <highchart config="chartConfig"></highchart>
-                <div class="jumbotron" data-ng-if="details.length">
-                    <table datatable="ng" dt-options="dtOptions" class="table table-striped table-bordered table-hover myTable">
-                        <caption>
-                            <i>表1：页面分析</i>
-                        </caption>
-                        <thead>
-                        <tr>
-                            <th>请求时间</th>
-                            <th>总耗时（ms）</th>
-                            <th>网络耗时（ms）</th>
-                            <th>页面跳转耗时（ms）</th>
-                            <th>域名查询耗时（ms）</th>
-                            <th>连接耗时（ms）</th>
-                            <th>后端耗时（ms）</th>
-                            <th>前端耗时（ms）</th>
-                            <th>DOM解析耗时（ms）</th>
-                            <th>页面渲染耗时（ms）</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr data-ng-repeat="detail in details">
-                            <td>
-                                <span class="cursor text-danger" bs-aside="aside" title="查看请求详情分析"
-                                      ng-click="findTiming(detail.id)"
-                                   data-template="modules/apps/views/timing/view-timing.client.view.html">
-                                    {{ detail.created | date:'yyyy-MM-dd HH:mm:ss'}}
-                                </span>
-                            </td>
-                            <td>{{ detail.pageLoad }}</td>
-                            <td>{{ detail.network }}</td>
-                            <td>{{ detail.redirect }}</td>
-                            <td>{{ detail.dns }}</td>
-                            <td>{{ detail.connect }}</td>
-                            <td>{{ detail.backend }}</td>
-                            <td>{{ detail.frontend }}</td>
-                            <td>{{ detail.processing }}</td>
-                            <td>{{ detail.onLoad }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <table datatable="ng" dt-options="dtOptions"
+                       class="table table-striped table-bordered table-hover myTable" data-ng-if="details.length">
+                    <caption>
+                        <i>表1：页面分析</i>
+                    </caption>
+                    <thead>
+                    <tr>
+                        <th>请求时间</th>
+                        <th>总耗时（ms）</th>
+                        <th>网络耗时（ms）</th>
+                        <th>页面跳转耗时（ms）</th>
+                        <th>域名查询耗时（ms）</th>
+                        <th>连接耗时（ms）</th>
+                        <th>后端耗时（ms）</th>
+                        <th>前端耗时（ms）</th>
+                        <th>DOM解析耗时（ms）</th>
+                        <th>页面渲染耗时（ms）</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr data-ng-repeat="detail in details">
+                        <td>
+                            <span class="cursor text-danger" bs-aside="aside" title="查看请求详情分析"
+                                  ng-click="findTiming(detail.id)"
+                               data-template="modules/apps/views/timing/view-timing.client.view.html">
+                                {{ detail.created | date:'yyyy-MM-dd HH:mm:ss'}}
+                            </span>
+                        </td>
+                        <td>{{ detail.pageLoad }}</td>
+                        <td>{{ detail.network }}</td>
+                        <td>{{ detail.redirect }}</td>
+                        <td>{{ detail.dns }}</td>
+                        <td>{{ detail.connect }}</td>
+                        <td>{{ detail.backend }}</td>
+                        <td>{{ detail.frontend }}</td>
+                        <td>{{ detail.processing }}</td>
+                        <td>{{ detail.onLoad }}</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
