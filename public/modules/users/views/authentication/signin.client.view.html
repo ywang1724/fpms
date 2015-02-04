@@ -1,27 +1,39 @@
 <section class="row" data-ng-controller="AuthenticationController">
-	<h3 class="col-md-12 text-center">请使用您的账户进行登录</h3>
-	<div class="col-xs-offset-2 col-xs-8 col-md-offset-5 col-md-2">
+	<div class="col-xs-offset-1 col-xs-10 col-md-offset-4 col-md-4 login-form-bg">
+		<h3 class="text-center">登录</h3>
 		<form data-ng-submit="signin()" class="signin form-horizontal" autocomplete="off">
 			<fieldset>
 				<div class="form-group">
-					<label for="username">账号</label>
-					<input type="text" id="username" name="username" class="form-control"
-						   data-ng-model="credentials.username" placeholder="账号" required>
+					<div data-ng-show="error" class="text-center text-danger">
+						<div class="alert alert-danger" role="alert">
+							<strong data-ng-bind="error"></strong>
+						</div>
+					</div>
 				</div>
 				<div class="form-group">
-					<label for="password">密码</label>
-					<input type="password" id="password" name="password" class="form-control"
-						   data-ng-model="credentials.password" placeholder="密码" required>
+					<div class="input-group input-group-lg">
+						<span class="input-group-addon">
+							<i class="text-muted glyphicon glyphicon-user"></i>
+						</span>
+						<input type="text" id="username" name="username" class="form-control"
+							   data-ng-model="credentials.username" placeholder="账号" required>
+					</div>
 				</div>
+				<div class="form-group">
+					<div class="input-group input-group-lg">
+						<span class="input-group-addon">
+							<i class="text-muted glyphicon glyphicon-asterisk"></i>
+						</span>
+						<input type="password" id="password" name="password" class="form-control"
+							   data-ng-model="credentials.password" placeholder="密码" required>
+					</div>
+				</div>
+				<br>
 				<div class="text-center form-group">
-					<button type="submit" class="btn btn-primary">登录</button>&nbsp; 或者&nbsp;
-					<a href="/#!/signup">注册</a>
+					<button type="submit" class="btn btn-success btn-lg btn-block">登 录</button>
 				</div>
 				<div class="forgot-password">
-					<a href="/#!/password/forgot">忘记密码？</a>
-				</div>
-				<div data-ng-show="error" class="text-center text-danger">
-					<strong data-ng-bind="error"></strong>
+					<a href="/#!/password/forgot">忘记密码?</a> &nbsp;Or &nbsp;	<a href="/#!/signup">注册一个</a>
 				</div>
 			</fieldset>
 		</form>
