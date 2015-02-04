@@ -353,7 +353,9 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
         $scope.findTiming = function (timingId) {
             $http.get('timings/' + timingId).success(function (result) {
-                $scope.timing = result;
+                $scope.timingData = result;
+                $scope.resources = result.allResourcesCalc;
+                $scope.timingErrs = result.errs;
             });
         };
     }

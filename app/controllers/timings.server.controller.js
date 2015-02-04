@@ -100,23 +100,23 @@ exports.read = function (req, res) {
     };
     if (req.timing.errs.length === 0) {
         result.allResourcesCalc = req.timing.resTimings.map(function (currR) {
-            var isRequest = currR.name.indexOf("http") === 0,
+            var isRequest = currR.name.indexOf('http') === 0,
                 urlFragments, maybeFileName, fileExtension;
 
             if (isRequest) {
                 urlFragments = currR.name.match(/:\/\/(.[^/]+)([^?]*)\??(.*)/);
-                maybeFileName = urlFragments[2].split("/").pop();
-                fileExtension = maybeFileName.substr((Math.max(0, maybeFileName.lastIndexOf(".")) || Infinity) + 1);
+                maybeFileName = urlFragments[2].split('/').pop();
+                fileExtension = maybeFileName.substr((Math.max(0, maybeFileName.lastIndexOf('.')) || Infinity) + 1);
             } else {
-                urlFragments = ["", req._remoteAddress];
-                fileExtension = currR.name.split(":")[0];
+                urlFragments = ['', req._remoteAddress];
+                fileExtension = currR.name.split(':')[0];
             }
 
             var currRes = {
                 name: currR.name,
                 domain: urlFragments[1],
-                initiatorType: currR.initiatorType || fileExtension || "SourceMap or Not Defined",
-                fileExtension: fileExtension || "XHR or Not Defined",
+                initiatorType: currR.initiatorType || fileExtension || 'SourceMap or Not Defined',
+                fileExtension: fileExtension || 'XHR or Not Defined',
                 loadtime: currR.duration,
                 isRequestToHost: urlFragments[1] === req._remoteAddress
             };
