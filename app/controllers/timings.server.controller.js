@@ -22,7 +22,7 @@ exports.create = function (req, res) {
             if (err) {
                 console.log(errorHandler.getErrorMessage(err));
             } else {
-                if (app.server === req._remoteAddress) {
+                if (app.server === req.ip) {
                     var rookie = JSON.parse(decodeURI(req.url.substring(req.url.indexOf('?') + 1))),
                         page = {};
                     Page.findOneAndUpdate({app: app, pathname: rookie.pathname}, page, {upsert: true})
@@ -108,7 +108,7 @@ exports.read = function (req, res) {
                 maybeFileName = urlFragments[2].split('/').pop();
                 fileExtension = maybeFileName.substr((Math.max(0, maybeFileName.lastIndexOf('.')) || Infinity) + 1);
             } else {
-                urlFragments = ['', req._remoteAddress];
+                urlFragments = ['', req.ip];
                 fileExtension = currR.name.split(':')[0];
             }
 
@@ -118,7 +118,7 @@ exports.read = function (req, res) {
                 initiatorType: currR.initiatorType || fileExtension || 'SourceMap or Not Defined',
                 fileExtension: fileExtension || 'XHR or Not Defined',
                 loadtime: currR.duration,
-                isRequestToHost: urlFragments[1] === req._remoteAddress
+                isRequestToHost: urlFragments[1] === req.ip
             };
 
             if (currR.requestStart) {
