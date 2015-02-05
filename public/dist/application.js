@@ -126,7 +126,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
         //可从后台动态获取数据，以后有时间完成
         $scope.type = 'java';
-        $scope.types = ['java', 'node.js'];
+        $scope.types = ['java', 'node.js', 'android', 'ios'];
 
         if (Authentication.user) {
             $scope.showName = Authentication.user.roles[0] === 'admin' ? true : false;
