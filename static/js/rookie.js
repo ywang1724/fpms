@@ -39,9 +39,10 @@ window.onload = function () {
                 alert(rookie.errs[item]);
             }
         } else {
+            var serverHost = fp.src.split('/rookie.js/')[0];
             //通过Image对象请求后端脚本
             var img = new Image(1, 1);
-            img.src = 'http://192.168.88.8:3000/_fp.gif?' + JSON.stringify(rookie);
+            img.src = serverHost + '/_fp.gif?' + JSON.stringify(rookie);
         }
     }, 0);
 
