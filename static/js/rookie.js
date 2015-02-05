@@ -34,16 +34,10 @@ window.onload = function () {
         if (rookie.navTiming.loadEventEnd - rookie.navTiming.navigationStart < 0) {
             rookie.errs.push('页面还在加载，获取数据失败！');
         }
-        if (rookie.errs.length > 0) {
-            for (var item in rookie.errs) {
-                alert(rookie.errs[item]);
-            }
-        } else {
-            var serverHost = fp.src.split('/rookie.js/')[0];
-            //通过Image对象请求后端脚本
-            var img = new Image(1, 1);
-            img.src = serverHost + '/_fp.gif?' + JSON.stringify(rookie);
-        }
+        var serverHost = fp.src.split('/rookie.js/')[0];
+        //通过Image对象请求后端脚本
+        var img = new Image(1, 1);
+        img.src = serverHost + '/_fp.gif?' + JSON.stringify(rookie);
     }, 0);
 
 };
