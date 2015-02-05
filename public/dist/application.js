@@ -145,7 +145,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             var app = new Apps({
                 name: this.name,
                 type: this.type,
-                server: this.server
+                host: this.host
             });
 
             // Redirect after save
@@ -155,7 +155,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 // Clear form fields
                 $scope.name = '';
                 $scope.type = 'java';
-                $scope.server = '';
+                $scope.host = '';
             }, function (errorResponse) {
                 $scope.error = errorResponse.data.message;
             });
