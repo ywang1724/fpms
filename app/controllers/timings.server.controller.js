@@ -22,48 +22,46 @@ exports.create = function (req, res) {
             if (err) {
                 console.log(errorHandler.getErrorMessage(err));
             } else {
-                if (app.type === 'android' || app.type === 'ios' || app.server === req.ip) {
-                    var rookie = JSON.parse(decodeURI(req.url.substring(req.url.indexOf('?') + 1))),
-                        page = {};
-                    Page.findOneAndUpdate({app: app, pathname: rookie.pathname}, page, {upsert: true})
-                        .exec(function (err, obj) {
-                            if (err) {
-                                console.log(errorHandler.getErrorMessage(err));
-                            } else {
-                                page = obj;
-                                var promise1 = NavTiming.create(rookie.navTiming, function (err, saved) {
-                                    if (err) {
-                                        console.log(errorHandler.getErrorMessage(err));
-                                    } else {
-                                        rookie.navTiming = saved;
-                                        rookie.totalTime = saved.loadEventEnd - saved.navigationStart;
+                var rookie = JSON.parse(decodeURI(req.url.substring(req.url.indexOf('?') + 1))),
+                    page = {};
+                Page.findOneAndUpdate({app: app, pathname: rookie.pathname}, page, {upsert: true})
+                    .exec(function (err, obj) {
+                        if (err) {
+                            console.log(errorHandler.getErrorMessage(err));
+                        } else {
+                            page = obj;
+                            var promise1 = NavTiming.create(rookie.navTiming, function (err, saved) {
+                                if (err) {
+                                    console.log(errorHandler.getErrorMessage(err));
+                                } else {
+                                    rookie.navTiming = saved;
+                                    rookie.totalTime = saved.loadEventEnd - saved.navigationStart;
+                                }
+                            });
+                            var promise2 = ResTiming.create(rookie.resTimings, function (err) {
+                                if (err) {
+                                    console.log(errorHandler.getErrorMessage(err));
+                                } else {
+                                    rookie.resTimings = [];
+                                    for (var i = 1; i < arguments.length; i++) {
+                                        rookie.resTimings.push(arguments[i]);
                                     }
-                                });
-                                var promise2 = ResTiming.create(rookie.resTimings, function (err) {
-                                    if (err) {
-                                        console.log(errorHandler.getErrorMessage(err));
-                                    } else {
-                                        rookie.resTimings = [];
-                                        for (var i = 1; i < arguments.length; i++) {
-                                            rookie.resTimings.push(arguments[i]);
-                                        }
-                                    }
-                                });
-                                rookie.page = page;
-                                Q.all([promise1, promise2]).then(function () {
-                                    new Timing(rookie).save(function (err) {
-                                        if (err) {
-                                            console.log(errorHandler.getErrorMessage(err));
-                                        }
-                                    });
-                                }, function (err) {
+                                }
+                            });
+                            rookie.page = page;
+                            Q.all([promise1, promise2]).then(function () {
+                                new Timing(rookie).save(function (err) {
                                     if (err) {
                                         console.log(errorHandler.getErrorMessage(err));
                                     }
                                 });
-                            }
-                        });
-                }
+                            }, function (err) {
+                                if (err) {
+                                    console.log(errorHandler.getErrorMessage(err));
+                                }
+                            });
+                        }
+                    });
             }
         });
     }
