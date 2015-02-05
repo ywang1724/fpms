@@ -22,7 +22,7 @@ exports.create = function (req, res) {
             if (err) {
                 console.log(errorHandler.getErrorMessage(err));
             } else {
-                if (app.server === req.ip) {
+                if (app.type === 'android' || app.type === 'ios' || app.server === req.ip) {
                     var rookie = JSON.parse(decodeURI(req.url.substring(req.url.indexOf('?') + 1))),
                         page = {};
                     Page.findOneAndUpdate({app: app, pathname: rookie.pathname}, page, {upsert: true})
@@ -96,7 +96,8 @@ exports.create = function (req, res) {
  */
 exports.read = function (req, res) {
     var result = {
-        errs: req.timing.errs
+        errs: req.timing.errs,
+        initiatorTypes: {}
     };
     if (req.timing.errs.length === 0) {
         result.allResourcesCalc = req.timing.resTimings.map(function (currR) {
@@ -115,8 +116,8 @@ exports.read = function (req, res) {
             var currRes = {
                 name: currR.name,
                 domain: urlFragments[1],
-                initiatorType: currR.initiatorType || fileExtension || 'SourceMap or Not Defined',
-                fileExtension: fileExtension || 'XHR or Not Defined',
+                initiatorType: currR.initiatorType || fileExtension || 'SourceMap或未定义',
+                fileExtension: fileExtension || 'Ajax请求或未定义',
                 loadtime: currR.duration,
                 isRequestToHost: urlFragments[1] === req.ip
             };

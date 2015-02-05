@@ -26,7 +26,7 @@ var AppSchema = new Schema({
 	},
 	type: {
 		type: String,
-		enum: ['java', 'node.js'],
+		enum: ['java', 'node.js', 'android', 'ios'],
 		required: '请填写您的应用类型'
 	},
 	server: {
