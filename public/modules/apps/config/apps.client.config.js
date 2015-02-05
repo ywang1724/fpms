@@ -23,3 +23,12 @@ angular.module('apps').config(function($selectProvider) {
         animation: 'am-flip-x'
     });
 });
+
+angular.module('apps').config(function($tooltipProvider) {
+    angular.extend($tooltipProvider.defaults, {
+        animation: 'am-flip-x',
+        trigger: 'hover',
+        placement: 'bottom',
+        type: 'success'
+    });
+});

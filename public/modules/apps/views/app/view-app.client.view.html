@@ -40,7 +40,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-3">
-                        <div class="alert alert-warning">
+                        <div class="alert alert-warning" bs-tooltip="pageLoadTooltip">
                             平均总耗时
                             <div class="large">
                                 {{statisticData.pageLoad}} ms
@@ -48,7 +48,7 @@
                         </div>
                     </div>
                     <div class="col-lg-3">
-                        <div class="alert alert-warning">
+                        <div class="alert alert-warning" bs-tooltip="networkTooltip">
                             平均网络耗时
                             <div class="large">
                                 {{statisticData.network}} ms
@@ -56,7 +56,7 @@
                         </div>
                     </div>
                     <div class="col-lg-3">
-                        <div class="alert alert-warning">
+                        <div class="alert alert-warning" bs-tooltip="backendTooltip">
                             平均后端耗时
                             <div class="large">
                                 {{statisticData.backend}} ms
@@ -64,7 +64,7 @@
                         </div>
                     </div>
                     <div class="col-lg-3">
-                        <div class="alert alert-warning">
+                        <div class="alert alert-warning" bs-tooltip="frontendTooltip">
                             平均前端耗时
                             <div class="large">
                                 {{statisticData.frontend}} ms

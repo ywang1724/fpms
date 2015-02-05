@@ -249,5 +249,18 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 $scope.timingErrs = result.errs;
             });
         };
+
+        $scope.pageLoadTooltip = {
+            "title": "页面请求加载总耗时"
+        };
+        $scope.networkTooltip = {
+            "title": "包括页面跳转、域名查询、请求连接耗时"
+        };
+        $scope.backendTooltip = {
+            "title": "包括从客户端发出请求到服务端完成响应耗时"
+        };
+        $scope.frontendTooltip = {
+            "title": "包括DOM加载、页面渲染耗时"
+        };
     }
 ]);
