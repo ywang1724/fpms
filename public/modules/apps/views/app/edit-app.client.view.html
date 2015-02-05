@@ -26,10 +26,10 @@
                     </div>
                 </div>
                 <div class="form-group"
-                     ng-class="{ 'has-error': appForm.server.$invalid }">
-                    <label class="control-label" for="server">服务器地址</label>
+                     ng-class="{ 'has-error': appForm.host.$invalid }">
+                    <label class="control-label" for="host">服务器地址</label>
                     <div class="controls">
-                        <input name="server" type="text" data-ng-model="app.server" id="server" class="form-control"
+                        <input name="host" type="text" data-ng-model="app.host" id="host" class="form-control"
                                placeholder="请填写您的应用所在服务器地址IPv4" data-ng-change="removeErr()" required>
                     </div>
                 </div>

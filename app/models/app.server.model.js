@@ -29,10 +29,9 @@ var AppSchema = new Schema({
 		enum: ['java', 'node.js', 'android', 'ios'],
 		required: '请填写您的应用类型'
 	},
-	server: {
+	host: {
 		type: String,
-		required: '请填写您的应用所在服务器地址IPv4',
-		match: [/^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$/, '请填写一个有效的IPv4地址，如127.0.0.1']
+		required: '请填写您的应用所在域'
 	}
 });
 

@@ -27,6 +27,7 @@ window.onload = function () {
     }
 
     rookie.pathname = window.location.pathname;
+    rookie.appHost = window.location.host;
 
     /*利用工具包分析页面加载数据调用（beta）*/
     setTimeout(function () {
