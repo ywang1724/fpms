@@ -61,35 +61,35 @@ exports.getUserInformation = function (ua, platform) {
         }
     } else if (platform === 'CrOS') {
         os = 'ChromeOS';
-    } else if (platform === 'Win32' || platform == 'Win64') {
+    } else if (platform === 'Win32' || platform === 'Win64') {
         os = 'Windows';
         bit = platform.replace(/[^0-9]+/, '');
         if (/Win(?:dows )?([^do]{2})\s?(\d+\.\d+)?/.test(ua)) {
-            if (RegExp["$1"] == "NT") {
-                switch (RegExp["$2"]) {
-                    case "5.0":
-                        osversion = "2000";
+            if (RegExp.$1 === 'NT') {
+                switch (RegExp.$2) {
+                    case '5.0':
+                        osversion = '2000';
                         break;
-                    case "5.1":
-                        osversion = "XP";
+                    case '5.1':
+                        osversion = 'XP';
                         break;
-                    case "6.0":
-                        osversion = "Vista";
+                    case '6.0':
+                        osversion = 'Vista';
                         break;
-                    case "6.1":
-                        osversion = "7";
+                    case '6.1':
+                        osversion = '7';
                         break;
-                    case "6.2":
-                        osversion = "8";
+                    case '6.2':
+                        osversion = '8';
                         break;
                     default:
-                        osversion = "NT";
+                        osversion = 'NT';
                         break;
                 }
-            } else if (RegExp["$1"] == "9x") {
-                osversion = "ME";
+            } else if (RegExp.$1 === '9x') {
+                osversion = 'ME';
             } else {
-                osversion = RegExp["$1"];
+                osversion = RegExp.$1;
             }
         }
     } else if (!os && /Android/.test(ua)) {
