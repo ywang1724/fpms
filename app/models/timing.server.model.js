@@ -33,7 +33,33 @@ var TimingSchema = new Schema({
 	created: {
 		type: Date,
 		default: Date.now
-	}
+	},
+    ui: {
+        browser: {
+            type: String,
+            default: ''
+        },
+        version: {
+            type: String,
+            default: ''
+        },
+        mobile: {
+            type: String,
+            default: ''
+        },
+        os: {
+            type: String,
+            default: ''
+        },
+        osversion: {
+            type: String,
+            default: ''
+        },
+        bit: {
+            type: String,
+            default: ''
+        }
+    }
 });
 
 mongoose.model('Timing', TimingSchema);

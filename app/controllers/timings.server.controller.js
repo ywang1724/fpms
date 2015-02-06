@@ -5,6 +5,7 @@
  */
 var mongoose = require('mongoose'),
     errorHandler = require('./errors.server.controller'),
+    detect = require('./../tools/detect'),
     Timing = mongoose.model('Timing'),
     NavTiming = mongoose.model('NavTiming'),
     ResTiming = mongoose.model('ResTiming'),
@@ -50,6 +51,7 @@ exports.create = function (req, res) {
                                     }
                                 });
                                 rookie.page = page;
+                                rookie.ui = detect.getUserInformation(rookie.userAgent, rookie.platform);
                                 Q.all([promise1, promise2]).then(function () {
                                     new Timing(rookie).save(function (err) {
                                         if (err) {
