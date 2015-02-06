@@ -8,10 +8,10 @@ var getUniqueErrorMessage = function(err) {
 
 	try {
 		var fieldName = err.err.substring(err.err.lastIndexOf('.$') + 2, err.err.lastIndexOf('_1'));
-		output = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + ' already exists';
+		output = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + ' 已经存在';
 
 	} catch (ex) {
-		output = 'Unique field already exists';
+		output = '该字段已经存在';
 	}
 
 	return output;
