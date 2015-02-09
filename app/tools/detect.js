@@ -3,7 +3,7 @@
 /**
  * 获取用户信息
  */
-exports.getUserInformation = function (ua, platform) {
+exports.getUserInformation = function (ua, platform, ip) {
     var browser,
         version,
         mobile,
@@ -107,6 +107,7 @@ exports.getUserInformation = function (ua, platform) {
         mobile: mobile,
         os: os,
         osversion: osversion,
-        bit: bit
+        bit: bit,
+        ip: ip
     };
 };

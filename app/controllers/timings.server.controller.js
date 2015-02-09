@@ -51,7 +51,7 @@ exports.create = function (req, res) {
                                     }
                                 });
                                 rookie.page = page;
-                                rookie.ui = detect.getUserInformation(rookie.userAgent, rookie.platform);
+                                rookie.ui = detect.getUserInformation(rookie.userAgent, rookie.platform, req.ip);
                                 Q.all([promise1, promise2]).then(function () {
                                     new Timing(rookie).save(function (err) {
                                         if (err) {

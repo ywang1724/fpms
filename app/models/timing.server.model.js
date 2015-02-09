@@ -58,6 +58,10 @@ var TimingSchema = new Schema({
         bit: {
             type: String,
             default: ''
+        },
+        ip: {
+            type: String,
+            default: ''
         }
     }
 });
