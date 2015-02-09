@@ -82,13 +82,13 @@ exports.create = function (req, res) {
     res.sendFile(fileName, options, function (err) {
         if (err) {
             if (err.code === 'ECONNABORT' && res.statusCode === 304) {
-                console.log('304 cache hit for ' + fileName);
+                console.log(new Date() + '304 cache hit for ' + fileName);
                 return;
             }
             console.log(err);
             res.status(err.status).end();
         } else {
-            console.log('Sent:', fileName);
+            console.log(new Date() + 'Sent:', fileName);
         }
     });
 };
@@ -266,13 +266,13 @@ exports.rookie = function (req, res) {
     res.sendFile(fileName, options, function (err) {
         if (err) {
             if (err.code === 'ECONNABORT' && res.statusCode === 304) {
-                console.log('304 cache hit for ' + fileName);
+                console.log(new Date() + '304 cache hit for ' + fileName);
                 return;
             }
             console.log(err);
             res.status(err.status).end();
         } else {
-            console.log('Sent:', fileName);
+            console.log(new Date() + 'Sent:', fileName);
         }
     });
 };
