@@ -190,7 +190,10 @@ exports.statisticList = function (req, res) {
                 });
             } else {
                 var result = {
-                        timingData: [],
+                        pageLoadData: [],
+                        networkData: [],
+                        backendData: [],
+                        frontendData: [],
                         numData: [],
                         statisticData: {
                             sum: timings.length,
@@ -200,31 +203,51 @@ exports.statisticList = function (req, res) {
                             frontend: 0
                         }
                     },
-                    buckets = {},
+                    buckets = {
+                        pageLoad: {},
+                        network: {},
+                        backend: {},
+                        frontend: {}
+                    },
                     key,
                     num = 0;
                 for (var i = 0; i < timings.length; i++) {
                     var currentKey = Date.UTC(timings[i].created.getFullYear(), timings[i].created.getMonth(),
                             timings[i].created.getDate()).toString(),
-                        pageLoad = timings[i].navTiming.loadEventEnd - timings[i].navTiming.navigationStart;
+                        pageLoad = timings[i].navTiming.loadEventEnd - timings[i].navTiming.navigationStart,
+                        network = timings[i].navTiming.connectEnd - timings[i].navTiming.navigationStart,
+                        backend = timings[i].navTiming.responseEnd - timings[i].navTiming.requestStart,
+                        frontend = timings[i].navTiming.loadEventEnd - timings[i].navTiming.domLoading;
                     result.statisticData.pageLoad += pageLoad;
-                    result.statisticData.network += timings[i].navTiming.connectEnd - timings[i].navTiming.navigationStart;
-                    result.statisticData.backend += timings[i].navTiming.responseEnd - timings[i].navTiming.requestStart;
-                    result.statisticData.frontend += timings[i].navTiming.loadEventEnd - timings[i].navTiming.domLoading;
-                    if (buckets[currentKey]) {
-                        buckets[currentKey] = pageLoad + buckets[currentKey];
+                    result.statisticData.network += network;
+                    result.statisticData.backend += backend;
+                    result.statisticData.frontend += frontend;
+                    if (buckets.pageLoad[currentKey]) {
+                        buckets.pageLoad[currentKey] = pageLoad + buckets.pageLoad[currentKey];
+                        buckets.network[currentKey] = network + buckets.network[currentKey];
+                        buckets.backend[currentKey] = backend + buckets.backend[currentKey];
+                        buckets.frontend[currentKey] = frontend + buckets.frontend[currentKey];
                         num++;
                     } else {
                         if (num > 0) {
-                            result.timingData.push([Number(key), Number((buckets[key] / num).toFixed(2))]);
+                            result.pageLoadData.push([Number(key), Number((buckets.pageLoad[key] / num).toFixed(2))]);
+                            result.networkData.push([Number(key), Number((buckets.network[key] / num).toFixed(2))]);
+                            result.backendData.push([Number(key), Number((buckets.backend[key] / num).toFixed(2))]);
+                            result.frontendData.push([Number(key), Number((buckets.frontend[key] / num).toFixed(2))]);
                             result.numData.push([Number(key), num]);
                         }
                         key = currentKey;
                         num = 1;
-                        buckets[currentKey] = pageLoad;
+                        buckets.pageLoad[currentKey] = pageLoad;
+                        buckets.network[currentKey] = network;
+                        buckets.backend[currentKey] = backend;
+                        buckets.frontend[currentKey] = frontend;
                     }
                 }
-                result.timingData.push([Number(key), Number((buckets[key] / num).toFixed(2))]);
+                result.pageLoadData.push([Number(key), Number((buckets.pageLoad[key] / num).toFixed(2))]);
+                result.networkData.push([Number(key), Number((buckets.network[key] / num).toFixed(2))]);
+                result.backendData.push([Number(key), Number((buckets.backend[key] / num).toFixed(2))]);
+                result.frontendData.push([Number(key), Number((buckets.frontend[key] / num).toFixed(2))]);
                 result.numData.push([Number(key), num]);
                 result.statisticData.pageLoad = (result.statisticData.pageLoad / result.statisticData.sum).toFixed(2);
                 result.statisticData.network = (result.statisticData.network / result.statisticData.sum).toFixed(2);
