@@ -90,6 +90,9 @@
                         <th>前端耗时（ms）</th>
                         <th>DOM解析耗时（ms）</th>
                         <th>页面渲染耗时（ms）</th>
+                        <th>用户请求IP</th>
+                        <th>用户浏览器</th>
+                        <th>用户系统</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -110,6 +113,9 @@
                         <td>{{ detail.frontend }}</td>
                         <td>{{ detail.processing }}</td>
                         <td>{{ detail.onLoad }}</td>
+                        <td>{{ detail.ip }}</td>
+                        <td>{{ detail.browser }}</td>
+                        <td>{{ detail.os }}</td>
                     </tr>
                     </tbody>
                 </table>

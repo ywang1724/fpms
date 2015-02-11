@@ -174,6 +174,9 @@ exports.statisticList = function (req, res) {
                     item.connect = timings[i].navTiming.connectEnd - timings[i].navTiming.connectStart;
                     item.processing = timings[i].navTiming.domComplete - timings[i].navTiming.domLoading;
                     item.onLoad = timings[i].navTiming.loadEventEnd - timings[i].navTiming.loadEventStart;
+                    item.ip = timings[i].ui.ip;
+                    item.browser = (timings[i].ui.browser + ' ' + timings[i].ui.version).trim();
+                    item.os = (timings[i].ui.os + ' ' + timings[i].ui.osversion).trim();
                     result.data.push(item);
                 }
                 res.jsonp(result);

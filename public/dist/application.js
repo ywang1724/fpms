@@ -232,7 +232,10 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 }
                             }).success(function (result) {
                                 $scope.chartConfig.series[0].data = result.numData;
-                                $scope.chartConfig.series[1].data = result.timingData;
+                                $scope.chartConfig.series[1].data = result.pageLoadData;
+                                $scope.chartConfig.series[2].data = result.networkData;
+                                $scope.chartConfig.series[3].data = result.backendData;
+                                $scope.chartConfig.series[4].data = result.frontendData;
                                 $scope.statisticData = result.statisticData;
                             });
                         };
@@ -280,15 +283,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                             },
                             yAxis: [{
                                 title: {
-                                    text: '平均总时间（ms）',
-                                    style: {
-                                        color: Highcharts.getOptions().colors[1]
-                                    }
-                                },
-                                labels: {
-                                    style: {
-                                        color: Highcharts.getOptions().colors[1]
-                                    }
+                                    text: '耗时（ms）'
                                 }
                             }, {
                                 title: {
@@ -311,7 +306,28 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 yAxis: 1,
                                 data: []
                             }, {
-                                name: '平均总时间',
+                                name: '平均总耗时',
+                                type: 'spline',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            },{
+                                name: '平均网络耗时',
+                                type: 'spline',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            },{
+                                name: '平均后端耗时',
+                                type: 'spline',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            },{
+                                name: '平均前端耗时',
                                 type: 'spline',
                                 tooltip: {
                                     valueSuffix: ' ms'
