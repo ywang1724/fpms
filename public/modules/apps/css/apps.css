@@ -15,3 +15,7 @@ caption {
     margin-top: 0.5em;
     text-align: center;
 }
+
+a[ng-click] {
+    cursor: pointer;
+}

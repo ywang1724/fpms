@@ -217,7 +217,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 data: []
                             }],
                             title: {
-                                text: '页面总体概况'
+                                text: '页面性能总体趋势图'
                             }
                         };
                         $scope.refrashChart = getTimings;

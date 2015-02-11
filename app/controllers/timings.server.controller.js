@@ -120,19 +120,19 @@ exports.read = function (req, res) {
                 domain: urlFragments[1],
                 initiatorType: currR.initiatorType || fileExtension || 'SourceMap或未定义',
                 fileExtension: fileExtension || 'Ajax请求或未定义',
-                loadtime: currR.duration,
+                loadtime: (currR.duration).toFixed(2),
                 isRequestToHost: urlFragments[1] === req.ip
             };
 
             if (currR.requestStart) {
-                currRes.requestStartDelay = currR.requestStart - currR.startTime;
-                currRes.dns = currR.domainLookupEnd - currR.domainLookupStart;
-                currRes.tcp = currR.connectEnd - currR.connectStart;
-                currRes.ttfb = currR.responseStart - currR.startTime;
-                currRes.requestDuration = currR.responseStart - currR.requestStart;
+                currRes.requestStartDelay = (currR.requestStart - currR.startTime).toFixed(2);
+                currRes.dns = (currR.domainLookupEnd - currR.domainLookupStart).toFixed(2);
+                currRes.tcp = (currR.connectEnd - currR.connectStart).toFixed(2);
+                currRes.ttfb = (currR.responseStart - currR.startTime).toFixed(2);
+                currRes.requestDuration = (currR.responseStart - currR.requestStart).toFixed(2);
             }
             if (currR.secureConnectionStart) {
-                currRes.ssl = currR.connectEnd - currR.secureConnectionStart;
+                currRes.ssl = (currR.connectEnd - currR.secureConnectionStart).toFixed(2);
             }
 
             return currRes;

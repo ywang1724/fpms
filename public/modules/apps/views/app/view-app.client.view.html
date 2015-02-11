@@ -38,87 +38,93 @@
                            placeholder="截止日期" bs-datepicker type="text" ng-disabled="!showChart">
                     <input type="button" value="刷新" class="btn btn-success" ng-click="refrashChart()" ng-disabled="!showChart">
                 </div>
-                <div class="row">
-                    <div class="col-lg-3">
-                        <div class="alert alert-warning" bs-tooltip="pageLoadTooltip">
-                            平均总耗时
-                            <div class="large">
-                                {{statisticData.pageLoad}} ms
-                            </div>
-                        </div>
+                <div bs-tabs>
+                    <div title="趋势" bs-pane>
+                        <highchart config="chartConfig"></highchart>
+                        <table datatable="ng" dt-options="dtOptions"
+                               class="table table-striped table-bordered table-hover myTable" data-ng-if="details.length">
+                            <caption>
+                                <i>表1：页面分析</i>
+                            </caption>
+                            <thead>
+                            <tr>
+                                <th>请求时间</th>
+                                <th>总耗时（ms）</th>
+                                <th>网络耗时（ms）</th>
+                                <th>页面跳转耗时（ms）</th>
+                                <th>域名查询耗时（ms）</th>
+                                <th>连接耗时（ms）</th>
+                                <th>后端耗时（ms）</th>
+                                <th>前端耗时（ms）</th>
+                                <th>DOM解析耗时（ms）</th>
+                                <th>页面渲染耗时（ms）</th>
+                                <th>用户请求IP</th>
+                                <th>用户浏览器</th>
+                                <th>用户系统</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr data-ng-repeat="detail in details">
+                                <td>
+                            <span class="cursor text-danger" bs-aside="aside" title="查看资源详情分析"
+                                  ng-click="findTiming(detail.id)"
+                                  data-template="modules/apps/views/timing/view-timing.client.view.html">
+                                {{ detail.created | date:'yyyy-MM-dd HH:mm:ss'}}
+                            </span>
+                                </td>
+                                <td>{{ detail.pageLoad }}</td>
+                                <td>{{ detail.network }}</td>
+                                <td>{{ detail.redirect }}</td>
+                                <td>{{ detail.dns }}</td>
+                                <td>{{ detail.connect }}</td>
+                                <td>{{ detail.backend }}</td>
+                                <td>{{ detail.frontend }}</td>
+                                <td>{{ detail.processing }}</td>
+                                <td>{{ detail.onLoad }}</td>
+                                <td>{{ detail.ip }}</td>
+                                <td>{{ detail.browser }}</td>
+                                <td>{{ detail.os }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="col-lg-3">
-                        <div class="alert alert-warning" bs-tooltip="networkTooltip">
-                            平均网络耗时
-                            <div class="large">
-                                {{statisticData.network}} ms
+                    <div title="概况" bs-pane>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div class="alert alert-warning" bs-tooltip="pageLoadTooltip">
+                                    平均总耗时
+                                    <div class="large">
+                                        {{statisticData.pageLoad}} ms
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="alert alert-warning" bs-tooltip="backendTooltip">
-                            平均后端耗时
-                            <div class="large">
-                                {{statisticData.backend}} ms
+                            <div class="col-lg-3">
+                                <div class="alert alert-warning" bs-tooltip="networkTooltip">
+                                    平均网络耗时
+                                    <div class="large">
+                                        {{statisticData.network}} ms
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="alert alert-warning" bs-tooltip="frontendTooltip">
-                            平均前端耗时
-                            <div class="large">
-                                {{statisticData.frontend}} ms
+                            <div class="col-lg-3">
+                                <div class="alert alert-warning" bs-tooltip="backendTooltip">
+                                    平均后端耗时
+                                    <div class="large">
+                                        {{statisticData.backend}} ms
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="alert alert-warning" bs-tooltip="frontendTooltip">
+                                    平均前端耗时
+                                    <div class="large">
+                                        {{statisticData.frontend}} ms
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <highchart config="chartConfig"></highchart>
-                <table datatable="ng" dt-options="dtOptions"
-                       class="table table-striped table-bordered table-hover myTable" data-ng-if="details.length">
-                    <caption>
-                        <i>表1：页面分析</i>
-                    </caption>
-                    <thead>
-                    <tr>
-                        <th>请求时间</th>
-                        <th>总耗时（ms）</th>
-                        <th>网络耗时（ms）</th>
-                        <th>页面跳转耗时（ms）</th>
-                        <th>域名查询耗时（ms）</th>
-                        <th>连接耗时（ms）</th>
-                        <th>后端耗时（ms）</th>
-                        <th>前端耗时（ms）</th>
-                        <th>DOM解析耗时（ms）</th>
-                        <th>页面渲染耗时（ms）</th>
-                        <th>用户请求IP</th>
-                        <th>用户浏览器</th>
-                        <th>用户系统</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr data-ng-repeat="detail in details">
-                        <td>
-                            <span class="cursor text-danger" bs-aside="aside" title="查看资源详情分析"
-                                  ng-click="findTiming(detail.id)"
-                               data-template="modules/apps/views/timing/view-timing.client.view.html">
-                                {{ detail.created | date:'yyyy-MM-dd HH:mm:ss'}}
-                            </span>
-                        </td>
-                        <td>{{ detail.pageLoad }}</td>
-                        <td>{{ detail.network }}</td>
-                        <td>{{ detail.redirect }}</td>
-                        <td>{{ detail.dns }}</td>
-                        <td>{{ detail.connect }}</td>
-                        <td>{{ detail.backend }}</td>
-                        <td>{{ detail.frontend }}</td>
-                        <td>{{ detail.processing }}</td>
-                        <td>{{ detail.onLoad }}</td>
-                        <td>{{ detail.ip }}</td>
-                        <td>{{ detail.browser }}</td>
-                        <td>{{ detail.os }}</td>
-                    </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
