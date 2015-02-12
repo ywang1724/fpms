@@ -158,7 +158,7 @@ exports.hasAuthorization = function (req, res, next) {
  * List of Pages
  */
 exports.pageList = function (req, res) {
-    Page.find({app: req.app.id}).exec(function (err, pages) {
+    Page.find({app: req.app.id}, '_id pathname').exec(function (err, pages) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)

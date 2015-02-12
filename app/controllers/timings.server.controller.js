@@ -145,9 +145,10 @@ exports.read = function (req, res) {
  * List of Timings
  */
 exports.statisticList = function (req, res) {
+    var pages = (typeof req.query.pageId === 'string') ? [req.query.pageId] : req.query.pageId;
     if (req.param('dateNumber')) {
         Timing.find({
-            page: req.param('pageId'),
+            page: {$in: pages},
             created: {
                 $gte: new Date(Number(req.param('dateNumber'))),
                 $lt: new Date(Number(req.param('dateNumber')) + 86400000)
@@ -184,7 +185,7 @@ exports.statisticList = function (req, res) {
         });
     } else {
         Timing.find({
-            page: req.param('pageId'),
+            page: {$in: pages},
             created: {$gte: new Date(req.param('fromDate')), $lt: new Date(req.param('untilDate'))}
         }).sort('created').populate('navTiming').exec(function (err, timings) {
             if (err) {

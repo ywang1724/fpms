@@ -96,7 +96,11 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                     $scope.pagesNum = data.length || 0;
                     if (data.length) {
                         $scope.showChart = true;
-                        $scope.pages = data;
+                        var ids = [];
+                        for (var i = 0; i < data.length; i++) {
+                            ids.push(data[i]._id);
+                        }
+                        $scope.pages = [{'_id':ids, 'pathname':'全部'}].concat(data);
                         $scope.selectPage = $scope.pages[0];
                         // 日期范围初始化
                         var now = new Date();
