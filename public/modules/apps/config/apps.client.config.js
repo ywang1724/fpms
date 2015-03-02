@@ -32,3 +32,7 @@ angular.module('apps').config(function($tooltipProvider) {
         type: 'success'
     });
 });
+
+angular.module('apps').config(['ngClipProvider', function(ngClipProvider) {
+    ngClipProvider.setPath("lib/zeroclipboard/dist/ZeroClipboard.swf");
+}]);

@@ -32,7 +32,9 @@ module.exports = {
                 'public/lib/angular-i18n/angular-locale_zh-cn.js',
                 'public/lib/highcharts/highcharts.js',
                 'public/lib/highcharts/modules/exporting.js',
-                'public/lib/highcharts-ng/dist/highcharts-ng.min.js'
+                'public/lib/highcharts-ng/dist/highcharts-ng.min.js',
+                'public/lib/ng-clip/dest/ng-clip.min.js',
+                'public/lib/zeroclipboard/dist/ZeroClipboard.min.js'
 			]
 		},
 		css: 'public/dist/application.min.css',

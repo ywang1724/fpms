@@ -2,8 +2,8 @@
 
 // Apps controller
 angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
-    'DTOptionsBuilder', '$http',
-    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http) {
+    'DTOptionsBuilder', '$http', '$timeout',
+    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout) {
         $scope.authentication = Authentication;
 
         //可从后台动态获取数据，以后有时间完成
@@ -281,6 +281,13 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         };
         $scope.frontendTooltip = {
             'title': '包括DOM加载、页面渲染耗时'
+        };
+
+        $scope.clip = function () {
+            $scope.isClip = true;
+            $timeout(function () {
+                $scope.isClip = false;
+            }, 3000);
         };
     }
 ]);

@@ -46,7 +46,9 @@ module.exports = {
                 'public/lib/angular-i18n/angular-locale_zh-cn.js',
                 'public/lib/highcharts/highcharts.src.js',
                 'public/lib/highcharts/modules/exporting.src.js',
-                'public/lib/highcharts-ng/dist/highcharts-ng.js'
+                'public/lib/highcharts-ng/dist/highcharts-ng.js',
+                'public/lib/ng-clip/src/ngClip.js',
+                'public/lib/zeroclipboard/dist/ZeroClipboard.js'
 			]
 		},
 		css: [

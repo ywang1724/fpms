@@ -25,3 +25,7 @@ a[ng-click] {
     display: flex;
     flex: 1 1 auto;
 }
+
+.myMB16 {
+    margin-bottom: 16px;
+}
