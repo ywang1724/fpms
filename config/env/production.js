@@ -12,7 +12,8 @@ module.exports = {
 				'public/lib/bootstrap/dist/css/bootstrap-theme.min.css',
                 'public/lib/bootstrap-additions/dist/bootstrap-additions.min.css',
                 'public/lib/angular-motion/dist/angular-motion.min.css',
-				'public/lib/datatables/media/css/jquery.dataTables.min.css'
+				'public/lib/datatables/media/css/jquery.dataTables.min.css',
+                'public/lib/font-awesome/css/font-awesome.min.css'
 			],
 			js: [
 				'public/lib/jquery/dist/jquery.min.js',

@@ -14,47 +14,44 @@
 	<div class="page-header">
 		<h1 data-ng-bind="app.name"></h1>
 	</div>
-    <div class="row myEqual">
-        <div class="col-xs-6">
-            <div class="panel panel-success">
-                <div class="panel-heading">查询参数配置：</div>
-                <div class="panel-body">
-                    <div class="text-center text-danger">
-                        目前{{app.name}}的<span class="large">{{pagesNum}}</span>个页面正在进行监控。
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">页面：</label>
-                        <button class="btn btn-default" name="selectPage" data-ng-model="selectPage"
-                                placeholder="暂无监控页面" ng-options="page.pathname for page in pages"
-                                bs-select ng-disabled="!showChart">
-                        </button>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">日期范围：</label>
-                        <input class="btn btn-default" ng-model="fromDate" data-max-date="{{untilDate}}"
-                               placeholder="开始日期" bs-datepicker type="text" ng-disabled="!showChart">
-                        至
-                        <input class="btn btn-default" ng-model="untilDate" data-min-date="{{fromDate}}"
-                               data-max-date="{{nowDate}}" placeholder="截止日期" bs-datepicker type="text" ng-disabled="!showChart">
-                    </div>
-                    <div class="form-group">
-                        <input type="button" value="刷新" class="btn btn-success center-block" ng-click="refrashChart()"
-                               ng-disabled="!showChart">
-                    </div>
-                </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">请复制以下代码到您需采集数据的所属页面html代码的body底部：
+            <!--<input type="button" value="复制代码" class="btn btn-info center-block" clip-copy="script"-->
+                   <!--clip-click="clip()">-->
+            <span class="pull-right fa fa-copy fa-lg cursor" title="复制代码" clip-copy="script"
+                  clip-click="clip()"></span>
+        </div>
+        <div class="panel-body">
+            <code class="center-block">{{script}}</code>
+            <div class="text-center text-success" data-ng-show="isClip">
+                <strong>已复制代码到剪贴板。</strong>
             </div>
         </div>
-        <div class="col-xs-6">
-            <div class="panel panel-info">
-                <div class="panel-heading">请复制以下代码到您需采集数据的所属页面html代码的body底部：</div>
-                <div class="panel-body">
-                    <code class="center-block">{{script}}</code>
-                    <input type="button" value="复制代码" class="btn btn-info center-block myMT16" clip-copy="script"
-                           clip-click="clip()">
-                    <div class="text-center text-success" data-ng-show="isClip">
-                        <strong>已复制代码到剪贴板。</strong>
-                    </div>
-                </div>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">查询参数配置：</div>
+        <div class="panel-body">
+            <div class="text-center text-danger">
+                目前{{app.name}}的<span class="large">{{pagesNum}}</span>个页面正在进行监控。
+            </div>
+            <div class="form-group">
+                <label class="control-label">页面：</label>
+                <button class="btn btn-default" name="selectPage" data-ng-model="selectPage"
+                        placeholder="暂无监控页面" ng-options="page.pathname for page in pages"
+                        bs-select ng-disabled="!showChart">
+                </button>
+            </div>
+            <div class="form-group">
+                <label class="control-label">日期范围：</label>
+                <input class="btn btn-default" ng-model="fromDate" data-max-date="{{untilDate}}"
+                       placeholder="开始日期" bs-datepicker type="text" ng-disabled="!showChart">
+                至
+                <input class="btn btn-default" ng-model="untilDate" data-min-date="{{fromDate}}"
+                       data-max-date="{{nowDate}}" placeholder="截止日期" bs-datepicker type="text" ng-disabled="!showChart">
+            </div>
+            <div class="form-group">
+                <input type="button" value="刷新" class="btn btn-success center-block" ng-click="refrashChart()"
+                       ng-disabled="!showChart">
             </div>
         </div>
     </div>
