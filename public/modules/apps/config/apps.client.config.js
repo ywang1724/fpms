@@ -14,7 +14,9 @@ angular.module('apps').run(['Menus',
 
 angular.module('apps').config(function($datepickerProvider) {
     angular.extend($datepickerProvider.defaults, {
-        dateFormat: 'yyyy-MM-dd'
+        animation: 'am-flip-x',
+        autoclose: true,
+        dateType: 'number'
     });
 });
 

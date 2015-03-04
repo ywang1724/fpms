@@ -147,11 +147,23 @@ exports.read = function (req, res) {
 exports.statisticList = function (req, res) {
     var pages = (typeof req.query.pageId === 'string') ? [req.query.pageId] : req.query.pageId;
     if (req.param('dateNumber')) {
+        var gteDate = new Date(Number(req.param('dateNumber'))), ltDate;
+        switch (req.param('interval')) {
+            case 'day':
+                ltDate = new Date(Date.UTC(gteDate.getFullYear(), gteDate.getMonth(), gteDate.getDate() + 1));
+                break;
+            case 'month':
+                ltDate = new Date(Date.UTC(gteDate.getFullYear(), gteDate.getMonth() + 1));
+                break;
+            case 'year':
+                ltDate = new Date(Date.UTC(gteDate.getFullYear() + 1, 0));
+                break;
+        }
         Timing.find({
             page: {$in: pages},
             created: {
-                $gte: new Date(Number(req.param('dateNumber'))),
-                $lt: new Date(Number(req.param('dateNumber')) + 86400000)
+                $gte: gteDate,
+                $lt: ltDate
             }
         }).sort('created').populate('navTiming').exec(function (err, timings) {
             if (err) {
@@ -216,9 +228,20 @@ exports.statisticList = function (req, res) {
                     key,
                     num = 0;
                 for (var i = 0; i < timings.length; i++) {
-                    var currentKey = Date.UTC(timings[i].created.getFullYear(), timings[i].created.getMonth(),
-                            timings[i].created.getDate()).toString(),
-                        pageLoad = timings[i].navTiming.loadEventEnd - timings[i].navTiming.navigationStart,
+                    var currentKey;
+                    switch (req.param('interval')) {
+                        case 'day':
+                            currentKey = Date.UTC(timings[i].created.getFullYear(), timings[i].created.getMonth(),
+                                timings[i].created.getDate()).toString();
+                            break;
+                        case 'month':
+                            currentKey = Date.UTC(timings[i].created.getFullYear(), timings[i].created.getMonth()).toString();
+                            break;
+                        case 'year':
+                            currentKey = Date.UTC(timings[i].created.getFullYear(), 0).toString();
+                            break;
+                    }
+                    var pageLoad = timings[i].navTiming.loadEventEnd - timings[i].navTiming.navigationStart,
                         network = timings[i].navTiming.connectEnd - timings[i].navTiming.navigationStart,
                         backend = timings[i].navTiming.responseEnd - timings[i].navTiming.requestStart,
                         frontend = timings[i].navTiming.loadEventEnd - timings[i].navTiming.domLoading;

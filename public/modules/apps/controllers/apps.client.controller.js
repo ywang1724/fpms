@@ -102,19 +102,47 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                         }
                         $scope.pages = [{'_id':ids, 'pathname':'全部'}].concat(data);
                         $scope.selectPage = $scope.pages[0];
+                        $scope.intervals = [
+                            {'name': '日', 'id': 'day'}, {'name': '月', 'id': 'month'}, {'name': '年', 'id': 'year'}
+                        ];
+                        $scope.selectInterval = $scope.intervals[0];
                         // 日期范围初始化
                         var now = new Date();
                         $scope.nowDate = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
                         $scope.fromDate = $scope.nowDate - 1296000000; //往前15天
-                        $scope.untilDate = new Date($scope.nowDate);
+                        $scope.untilDate = $scope.nowDate;
 
                         var getTimings = function () {
-                            var trueDate = Date.parse($scope.untilDate) + 86400000;
+                            var trueFromDate, trueUntilDate;
+                            switch ($scope.selectInterval.id) {
+                                case 'day':
+                                    trueFromDate = $scope.fromDate;
+                                    trueUntilDate = $scope.untilDate + 86400000;
+                                    $scope.chartConfig.xAxis.tickInterval = 86400000; //1天
+                                    $scope.chartConfig.xAxis.dateTimeLabelFormats = {day: '%m.%d'};
+                                    $scope.chartConfig.options.tooltip.xDateFormat = '%Y-%m-%d';
+                                    break;
+                                case 'month':
+                                    trueFromDate = Date.UTC((new Date($scope.fromDate)).getFullYear(), (new Date($scope.fromDate)).getMonth());
+                                    trueUntilDate = Date.UTC((new Date($scope.untilDate)).getFullYear(), (new Date($scope.untilDate)).getMonth() + 1);
+                                    $scope.chartConfig.xAxis.tickInterval = 2419200000; //28天
+                                    $scope.chartConfig.xAxis.dateTimeLabelFormats = {month: '%Y.%m'};
+                                    $scope.chartConfig.options.tooltip.xDateFormat = '%Y.%m';
+                                    break;
+                                case 'year':
+                                    trueFromDate = Date.UTC((new Date($scope.fromDate)).getFullYear(), 0);
+                                    trueUntilDate = Date.UTC((new Date($scope.untilDate)).getFullYear() + 1, 0);
+                                    $scope.chartConfig.xAxis.tickInterval = 31104000000; //360天
+                                    $scope.chartConfig.xAxis.dateTimeLabelFormats = {day: '%Y'};
+                                    $scope.chartConfig.options.tooltip.xDateFormat = '%Y';
+                                    break;
+                            }
                             $http.get('timings', {
                                 params: {
                                     pageId: $scope.selectPage._id,
-                                    fromDate: new Date($scope.fromDate),
-                                    untilDate: new Date(trueDate)
+                                    fromDate: new Date(trueFromDate),
+                                    untilDate: new Date(trueUntilDate),
+                                    interval: $scope.selectInterval.id
                                 }
                             }).success(function (result) {
                                 $scope.chartConfig.series[0].data = result.numData;
@@ -125,7 +153,6 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 $scope.statisticData = result.statisticData;
                             });
                         };
-                        getTimings();
 
                         $scope.chartConfig = {
                             options: {
@@ -142,7 +169,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                                     $http.get('timings', {
                                                         params: {
                                                             pageId: $scope.selectPage._id,
-                                                            dateNumber: this.category
+                                                            dateNumber: this.category,
+                                                            interval: $scope.selectInterval.id
                                                         }
                                                     }).success(function (result) {
                                                         $scope.details = result.data;
@@ -162,10 +190,12 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     align: 'high'
                                 },
                                 type: 'datetime',
+                                tickInterval: 86400000,
                                 dateTimeLabelFormats: {
-                                    day: '%m.%d'
-                                },
-                                tickInterval: 86400000 //一天
+                                    day: '%m.%d',
+                                    month: '%Y.%m',
+                                    year: '%Y'
+                                }
                             },
                             yAxis: [{
                                 title: {
@@ -198,21 +228,21 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     valueSuffix: ' ms'
                                 },
                                 data: []
-                            },{
+                            }, {
                                 name: '平均网络耗时',
                                 type: 'spline',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
-                            },{
+                            }, {
                                 name: '平均后端耗时',
                                 type: 'spline',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
-                            },{
+                            }, {
                                 name: '平均前端耗时',
                                 type: 'spline',
                                 tooltip: {
@@ -225,6 +255,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                             }
                         };
                         $scope.refrashChart = getTimings;
+                        getTimings();
                     } else {
                         $scope.showChart = false;
                     }
