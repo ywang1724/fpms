@@ -150,6 +150,18 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 $scope.chartConfig.series[2].data = result.networkData;
                                 $scope.chartConfig.series[3].data = result.backendData;
                                 $scope.chartConfig.series[4].data = result.frontendData;
+                                $scope.timingPie.series[0].data = [
+                                    ['网络', (result.statisticData.network / result.statisticData.pageLoad) * 100],
+                                    ['后端', (result.statisticData.backend / result.statisticData.pageLoad) * 100],
+                                    {
+                                        name: '前端',
+                                        y: (result.statisticData.frontend / result.statisticData.pageLoad) *100,
+                                        sliced: true,
+                                        selected: true
+                                    },
+                                    ['其它', ((result.statisticData.pageLoad - result.statisticData.network -
+                                    result.statisticData.backend - result.statisticData.frontend) /
+                                    result.statisticData.pageLoad) * 100]];
                                 $scope.statisticData = result.statisticData;
                             });
                         };
@@ -256,30 +268,38 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                         };
                         $scope.timingPie = {
                             options: {
-
+                                chart: {
+                                    plotBackgroundColor: null,
+                                    plotBorderWidth: null,
+                                    plotShadow: false
+                                },
+                                tooltip: {
+                                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                                },
+                                plotOptions: {
+                                    pie: {
+                                        allowPointSelect: true,
+                                        cursor: 'pointer',
+                                        dataLabels: {
+                                            enabled: true,
+                                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                            style: {
+                                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                            }
+                                        }
+                                    }
+                                }
                             },
                             credits: {
                                 enabled: false
                             },
                             title: {
-                                text: '页面耗时分布图'
+                                text: '页面加载耗时分布图'
                             },
                             series: [{
                                 type: 'pie',
-                                name: 'Browser share',
-                                data: [
-                                    ['Firefox',   45.0],
-                                    ['IE',       26.8],
-                                    {
-                                        name: 'Chrome',
-                                        y: 12.8,
-                                        sliced: true,
-                                        selected: true
-                                    },
-                                    ['Safari',    8.5],
-                                    ['Opera',     6.2],
-                                    ['Others',   0.7]
-                                ]
+                                name: '占总耗时比率',
+                                data: []
                             }]
                         };
                         $scope.refrashChart = getTimings;
