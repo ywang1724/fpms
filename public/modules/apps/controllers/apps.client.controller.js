@@ -254,8 +254,43 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 text: '页面性能总体趋势图'
                             }
                         };
+                        $scope.timingPie = {
+                            options: {
+
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            title: {
+                                text: '页面耗时分布图'
+                            },
+                            series: [{
+                                type: 'pie',
+                                name: 'Browser share',
+                                data: [
+                                    ['Firefox',   45.0],
+                                    ['IE',       26.8],
+                                    {
+                                        name: 'Chrome',
+                                        y: 12.8,
+                                        sliced: true,
+                                        selected: true
+                                    },
+                                    ['Safari',    8.5],
+                                    ['Opera',     6.2],
+                                    ['Others',   0.7]
+                                ]
+                            }]
+                        };
                         $scope.refrashChart = getTimings;
                         getTimings();
+                        $scope.reflow = function () {
+                            for (var i = 0; i < Highcharts.charts.length; i++) {
+                                if (Highcharts.charts[i]) {
+                                    Highcharts.charts[i].reflow();
+                                }
+                            }
+                        };
                     } else {
                         $scope.showChart = false;
                     }
