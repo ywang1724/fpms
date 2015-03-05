@@ -133,14 +133,32 @@
                     <i class="fa fa-th"></i> 概况
                 </tab-heading>
                 <div class="row myMT16">
-                    <div class="col-lg-3">
-                        <div class="alert alert-warning" bs-tooltip="pageLoadTooltip">
+                    <div class="col-lg-4">
+                        <div class="alert alert-info" bs-tooltip="sumTooltip">
+                            总请求数
+                            <div class="large">
+                                {{statisticData.sum}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="alert alert-info" bs-tooltip="pageLoadTooltip">
                             平均总耗时
                             <div class="large">
                                 {{statisticData.pageLoad}} ms
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-4">
+                        <div class="alert alert-success" bs-tooltip="backendTooltip">
+                            平均后端耗时
+                            <div class="large">
+                                {{statisticData.backend}} ms
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-lg-3">
                         <div class="alert alert-warning" bs-tooltip="networkTooltip">
                             平均网络耗时
@@ -149,24 +167,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3">
-                        <div class="alert alert-warning" bs-tooltip="backendTooltip">
-                            平均后端耗时
-                            <div class="large">
-                                {{statisticData.backend}} ms
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="alert alert-warning" bs-tooltip="frontendTooltip">
-                            平均前端耗时
-                            <div class="large">
-                                {{statisticData.frontend}} ms
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col-lg-3">
                         <div class="alert alert-warning" bs-tooltip="redirectTooltip">
                             平均页面跳转耗时
@@ -191,18 +191,26 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3">
-                        <div class="alert alert-warning" bs-tooltip="processingTooltip">
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="alert alert-danger" bs-tooltip="frontendTooltip">
+                            平均前端耗时
+                            <div class="large">
+                                {{statisticData.frontend}} ms
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="alert alert-danger" bs-tooltip="processingTooltip">
                             平均DOM解析耗时
                             <div class="large">
                                 {{statisticData.processing}} ms
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-3">
-                        <div class="alert alert-warning" bs-tooltip="onLoadTooltip">
+                    <div class="col-lg-4">
+                        <div class="alert alert-danger" bs-tooltip="onLoadTooltip">
                             平均页面渲染耗时
                             <div class="large">
                                 {{statisticData.onLoad}} ms

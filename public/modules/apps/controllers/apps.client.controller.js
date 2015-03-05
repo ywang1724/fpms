@@ -396,6 +396,9 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             });
         };
 
+        $scope.sumTooltip = {
+            'title': '页面请求总数'
+        };
         $scope.pageLoadTooltip = {
             'title': '页面请求加载总耗时'
         };
