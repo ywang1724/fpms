@@ -210,20 +210,35 @@ exports.statisticList = function (req, res) {
                         networkData: [],
                         backendData: [],
                         frontendData: [],
+                        redirectData: [],
+                        dnsData: [],
+                        connectData: [],
+                        processingData: [],
+                        onLoadData: [],
                         numData: [],
                         statisticData: {
                             sum: timings.length,
                             pageLoad: 0,
                             network: 0,
                             backend: 0,
-                            frontend: 0
+                            frontend: 0,
+                            redirect: 0,
+                            dns: 0,
+                            connect: 0,
+                            processing: 0,
+                            onLoad: 0
                         }
                     },
                     buckets = {
                         pageLoad: {},
                         network: {},
                         backend: {},
-                        frontend: {}
+                        frontend: {},
+                        redirect: {},
+                        dns: {},
+                        connect: {},
+                        processing: {},
+                        onLoad: {}
                     },
                     key,
                     num = 0;
@@ -244,16 +259,31 @@ exports.statisticList = function (req, res) {
                     var pageLoad = timings[i].navTiming.loadEventEnd - timings[i].navTiming.navigationStart,
                         network = timings[i].navTiming.connectEnd - timings[i].navTiming.navigationStart,
                         backend = timings[i].navTiming.responseEnd - timings[i].navTiming.requestStart,
-                        frontend = timings[i].navTiming.loadEventEnd - timings[i].navTiming.domLoading;
+                        frontend = timings[i].navTiming.loadEventEnd - timings[i].navTiming.domLoading,
+                        redirect = timings[i].navTiming.redirectEnd - timings[i].navTiming.redirectStart,
+                        dns = timings[i].navTiming.domainLookupEnd - timings[i].navTiming.domainLookupStart,
+                        connect = timings[i].navTiming.connectEnd - timings[i].navTiming.connectStart,
+                        processing = timings[i].navTiming.domComplete - timings[i].navTiming.domLoading,
+                        onLoad = timings[i].navTiming.loadEventEnd - timings[i].navTiming.loadEventStart;
                     result.statisticData.pageLoad += pageLoad;
                     result.statisticData.network += network;
                     result.statisticData.backend += backend;
                     result.statisticData.frontend += frontend;
+                    result.statisticData.redirect += redirect;
+                    result.statisticData.dns += dns;
+                    result.statisticData.connect += connect;
+                    result.statisticData.processing += processing;
+                    result.statisticData.onLoad += onLoad;
                     if (buckets.pageLoad[currentKey]) {
                         buckets.pageLoad[currentKey] = pageLoad + buckets.pageLoad[currentKey];
                         buckets.network[currentKey] = network + buckets.network[currentKey];
                         buckets.backend[currentKey] = backend + buckets.backend[currentKey];
                         buckets.frontend[currentKey] = frontend + buckets.frontend[currentKey];
+                        buckets.redirect[currentKey] = redirect + buckets.redirect[currentKey];
+                        buckets.dns[currentKey] = dns + buckets.dns[currentKey];
+                        buckets.connect[currentKey] = connect + buckets.connect[currentKey];
+                        buckets.processing[currentKey] = processing + buckets.processing[currentKey];
+                        buckets.onLoad[currentKey] = onLoad + buckets.onLoad[currentKey];
                         num++;
                     } else {
                         if (num > 0) {
@@ -261,6 +291,11 @@ exports.statisticList = function (req, res) {
                             result.networkData.push([Number(key), Number((buckets.network[key] / num).toFixed(2))]);
                             result.backendData.push([Number(key), Number((buckets.backend[key] / num).toFixed(2))]);
                             result.frontendData.push([Number(key), Number((buckets.frontend[key] / num).toFixed(2))]);
+                            result.redirectData.push([Number(key), Number((buckets.redirect[key] / num).toFixed(2))]);
+                            result.dnsData.push([Number(key), Number((buckets.dns[key] / num).toFixed(2))]);
+                            result.connectData.push([Number(key), Number((buckets.connect[key] / num).toFixed(2))]);
+                            result.processingData.push([Number(key), Number((buckets.processing[key] / num).toFixed(2))]);
+                            result.onLoadData.push([Number(key), Number((buckets.onLoad[key] / num).toFixed(2))]);
                             result.numData.push([Number(key), num]);
                         }
                         key = currentKey;
@@ -269,17 +304,32 @@ exports.statisticList = function (req, res) {
                         buckets.network[currentKey] = network;
                         buckets.backend[currentKey] = backend;
                         buckets.frontend[currentKey] = frontend;
+                        buckets.redirect[currentKey] = redirect;
+                        buckets.dns[currentKey] = dns;
+                        buckets.connect[currentKey] = connect;
+                        buckets.processing[currentKey] = processing;
+                        buckets.onLoad[currentKey] = onLoad;
                     }
                 }
                 result.pageLoadData.push([Number(key), Number((buckets.pageLoad[key] / num).toFixed(2))]);
                 result.networkData.push([Number(key), Number((buckets.network[key] / num).toFixed(2))]);
                 result.backendData.push([Number(key), Number((buckets.backend[key] / num).toFixed(2))]);
                 result.frontendData.push([Number(key), Number((buckets.frontend[key] / num).toFixed(2))]);
+                result.redirectData.push([Number(key), Number((buckets.redirect[key] / num).toFixed(2))]);
+                result.dnsData.push([Number(key), Number((buckets.dns[key] / num).toFixed(2))]);
+                result.connectData.push([Number(key), Number((buckets.connect[key] / num).toFixed(2))]);
+                result.processingData.push([Number(key), Number((buckets.processing[key] / num).toFixed(2))]);
+                result.onLoadData.push([Number(key), Number((buckets.onLoad[key] / num).toFixed(2))]);
                 result.numData.push([Number(key), num]);
                 result.statisticData.pageLoad = (result.statisticData.pageLoad / result.statisticData.sum).toFixed(2);
                 result.statisticData.network = (result.statisticData.network / result.statisticData.sum).toFixed(2);
                 result.statisticData.backend = (result.statisticData.backend / result.statisticData.sum).toFixed(2);
                 result.statisticData.frontend = (result.statisticData.frontend / result.statisticData.sum).toFixed(2);
+                result.statisticData.redirect = (result.statisticData.redirect / result.statisticData.sum).toFixed(2);
+                result.statisticData.dns = (result.statisticData.dns / result.statisticData.sum).toFixed(2);
+                result.statisticData.connect = (result.statisticData.connect / result.statisticData.sum).toFixed(2);
+                result.statisticData.processing = (result.statisticData.processing / result.statisticData.sum).toFixed(2);
+                result.statisticData.onLoad = (result.statisticData.onLoad / result.statisticData.sum).toFixed(2);
                 res.jsonp(result);
             }
         });

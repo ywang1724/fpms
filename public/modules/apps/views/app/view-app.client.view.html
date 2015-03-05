@@ -166,6 +166,50 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="alert alert-warning" bs-tooltip="redirectTooltip">
+                            平均页面跳转耗时
+                            <div class="large">
+                                {{statisticData.redirect}} ms
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="alert alert-warning" bs-tooltip="dnsTooltip">
+                            平均域名查询耗时
+                            <div class="large">
+                                {{statisticData.dns}} ms
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="alert alert-warning" bs-tooltip="connectTooltip">
+                            平均连接耗时
+                            <div class="large">
+                                {{statisticData.connect}} ms
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="alert alert-warning" bs-tooltip="processingTooltip">
+                            平均DOM解析耗时
+                            <div class="large">
+                                {{statisticData.processing}} ms
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="alert alert-warning" bs-tooltip="onLoadTooltip">
+                            平均页面渲染耗时
+                            <div class="large">
+                                {{statisticData.onLoad}} ms
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </tab>
             <tab select="reflow()">
                 <tab-heading>

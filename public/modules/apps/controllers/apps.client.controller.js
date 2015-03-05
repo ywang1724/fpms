@@ -150,6 +150,11 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 $scope.chartConfig.series[2].data = result.networkData;
                                 $scope.chartConfig.series[3].data = result.backendData;
                                 $scope.chartConfig.series[4].data = result.frontendData;
+                                $scope.chartConfig.series[5].data = result.redirectData;
+                                $scope.chartConfig.series[6].data = result.dnsData;
+                                $scope.chartConfig.series[7].data = result.connectData;
+                                $scope.chartConfig.series[8].data = result.processingData;
+                                $scope.chartConfig.series[9].data = result.onLoadData;
                                 $scope.timingPie.series[0].data = [
                                     ['网络', (result.statisticData.network / result.statisticData.pageLoad) * 100],
                                     ['后端', (result.statisticData.backend / result.statisticData.pageLoad) * 100],
@@ -261,6 +266,41 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     valueSuffix: ' ms'
                                 },
                                 data: []
+                            }, {
+                                name: '平均页面跳转耗时',
+                                type: 'spline',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '平均域名查询耗时',
+                                type: 'spline',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '平均连接耗时',
+                                type: 'spline',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '平均DOM解析耗时',
+                                type: 'spline',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '平均页面渲染耗时',
+                                type: 'spline',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
                             }],
                             title: {
                                 text: '页面性能总体趋势图'
@@ -367,6 +407,21 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         };
         $scope.frontendTooltip = {
             'title': '包括DOM加载、页面渲染耗时'
+        };
+        $scope.redirectTooltip = {
+            'title': '页面页面跳转耗时'
+        };
+        $scope.dnsTooltip = {
+            'title': '域名查询耗时'
+        };
+        $scope.connectTooltip = {
+            'title': '请求连接耗时'
+        };
+        $scope.processingTooltip = {
+            'title': 'DOM加载耗时'
+        };
+        $scope.onLoadTooltip = {
+            'title': '页面渲染耗时'
         };
 
         $scope.clip = function () {
