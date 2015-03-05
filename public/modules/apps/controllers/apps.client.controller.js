@@ -385,7 +385,16 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                         $scope.timingArea = {
                             options: {
                                 chart: {
+                                    type: 'areaspline',
                                     zoomType: 'x'
+                                },
+                                plotOptions: {
+                                    areaspline: {
+                                        fillOpacity: 0.5,
+                                        marker: {
+                                            enabled: false
+                                        }
+                                    }
                                 },
                                 tooltip: {
                                     shared: true
@@ -393,27 +402,6 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                             },
                             credits: {
                                 enabled: false
-                            },
-                            plotOptions: {
-                                area: {
-                                    fillColor: {
-                                        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1},
-                                        stops: [
-                                            [0, Highcharts.getOptions().colors[0]],
-                                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                                        ]
-                                    },
-                                    marker: {
-                                        radius: 2
-                                    },
-                                    lineWidth: 1,
-                                    states: {
-                                        hover: {
-                                            lineWidth: 1
-                                        }
-                                    },
-                                    threshold: null
-                                }
                             },
                             xAxis: {
                                 title: {
@@ -429,63 +417,54 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                             },
                             series: [{
                                 name: '总耗时',
-                                type: 'area',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
                                 name: '网络耗时',
-                                type: 'area',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
                                 name: '后端耗时',
-                                type: 'area',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
                                 name: '前端耗时',
-                                type: 'area',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
                                 name: '页面跳转耗时',
-                                type: 'area',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
                                 name: '域名查询耗时',
-                                type: 'area',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
                                 name: '连接耗时',
-                                type: 'area',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
                                 name: 'DOM解析耗时',
-                                type: 'area',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
                                 name: '页面渲染耗时',
-                                type: 'area',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
