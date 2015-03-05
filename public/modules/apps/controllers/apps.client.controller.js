@@ -78,6 +78,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
         // Find existing App
         $scope.findOne = function () {
+            $scope.showData = true;
             $scope.app = Apps.get({
                 appId: $stateParams.appId
             });
@@ -106,6 +107,13 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                             {'name': '日', 'id': 'day'}, {'name': '月', 'id': 'month'}, {'name': '年', 'id': 'year'}
                         ];
                         $scope.selectInterval = $scope.intervals[0];
+                        $scope.browsers = [
+                            {'name': '全部', 'id': ['Internet Explorer', 'Chrome', 'Android Webkit Browser', 'Firefox', 'Safari']},
+                            {'name': 'Internet Explorer', 'id': ['Internet Explorer']}, {'name': 'Chrome', 'id': ['Chrome']},
+                            {'name': 'Android Webkit Browser', 'id': ['Android Webkit Browser']},
+                            {'name': 'Firefox', 'id': ['Firefox']}, {'name': 'Safari', 'id': ['Safari']}
+                        ];
+                        $scope.selectBrowser = $scope.browsers[0];
                         // 日期范围初始化
                         var now = new Date();
                         $scope.nowDate = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
@@ -143,32 +151,38 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     pageId: $scope.selectPage._id,
                                     fromDate: new Date(trueFromDate),
                                     untilDate: new Date(trueUntilDate),
-                                    interval: $scope.selectInterval.id
+                                    interval: $scope.selectInterval.id,
+                                    browser: $scope.selectBrowser.id
                                 }
                             }).success(function (result) {
-                                $scope.chartConfig.series[0].data = result.numData;
-                                $scope.chartConfig.series[1].data = result.pageLoadData;
-                                $scope.chartConfig.series[2].data = result.networkData;
-                                $scope.chartConfig.series[3].data = result.backendData;
-                                $scope.chartConfig.series[4].data = result.frontendData;
-                                $scope.chartConfig.series[5].data = result.redirectData;
-                                $scope.chartConfig.series[6].data = result.dnsData;
-                                $scope.chartConfig.series[7].data = result.connectData;
-                                $scope.chartConfig.series[8].data = result.processingData;
-                                $scope.chartConfig.series[9].data = result.onLoadData;
-                                $scope.timingPie.series[0].data = [
-                                    ['网络', (result.statisticData.network / result.statisticData.pageLoad) * 100],
-                                    ['后端', (result.statisticData.backend / result.statisticData.pageLoad) * 100],
-                                    {
-                                        name: '前端',
-                                        y: (result.statisticData.frontend / result.statisticData.pageLoad) *100,
-                                        sliced: true,
-                                        selected: true
-                                    },
-                                    ['其它', ((result.statisticData.pageLoad - result.statisticData.network -
-                                    result.statisticData.backend - result.statisticData.frontend) /
-                                    result.statisticData.pageLoad) * 100]];
-                                $scope.statisticData = result.statisticData;
+                                if (result.statisticData.sum > 0) {
+                                    $scope.chartConfig.series[0].data = result.numData;
+                                    $scope.chartConfig.series[1].data = result.pageLoadData;
+                                    $scope.chartConfig.series[2].data = result.networkData;
+                                    $scope.chartConfig.series[3].data = result.backendData;
+                                    $scope.chartConfig.series[4].data = result.frontendData;
+                                    $scope.chartConfig.series[5].data = result.redirectData;
+                                    $scope.chartConfig.series[6].data = result.dnsData;
+                                    $scope.chartConfig.series[7].data = result.connectData;
+                                    $scope.chartConfig.series[8].data = result.processingData;
+                                    $scope.chartConfig.series[9].data = result.onLoadData;
+                                    $scope.timingPie.series[0].data = [
+                                        ['网络', (result.statisticData.network / result.statisticData.pageLoad) * 100],
+                                        ['后端', (result.statisticData.backend / result.statisticData.pageLoad) * 100],
+                                        {
+                                            name: '前端',
+                                            y: (result.statisticData.frontend / result.statisticData.pageLoad) *100,
+                                            sliced: true,
+                                            selected: true
+                                        },
+                                        ['其它', ((result.statisticData.pageLoad - result.statisticData.network -
+                                        result.statisticData.backend - result.statisticData.frontend) /
+                                        result.statisticData.pageLoad) * 100]];
+                                    $scope.statisticData = result.statisticData;
+                                    $scope.showData = true;
+                                } else {
+                                    $scope.showData = false;
+                                }
                             });
                         };
 
@@ -188,7 +202,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                                         params: {
                                                             pageId: $scope.selectPage._id,
                                                             dateNumber: this.category,
-                                                            interval: $scope.selectInterval.id
+                                                            interval: $scope.selectInterval.id,
+                                                            browser: $scope.selectBrowser.id
                                                         }
                                                     }).success(function (result) {
                                                         $scope.details = result.data;

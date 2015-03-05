@@ -145,7 +145,8 @@ exports.read = function (req, res) {
  * List of Timings
  */
 exports.statisticList = function (req, res) {
-    var pages = (typeof req.query.pageId === 'string') ? [req.query.pageId] : req.query.pageId;
+    var pages = (typeof req.query.pageId === 'string') ? [req.query.pageId] : req.query.pageId,
+        browsers = (typeof req.query.browser === 'string') ? [req.query.browser] : req.query.browser;
     if (req.param('dateNumber')) {
         var gteDate = new Date(Number(req.param('dateNumber'))), ltDate;
         switch (req.param('interval')) {
@@ -161,6 +162,7 @@ exports.statisticList = function (req, res) {
         }
         Timing.find({
             page: {$in: pages},
+            'ui.browser': {$in: browsers},
             created: {
                 $gte: gteDate,
                 $lt: ltDate
@@ -198,6 +200,7 @@ exports.statisticList = function (req, res) {
     } else {
         Timing.find({
             page: {$in: pages},
+            'ui.browser': {$in: browsers},
             created: {$gte: new Date(req.param('fromDate')), $lt: new Date(req.param('untilDate'))}
         }).sort('created').populate('navTiming').exec(function (err, timings) {
             if (err) {
