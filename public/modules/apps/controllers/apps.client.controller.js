@@ -113,6 +113,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                         $scope.untilDate = $scope.nowDate;
 
                         var getTimings = function () {
+                            $scope.details = [];
                             var trueFromDate, trueUntilDate;
                             switch ($scope.selectInterval.id) {
                                 case 'day':
@@ -191,6 +192,30 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                                         }
                                                     }).success(function (result) {
                                                         $scope.details = result.data;
+                                                        var pageLoad = [], network = [], backend = [], frontend = [],
+                                                            redirect = [], dns = [], connect = [], processing = [],
+                                                            onLoad = [];
+                                                        for (var i = 0; i < result.data.length; i++) {
+                                                            var dateNum = Date.parse(result.data[i].created);
+                                                            pageLoad.push([dateNum, result.data[i].pageLoad]);
+                                                            network.push([dateNum, result.data[i].network]);
+                                                            backend.push([dateNum, result.data[i].backend]);
+                                                            frontend.push([dateNum, result.data[i].frontend]);
+                                                            redirect.push([dateNum, result.data[i].redirect]);
+                                                            dns.push([dateNum, result.data[i].dns]);
+                                                            connect.push([dateNum, result.data[i].connect]);
+                                                            processing.push([dateNum, result.data[i].processing]);
+                                                            onLoad.push([dateNum, result.data[i].onLoad]);
+                                                        }
+                                                        $scope.timingArea.series[0].data = pageLoad;
+                                                        $scope.timingArea.series[1].data = network;
+                                                        $scope.timingArea.series[2].data = backend;
+                                                        $scope.timingArea.series[3].data = frontend;
+                                                        $scope.timingArea.series[4].data = redirect;
+                                                        $scope.timingArea.series[5].data = dns;
+                                                        $scope.timingArea.series[6].data = connect;
+                                                        $scope.timingArea.series[7].data = processing;
+                                                        $scope.timingArea.series[8].data = onLoad;
                                                     });
                                                 }
                                             }
@@ -341,6 +366,119 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 name: '占总耗时比率',
                                 data: []
                             }]
+                        };
+                        $scope.timingArea = {
+                            options: {
+                                chart: {
+                                    zoomType: 'x'
+                                },
+                                tooltip: {
+                                    shared: true
+                                }
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            plotOptions: {
+                                area: {
+                                    fillColor: {
+                                        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1},
+                                        stops: [
+                                            [0, Highcharts.getOptions().colors[0]],
+                                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                        ]
+                                    },
+                                    marker: {
+                                        radius: 2
+                                    },
+                                    lineWidth: 1,
+                                    states: {
+                                        hover: {
+                                            lineWidth: 1
+                                        }
+                                    },
+                                    threshold: null
+                                }
+                            },
+                            xAxis: {
+                                title: {
+                                    text: '日期',
+                                    align: 'high'
+                                },
+                                type: 'datetime'
+                            },
+                            yAxis: {
+                                title: {
+                                    text: '耗时（ms）'
+                                }
+                            },
+                            series: [{
+                                name: '总耗时',
+                                type: 'area',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '网络耗时',
+                                type: 'area',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '后端耗时',
+                                type: 'area',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '前端耗时',
+                                type: 'area',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '页面跳转耗时',
+                                type: 'area',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '域名查询耗时',
+                                type: 'area',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '连接耗时',
+                                type: 'area',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: 'DOM解析耗时',
+                                type: 'area',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '页面渲染耗时',
+                                type: 'area',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }],
+                            title: {
+                                text: '页面性能趋势图'
+                            }
                         };
                         $scope.refrashChart = getTimings;
                         getTimings();
