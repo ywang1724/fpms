@@ -108,10 +108,10 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                         ];
                         $scope.selectInterval = $scope.intervals[0];
                         $scope.browsers = [
-                            {'name': '全部', 'id': ['Internet Explorer', 'Chrome', 'Android Webkit Browser', 'Firefox', 'Safari']},
-                            {'name': 'Internet Explorer', 'id': ['Internet Explorer']}, {'name': 'Chrome', 'id': ['Chrome']},
-                            {'name': 'Android Webkit Browser', 'id': ['Android Webkit Browser']},
-                            {'name': 'Firefox', 'id': ['Firefox']}, {'name': 'Safari', 'id': ['Safari']}
+                            {'name': '全部', 'id': 'all'},
+                            {'name': 'Internet Explorer', 'id': 'Internet Explorer'}, {'name': 'Chrome', 'id': 'Chrome'},
+                            {'name': 'Android Webkit Browser', 'id': 'Android Webkit Browser'},
+                            {'name': 'Firefox', 'id': 'Firefox'}, {'name': 'Safari', 'id': 'Safari'}
                         ];
                         $scope.selectBrowser = $scope.browsers[0];
                         $scope.statistics = [
