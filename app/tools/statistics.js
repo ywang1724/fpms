@@ -1,14 +1,6 @@
 'use strict';
 
 /**
- * 获取平均值
- */
-exports.mean = function (arr) {
-    if (arr.length === 0) return null;
-    return sum(arr) / arr.length;
-};
-
-/**
  * 求和
  */
 var sum = function (arr) {
@@ -17,6 +9,34 @@ var sum = function (arr) {
         value += arr[i];
     }
     return value;
+};
+
+/**
+ * 获取分位数（已排序）
+ */
+var quantileSorted = function (arr, p) {
+    var idx = (arr.length) * p;
+    if (p < 0 || p > 1) {
+        return null;
+    } else if (p === 1) {
+        return arr[arr.length - 1];
+    } else if (p === 0) {
+        return arr[0];
+    } else if (idx % 1 !== 0) {
+        return arr[Math.ceil(idx) - 1];
+    } else if (arr.length % 2 === 0) {
+        return (arr[idx - 1] + arr[idx]) / 2;
+    } else {
+        return arr[idx];
+    }
+};
+
+/**
+ * 获取平均值
+ */
+exports.mean = function (arr) {
+    if (arr.length === 0) return null;
+    return sum(arr) / arr.length;
 };
 
 /**
@@ -48,25 +68,5 @@ exports.quantile = function (arr, p) {
         return results;
     } else {
         return quantileSorted(sorted, p);
-    }
-};
-
-/**
- * 获取分位数（已排序）
- */
-var quantileSorted = function (arr, p) {
-    var idx = (arr.length) * p;
-    if (p < 0 || p > 1) {
-        return null;
-    } else if (p === 1) {
-        return arr[arr.length - 1];
-    } else if (p === 0) {
-        return arr[0];
-    } else if (idx % 1 !== 0) {
-        return arr[Math.ceil(idx) - 1];
-    } else if (arr.length % 2 === 0) {
-        return (arr[idx - 1] + arr[idx]) / 2;
-    } else {
-        return arr[idx];
     }
 };

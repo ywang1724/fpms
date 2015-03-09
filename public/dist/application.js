@@ -202,6 +202,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
         // Find existing App
         $scope.findOne = function () {
+            $scope.showData = true;
             $scope.app = Apps.get({
                 appId: $stateParams.appId
             });
@@ -230,6 +231,18 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                             {'name': '日', 'id': 'day'}, {'name': '月', 'id': 'month'}, {'name': '年', 'id': 'year'}
                         ];
                         $scope.selectInterval = $scope.intervals[0];
+                        $scope.browsers = [
+                            {'name': '全部', 'id': ['Internet Explorer', 'Chrome', 'Android Webkit Browser', 'Firefox', 'Safari']},
+                            {'name': 'Internet Explorer', 'id': ['Internet Explorer']}, {'name': 'Chrome', 'id': ['Chrome']},
+                            {'name': 'Android Webkit Browser', 'id': ['Android Webkit Browser']},
+                            {'name': 'Firefox', 'id': ['Firefox']}, {'name': 'Safari', 'id': ['Safari']}
+                        ];
+                        $scope.selectBrowser = $scope.browsers[0];
+                        $scope.statistics = [
+                            {'name': '平均值', 'id': 'mean'}, {'name': 'p50', 'id': 'median'},
+                            {'name': 'p90', 'id': 'quantile_90'}
+                        ];
+                        $scope.selectStatistic = $scope.statistics[0];
                         // 日期范围初始化
                         var now = new Date();
                         $scope.nowDate = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
@@ -237,6 +250,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                         $scope.untilDate = $scope.nowDate;
 
                         var getTimings = function () {
+                            $scope.details = [];
                             var trueFromDate, trueUntilDate;
                             switch ($scope.selectInterval.id) {
                                 case 'day':
@@ -261,37 +275,80 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     $scope.chartConfig.options.tooltip.xDateFormat = '%Y';
                                     break;
                             }
+                            console.log($scope.chartConfig);
+                            switch ($scope.selectStatistic.id) {
+                                case 'mean':
+                                    $scope.chartConfig.title.text = '页面性能总体趋势图（平均值）';
+                                    break;
+                                case 'median':
+                                    $scope.chartConfig.title.text = '页面性能总体趋势图（p50）';
+                                    break;
+                                case 'quantile_90':
+                                    $scope.chartConfig.title.text = '页面性能总体趋势图（p90）';
+                                    break;
+                            }
                             $http.get('timings', {
                                 params: {
                                     pageId: $scope.selectPage._id,
                                     fromDate: new Date(trueFromDate),
                                     untilDate: new Date(trueUntilDate),
-                                    interval: $scope.selectInterval.id
+                                    interval: $scope.selectInterval.id,
+                                    browser: $scope.selectBrowser.id,
+                                    statistic: $scope.selectStatistic.id
                                 }
                             }).success(function (result) {
-                                $scope.chartConfig.series[0].data = result.numData;
-                                $scope.chartConfig.series[1].data = result.pageLoadData;
-                                $scope.chartConfig.series[2].data = result.networkData;
-                                $scope.chartConfig.series[3].data = result.backendData;
-                                $scope.chartConfig.series[4].data = result.frontendData;
-                                $scope.chartConfig.series[5].data = result.redirectData;
-                                $scope.chartConfig.series[6].data = result.dnsData;
-                                $scope.chartConfig.series[7].data = result.connectData;
-                                $scope.chartConfig.series[8].data = result.processingData;
-                                $scope.chartConfig.series[9].data = result.onLoadData;
-                                $scope.timingPie.series[0].data = [
-                                    ['网络', (result.statisticData.network / result.statisticData.pageLoad) * 100],
-                                    ['后端', (result.statisticData.backend / result.statisticData.pageLoad) * 100],
-                                    {
-                                        name: '前端',
-                                        y: (result.statisticData.frontend / result.statisticData.pageLoad) *100,
-                                        sliced: true,
-                                        selected: true
-                                    },
-                                    ['其它', ((result.statisticData.pageLoad - result.statisticData.network -
-                                    result.statisticData.backend - result.statisticData.frontend) /
-                                    result.statisticData.pageLoad) * 100]];
-                                $scope.statisticData = result.statisticData;
+                                if (result.statisticData.sum > 0) {
+                                    $scope.chartConfig.series[0].data = result.numData;
+                                    $scope.chartConfig.series[1].data = result.pageLoadData;
+                                    $scope.chartConfig.series[2].data = result.networkData;
+                                    $scope.chartConfig.series[3].data = result.backendData;
+                                    $scope.chartConfig.series[4].data = result.frontendData;
+                                    $scope.chartConfig.series[5].data = result.redirectData;
+                                    $scope.chartConfig.series[6].data = result.dnsData;
+                                    $scope.chartConfig.series[7].data = result.connectData;
+                                    $scope.chartConfig.series[8].data = result.processingData;
+                                    $scope.chartConfig.series[9].data = result.onLoadData;
+                                    $scope.timingPie.series[0].data = [
+                                        ['网络', (result.statisticData.network / result.statisticData.pageLoad) * 100],
+                                        ['后端', (result.statisticData.backend / result.statisticData.pageLoad) * 100],
+                                        {
+                                            name: '前端',
+                                            y: (result.statisticData.frontend / result.statisticData.pageLoad) *100,
+                                            sliced: true,
+                                            selected: true
+                                        },
+                                        ['其它', ((result.statisticData.pageLoad - result.statisticData.network -
+                                        result.statisticData.backend - result.statisticData.frontend) /
+                                        result.statisticData.pageLoad) * 100]];
+                                    $scope.timingPie50.series[0].data = [
+                                        ['网络', (result.statisticData.network50 / result.statisticData.pageLoad50) * 100],
+                                        ['后端', (result.statisticData.backend50 / result.statisticData.pageLoad50) * 100],
+                                        {
+                                            name: '前端',
+                                            y: (result.statisticData.frontend50 / result.statisticData.pageLoad50) *100,
+                                            sliced: true,
+                                            selected: true
+                                        },
+                                        ['其它', ((result.statisticData.pageLoad50 - result.statisticData.network50 -
+                                        result.statisticData.backend50 - result.statisticData.frontend50) /
+                                        result.statisticData.pageLoad50) * 100]];
+                                    $scope.timingPie90.series[0].data = [
+                                        ['网络', (result.statisticData.network90 / result.statisticData.pageLoad90) * 100],
+                                        ['后端', (result.statisticData.backend90 / result.statisticData.pageLoad90) * 100],
+                                        {
+                                            name: '前端',
+                                            y: (result.statisticData.frontend90 / result.statisticData.pageLoad90) *100,
+                                            sliced: true,
+                                            selected: true
+                                        },
+                                        ['其它', ((result.statisticData.pageLoad90 - result.statisticData.network90 -
+                                        result.statisticData.backend90 - result.statisticData.frontend90) /
+                                        result.statisticData.pageLoad90) * 100]];
+                                    $scope.statisticData = result.statisticData;
+                                    $scope.showData = true;
+                                } else {
+                                    $scope.showData = false;
+                                }
                             });
                         };
 
@@ -311,10 +368,35 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                                         params: {
                                                             pageId: $scope.selectPage._id,
                                                             dateNumber: this.category,
-                                                            interval: $scope.selectInterval.id
+                                                            interval: $scope.selectInterval.id,
+                                                            browser: $scope.selectBrowser.id
                                                         }
                                                     }).success(function (result) {
                                                         $scope.details = result.data;
+                                                        var pageLoad = [], network = [], backend = [], frontend = [],
+                                                            redirect = [], dns = [], connect = [], processing = [],
+                                                            onLoad = [];
+                                                        for (var i = 0; i < result.data.length; i++) {
+                                                            var dateNum = Date.parse(result.data[i].created);
+                                                            pageLoad.push([dateNum, result.data[i].pageLoad]);
+                                                            network.push([dateNum, result.data[i].network]);
+                                                            backend.push([dateNum, result.data[i].backend]);
+                                                            frontend.push([dateNum, result.data[i].frontend]);
+                                                            redirect.push([dateNum, result.data[i].redirect]);
+                                                            dns.push([dateNum, result.data[i].dns]);
+                                                            connect.push([dateNum, result.data[i].connect]);
+                                                            processing.push([dateNum, result.data[i].processing]);
+                                                            onLoad.push([dateNum, result.data[i].onLoad]);
+                                                        }
+                                                        $scope.timingArea.series[0].data = pageLoad;
+                                                        $scope.timingArea.series[1].data = network;
+                                                        $scope.timingArea.series[2].data = backend;
+                                                        $scope.timingArea.series[3].data = frontend;
+                                                        $scope.timingArea.series[4].data = redirect;
+                                                        $scope.timingArea.series[5].data = dns;
+                                                        $scope.timingArea.series[6].data = connect;
+                                                        $scope.timingArea.series[7].data = processing;
+                                                        $scope.timingArea.series[8].data = onLoad;
                                                     });
                                                 }
                                             }
@@ -363,63 +445,63 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 yAxis: 1,
                                 data: []
                             }, {
-                                name: '平均总耗时',
+                                name: '总耗时',
                                 type: 'spline',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
-                                name: '平均网络耗时',
+                                name: '网络耗时',
                                 type: 'spline',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
-                                name: '平均后端耗时',
+                                name: '后端耗时',
                                 type: 'spline',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
-                                name: '平均前端耗时',
+                                name: '前端耗时',
                                 type: 'spline',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
-                                name: '平均页面跳转耗时',
+                                name: '页面跳转耗时',
                                 type: 'spline',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
-                                name: '平均域名查询耗时',
+                                name: '域名查询耗时',
                                 type: 'spline',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
-                                name: '平均连接耗时',
+                                name: '连接耗时',
                                 type: 'spline',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
-                                name: '平均DOM解析耗时',
+                                name: 'DOM解析耗时',
                                 type: 'spline',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
-                                name: '平均页面渲染耗时',
+                                name: '页面渲染耗时',
                                 type: 'spline',
                                 tooltip: {
                                     valueSuffix: ' ms'
@@ -427,7 +509,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 data: []
                             }],
                             title: {
-                                text: '页面性能总体趋势图'
+                                text: ''
                             }
                         };
                         $scope.timingPie = {
@@ -458,13 +540,177 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 enabled: false
                             },
                             title: {
-                                text: '页面加载耗时分布图'
+                                text: '页面加载耗时分布图(平均值)'
                             },
                             series: [{
                                 type: 'pie',
                                 name: '占总耗时比率',
                                 data: []
                             }]
+                        };
+                        $scope.timingPie50 = {
+                            options: {
+                                chart: {
+                                    plotBackgroundColor: null,
+                                    plotBorderWidth: null,
+                                    plotShadow: false
+                                },
+                                tooltip: {
+                                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                                },
+                                plotOptions: {
+                                    pie: {
+                                        allowPointSelect: true,
+                                        cursor: 'pointer',
+                                        dataLabels: {
+                                            enabled: true,
+                                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                            style: {
+                                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            title: {
+                                text: '页面加载耗时分布图(p50)'
+                            },
+                            series: [{
+                                type: 'pie',
+                                name: '占总耗时比率',
+                                data: []
+                            }]
+                        };
+                        $scope.timingPie90 = {
+                            options: {
+                                chart: {
+                                    plotBackgroundColor: null,
+                                    plotBorderWidth: null,
+                                    plotShadow: false
+                                },
+                                tooltip: {
+                                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                                },
+                                plotOptions: {
+                                    pie: {
+                                        allowPointSelect: true,
+                                        cursor: 'pointer',
+                                        dataLabels: {
+                                            enabled: true,
+                                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                            style: {
+                                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            title: {
+                                text: '页面加载耗时分布图(p90)'
+                            },
+                            series: [{
+                                type: 'pie',
+                                name: '占总耗时比率',
+                                data: []
+                            }]
+                        };
+                        $scope.timingArea = {
+                            options: {
+                                chart: {
+                                    type: 'areaspline',
+                                    zoomType: 'x'
+                                },
+                                plotOptions: {
+                                    areaspline: {
+                                        fillOpacity: 0.5,
+                                        marker: {
+                                            enabled: false
+                                        }
+                                    }
+                                },
+                                tooltip: {
+                                    shared: true
+                                }
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            xAxis: {
+                                title: {
+                                    text: '日期',
+                                    align: 'high'
+                                },
+                                type: 'datetime'
+                            },
+                            yAxis: {
+                                title: {
+                                    text: '耗时（ms）'
+                                }
+                            },
+                            series: [{
+                                name: '总耗时',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '网络耗时',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '后端耗时',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '前端耗时',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '页面跳转耗时',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '域名查询耗时',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '连接耗时',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: 'DOM解析耗时',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: '页面渲染耗时',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }],
+                            title: {
+                                text: '页面性能趋势图'
+                            }
                         };
                         $scope.refrashChart = getTimings;
                         getTimings();
@@ -520,6 +766,9 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             });
         };
 
+        $scope.sumTooltip = {
+            'title': '页面请求总数'
+        };
         $scope.pageLoadTooltip = {
             'title': '页面请求加载总耗时'
         };
