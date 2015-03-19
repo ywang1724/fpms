@@ -393,7 +393,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 chart: {
                                     plotBackgroundColor: null,
                                     plotBorderWidth: null,
-                                    plotShadow: false
+                                    plotShadow: false,
+                                    marginTop: 30
                                 },
                                 tooltip: {
                                     pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -407,6 +408,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                             format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                                             style: {
                                                 color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+
                                             }
                                         }
                                     }
@@ -416,7 +418,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 enabled: false
                             },
                             title: {
-                                text: '页面加载耗时分布图(平均值)'
+                                text: '页面加载耗时分布图(平均值)',
                             },
                             series: [{
                                 type: 'pie',
@@ -429,7 +431,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 chart: {
                                     plotBackgroundColor: null,
                                     plotBorderWidth: null,
-                                    plotShadow: false
+                                    plotShadow: false,
+                                    marginTop: 30
                                 },
                                 tooltip: {
                                     pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -465,7 +468,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 chart: {
                                     plotBackgroundColor: null,
                                     plotBorderWidth: null,
-                                    plotShadow: false
+                                    plotShadow: false,
+                                    marginTop: 30
                                 },
                                 tooltip: {
                                     pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
