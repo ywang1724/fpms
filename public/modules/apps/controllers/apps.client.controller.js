@@ -418,7 +418,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 enabled: false
                             },
                             title: {
-                                text: '页面加载耗时分布图(平均值)',
+                                text: '页面加载耗时分布图(平均值)'
                             },
                             series: [{
                                 type: 'pie',
