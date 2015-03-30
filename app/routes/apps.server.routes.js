@@ -4,7 +4,7 @@ module.exports = function(app) {
 	var users = require('../../app/controllers/users.server.controller');
 	var apps = require('../../app/controllers/apps.server.controller');
 
-	// Apps Routes
+	// 应用路由
 	app.route('/apps')
 		.get(users.requiresLogin, apps.list)
 		.post(users.requiresLogin, apps.create);
@@ -14,10 +14,10 @@ module.exports = function(app) {
 		.put(users.requiresLogin, apps.hasAuthorization, apps.update)
 		.delete(users.requiresLogin, apps.hasAuthorization, apps.delete);
 
-	// Pages Routes
+	// 页面路由
 	app.route('/pages/:appId')
 		.get(users.requiresLogin, apps.pageList);
 
-	// Finish by binding the App middleware
+	// 绑定App中间件
 	app.param('appId', apps.appByID);
 };

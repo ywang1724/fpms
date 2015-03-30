@@ -1,6 +1,6 @@
 'use strict';
 /**
- * Module dependencies.
+ * 加载依赖模块
  */
 var init = require('./config/init')(),
 	config = require('./config/config'),
@@ -8,11 +8,11 @@ var init = require('./config/init')(),
 	chalk = require('chalk');
 
 /**
- * Main application entry file.
- * Please note that the order of loading is important.
+ * 主程序入口文件
+ * 加载顺序非常重要
  */
 
-// Bootstrap db connection
+// 启动数据库连接
 var db = mongoose.connect(config.db, function(err) {
 	if (err) {
 		console.error(chalk.red('Could not connect to MongoDB!'));
@@ -20,17 +20,17 @@ var db = mongoose.connect(config.db, function(err) {
 	}
 });
 
-// Init the express application
+// 初始化express框架应用
 var app = require('./config/express')(db);
 
-// Bootstrap passport config
+// 启动passport配置
 require('./config/passport')();
 
-// Start the app by listening on <port>
+// 启动应用并开启监听端口
 app.listen(config.port);
 
-// Expose app
+// 暴露app变量
 exports = module.exports = app;
 
-// Logging initialization
+// 打印应用启动日志
 console.log('FPMS started on port ' + config.port + ' and process.env.NODE_ENV = ' + process.env.NODE_ENV);

@@ -26,13 +26,16 @@ exports.create = function (req, res) {
             } else {
                 var rookie = JSON.parse(decodeURI(req.url.substring(req.url.indexOf('?') + 1)));
                 if (rookie.appHost === app.host) {
+                    //定义页面对象
                     var page = {};
+                    //查找Web应用对应页面，如果存在则返回，如果不存在则新建
                     Page.findOneAndUpdate({app: app, pathname: rookie.pathname}, page, {upsert: true})
                         .exec(function (err, obj) {
                             if (err) {
                                 console.log(errorHandler.getErrorMessage(err));
                             } else {
                                 page = obj;
+                                //新建导航计时文档
                                 var promise1 = NavTiming.create(rookie.navTiming, function (err, saved) {
                                     if (err) {
                                         console.log(errorHandler.getErrorMessage(err));
@@ -41,6 +44,7 @@ exports.create = function (req, res) {
                                         rookie.totalTime = saved.loadEventEnd - saved.navigationStart;
                                     }
                                 });
+                                //新建资源计时文档
                                 var promise2 = ResTiming.create(rookie.resTimings, function (err) {
                                     if (err) {
                                         console.log(errorHandler.getErrorMessage(err));
@@ -51,8 +55,10 @@ exports.create = function (req, res) {
                                         }
                                     }
                                 });
+                                //页面和用户相关信息赋值
                                 rookie.page = page;
                                 rookie.ui = detect.getUserInformation(rookie.userAgent, rookie.platform, req.ip);
+                                //按序存储数据
                                 Q.all([promise1, promise2]).then(function () {
                                     new Timing(rookie).save(function (err) {
                                         if (err) {
@@ -430,6 +436,7 @@ exports.timingByID = function (req, res, next, id) {
  * 获取rookie.js
  */
 exports.rookie = function (req, res) {
+    //配置文件参数
     var options = {
             root: process.env.NODE_ENV === 'production' ? 'static/dist/' : 'static/js/',
             dotfiles: 'allow',
@@ -440,7 +447,9 @@ exports.rookie = function (req, res) {
             }
         },
         fileName = 'rookie.js';
+    //存储appId到session
     req.session.appId = req.app._id;
+    //发送文件
     res.sendFile(fileName, options, function (err) {
         if (err) {
             if (err.code === 'ECONNABORT' && res.statusCode === 304) {

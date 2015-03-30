@@ -56,10 +56,10 @@ module.exports = function(db) {
 	// Showing stack errors
 	app.set('showStackError', true);
 
-	// Set swig as the template engine
+	// 设置swig为模板引擎
 	app.engine('server.view.html', consolidate[config.templateEngine]);
 
-	// Set views path and view engine
+	// 设置视图路径和视图引擎
 	app.set('view engine', 'server.view.html');
 	app.set('views', './app/views');
 
@@ -84,7 +84,7 @@ module.exports = function(db) {
 	// CookieParser should be above session
 	app.use(cookieParser());
 
-	// Express MongoDB session storage
+	// session存储
 	app.use(session({
 		saveUninitialized: true,
 		resave: true,
@@ -97,7 +97,7 @@ module.exports = function(db) {
 		name: config.sessionName
 	}));
 
-	// use passport session
+	// 使用passport session
 	app.use(passport.initialize());
 	app.use(passport.session());
 
@@ -111,7 +111,7 @@ module.exports = function(db) {
 	app.use(helmet.ienoopen());
 	app.disable('x-powered-by');
 
-	// Setting the app router and static folder
+	// 设置应用路由和静态资源文件夹
 	app.use(express.static(path.resolve('./public')));
 
 	// Globbing routing files
@@ -119,21 +119,21 @@ module.exports = function(db) {
 		require(path.resolve(routePath))(app);
 	});
 
-	// Assume 'not found' in the error msgs is a 404. this is somewhat silly, but valid, you can do whatever you like, set properties, use instanceof etc.
+	// 错误响应
 	app.use(function(err, req, res, next) {
-		// If the error object doesn't exists
+		// 错误不存在
 		if (!err) return next();
 
-		// Log it
+		// 打印错误
 		console.error(err.stack);
 
-		// Error page
+		// 错误页面
 		res.status(500).render('500', {
 			error: err.stack
 		});
 	});
 
-	// Assume 404 since no middleware responded
+	// 404响应
 	app.use(function(req, res) {
 		res.status(404).render('404', {
 			url: req.originalUrl,

@@ -3,7 +3,7 @@
 // Setting up route
 angular.module('users').config(['$stateProvider',
 	function($stateProvider) {
-		// Users state routing
+		// 用户路由
 		$stateProvider.
 		state('profile', {
 			url: '/settings/profile',

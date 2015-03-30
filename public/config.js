@@ -1,18 +1,18 @@
 'use strict';
 
-// Init the application configuration module for AngularJS application
+// 初始化应用配置模块
 var ApplicationConfiguration = (function() {
-	// Init module configuration options
+	// 初始化模块配置
 	var applicationModuleName = 'fpms';
 	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',
 		'ui.router', 'ui.bootstrap', 'ui.utils', 'datatables', 'mgcrea.ngStrap', 'ngLocale', 'highcharts-ng', 'ngClipboard'];
 
-	// Add a new vertical module
+	// 添加一个新的垂直模块
 	var registerModule = function(moduleName, dependencies) {
-		// Create angular module
+		// 添加angular模块
 		angular.module(moduleName, dependencies || []);
 
-		// Add the module to the AngularJS configuration file
+		// 添加模块到AngularJS配置文件
 		angular.module(applicationModuleName).requires.push(moduleName);
 	};
 
