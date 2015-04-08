@@ -151,29 +151,27 @@
                 <i class="fa fa-th"></i> 概况
             </tab-heading>
             <div class="row myMT16">
-                <div class="col-lg-12">
+                <div class="col-lg-4">
                     <div class="alert alert-info" bs-tooltip="sumTooltip">
-                        总请求数
+                        HTTP请求数
                         <div class="large">
-                            {{statisticData.sum}}
+                            {{statisticData.requests}}
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="alert alert-info" bs-tooltip="pageLoadTooltip">
-                        总耗时
+                <div class="col-lg-4">
+                    <div class="alert alert-warning" bs-tooltip="pageLoadTooltip">
+                        DNS查询时间
                         <div class="large">
-                            {{statisticData.pageLoad}} ms
+                            {{statisticData.dnsTime}} ms
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="alert alert-success" bs-tooltip="backendTooltip">
-                        后端耗时
+                <div class="col-lg-4">
+                    <div class="alert alert-warning" bs-tooltip="backendTooltip">
+                        请求连接时间
                         <div class="large">
-                            {{statisticData.backend}} ms
+                            {{statisticData.connectTime}} ms
                         </div>
                     </div>
                 </div>
@@ -181,6 +179,82 @@
             <div class="row">
                 <div class="col-lg-3">
                     <div class="alert alert-warning" bs-tooltip="networkTooltip">
+                        请求文档时间
+                        <div class="large">
+                            {{statisticData.requestTime}} ms
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="alert alert-warning" bs-tooltip="redirectTooltip">
+                        接收文档时间
+                        <div class="large">
+                            {{statisticData.receiveTime}} ms
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="alert alert-warning" bs-tooltip="dnsTooltip">
+                        解析文档时间
+                        <div class="large">
+                            {{statisticData.processTime}} ms
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="alert alert-warning" bs-tooltip="connectTooltip">
+                        页面可交互时间
+                        <div class="large">
+                            {{statisticData.interactiveTime}} ms
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="alert alert-warning" bs-tooltip="frontendTooltip">
+                        DOM Ready时间
+                        <div class="large">
+                            {{statisticData.domReadyTime}} ms
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="alert alert-warning" bs-tooltip="processingTooltip">
+                        资源完成加载时间
+                        <div class="large">
+                            {{statisticData.processing}} ms
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="alert alert-warning" bs-tooltip="onLoadTooltip">
+                        页面onLoad时间
+                        <div class="large">
+                            {{statisticData.onLoadTime}} ms
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="alert alert-warning" bs-tooltip="frontendTooltip">
+                        页面完全加载时间
+                        <div class="large">
+                            {{statisticData.pageLoadTime}} ms
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="alert alert-danger" bs-tooltip="processingTooltip">
+                        总耗时
+                        <div class="large">
+                            {{statisticData.pageLoad}} ms
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="alert alert-danger" bs-tooltip="onLoadTooltip">
                         网络耗时
                         <div class="large">
                             {{statisticData.network}} ms
@@ -188,7 +262,25 @@
                     </div>
                 </div>
                 <div class="col-lg-3">
-                    <div class="alert alert-warning" bs-tooltip="redirectTooltip">
+                    <div class="alert alert-danger" bs-tooltip="frontendTooltip">
+                        后端耗时
+                        <div class="large">
+                            {{statisticData.backend}} ms
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="alert alert-danger" bs-tooltip="processingTooltip">
+                        前端耗时
+                        <div class="large">
+                            {{statisticData.frontend}} ms
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="alert alert-danger" bs-tooltip="onLoadTooltip">
                         页面跳转耗时
                         <div class="large">
                             {{statisticData.redirect}} ms
@@ -196,42 +288,58 @@
                     </div>
                 </div>
                 <div class="col-lg-3">
-                    <div class="alert alert-warning" bs-tooltip="dnsTooltip">
-                        域名查询耗时
+                    <div class="alert alert-danger" bs-tooltip="frontendTooltip">
+                        DNS查询耗时
                         <div class="large">
                             {{statisticData.dns}} ms
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3">
-                    <div class="alert alert-warning" bs-tooltip="connectTooltip">
+                    <div class="alert alert-danger" bs-tooltip="processingTooltip">
                         连接耗时
                         <div class="large">
                             {{statisticData.connect}} ms
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="alert alert-danger" bs-tooltip="frontendTooltip">
-                        前端耗时
+                <div class="col-lg-3">
+                    <div class="alert alert-danger" bs-tooltip="onLoadTooltip">
+                        等待响应耗时
                         <div class="large">
-                            {{statisticData.frontend}} ms
+                            {{statisticData.waiting}} ms
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4">
+            </div>
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="alert alert-danger" bs-tooltip="frontendTooltip">
+                        接收文档耗时
+                        <div class="large">
+                            {{statisticData.receiving}} ms
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
                     <div class="alert alert-danger" bs-tooltip="processingTooltip">
-                        DOM解析耗时
+                        DOM处理耗时
                         <div class="large">
                             {{statisticData.processing}} ms
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-3">
                     <div class="alert alert-danger" bs-tooltip="onLoadTooltip">
-                        页面渲染耗时
+                        DOM内容加载耗时
+                        <div class="large">
+                            {{statisticData.contentLoaded}} ms
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="alert alert-danger" bs-tooltip="onLoadTooltip">
+                        load事件耗时
                         <div class="large">
                             {{statisticData.onLoad}} ms
                         </div>
