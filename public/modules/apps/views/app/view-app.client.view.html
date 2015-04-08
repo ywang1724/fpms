@@ -163,7 +163,7 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="alert alert-info" bs-tooltip="pageLoadTooltip">
-                        总耗时(平均值)
+                        总耗时
                         <div class="large">
                             {{statisticData.pageLoad}} ms
                         </div>
@@ -171,7 +171,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="alert alert-success" bs-tooltip="backendTooltip">
-                        后端耗时(平均值)
+                        后端耗时
                         <div class="large">
                             {{statisticData.backend}} ms
                         </div>
@@ -181,7 +181,7 @@
             <div class="row">
                 <div class="col-lg-3">
                     <div class="alert alert-warning" bs-tooltip="networkTooltip">
-                        网络耗时(平均值)
+                        网络耗时
                         <div class="large">
                             {{statisticData.network}} ms
                         </div>
@@ -189,7 +189,7 @@
                 </div>
                 <div class="col-lg-3">
                     <div class="alert alert-warning" bs-tooltip="redirectTooltip">
-                        页面跳转耗时(平均值)
+                        页面跳转耗时
                         <div class="large">
                             {{statisticData.redirect}} ms
                         </div>
@@ -197,7 +197,7 @@
                 </div>
                 <div class="col-lg-3">
                     <div class="alert alert-warning" bs-tooltip="dnsTooltip">
-                        域名查询耗时(平均值)
+                        域名查询耗时
                         <div class="large">
                             {{statisticData.dns}} ms
                         </div>
@@ -205,7 +205,7 @@
                 </div>
                 <div class="col-lg-3">
                     <div class="alert alert-warning" bs-tooltip="connectTooltip">
-                        连接耗时(平均值)
+                        连接耗时
                         <div class="large">
                             {{statisticData.connect}} ms
                         </div>
@@ -215,7 +215,7 @@
             <div class="row">
                 <div class="col-lg-4">
                     <div class="alert alert-danger" bs-tooltip="frontendTooltip">
-                        前端耗时(平均值)
+                        前端耗时
                         <div class="large">
                             {{statisticData.frontend}} ms
                         </div>
@@ -223,7 +223,7 @@
                 </div>
                 <div class="col-lg-4">
                     <div class="alert alert-danger" bs-tooltip="processingTooltip">
-                        DOM解析耗时(平均值)
+                        DOM解析耗时
                         <div class="large">
                             {{statisticData.processing}} ms
                         </div>
@@ -231,165 +231,9 @@
                 </div>
                 <div class="col-lg-4">
                     <div class="alert alert-danger" bs-tooltip="onLoadTooltip">
-                        页面渲染耗时(平均值)
+                        页面渲染耗时
                         <div class="large">
                             {{statisticData.onLoad}} ms
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="alert alert-info" bs-tooltip="pageLoadTooltip">
-                        总耗时(p50)
-                        <div class="large">
-                            {{statisticData.pageLoad50}} ms
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="alert alert-success" bs-tooltip="backendTooltip">
-                        后端耗时(p50)
-                        <div class="large">
-                            {{statisticData.backend50}} ms
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="alert alert-warning" bs-tooltip="networkTooltip">
-                        网络耗时(p50)
-                        <div class="large">
-                            {{statisticData.network50}} ms
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="alert alert-warning" bs-tooltip="redirectTooltip">
-                        页面跳转耗时(p50)
-                        <div class="large">
-                            {{statisticData.redirect50}} ms
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="alert alert-warning" bs-tooltip="dnsTooltip">
-                        域名查询耗时(p50)
-                        <div class="large">
-                            {{statisticData.dns50}} ms
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="alert alert-warning" bs-tooltip="connectTooltip">
-                        连接耗时(p50)
-                        <div class="large">
-                            {{statisticData.connect50}} ms
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="alert alert-danger" bs-tooltip="frontendTooltip">
-                        前端耗时(p50)
-                        <div class="large">
-                            {{statisticData.frontend50}} ms
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="alert alert-danger" bs-tooltip="processingTooltip">
-                        DOM解析耗时(p50)
-                        <div class="large">
-                            {{statisticData.processing50}} ms
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="alert alert-danger" bs-tooltip="onLoadTooltip">
-                        页面渲染耗时(p50)
-                        <div class="large">
-                            {{statisticData.onLoad50}} ms
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="alert alert-info" bs-tooltip="pageLoadTooltip">
-                        总耗时(p90)
-                        <div class="large">
-                            {{statisticData.pageLoad90}} ms
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="alert alert-success" bs-tooltip="backendTooltip">
-                        后端耗时(p90)
-                        <div class="large">
-                            {{statisticData.backend90}} ms
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="alert alert-warning" bs-tooltip="networkTooltip">
-                        网络耗时(p90)
-                        <div class="large">
-                            {{statisticData.network90}} ms
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="alert alert-warning" bs-tooltip="redirectTooltip">
-                        页面跳转耗时(p90)
-                        <div class="large">
-                            {{statisticData.redirect90}} ms
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="alert alert-warning" bs-tooltip="dnsTooltip">
-                        域名查询耗时(p90)
-                        <div class="large">
-                            {{statisticData.dns90}} ms
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="alert alert-warning" bs-tooltip="connectTooltip">
-                        连接耗时(p90)
-                        <div class="large">
-                            {{statisticData.connect90}} ms
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="alert alert-danger" bs-tooltip="frontendTooltip">
-                        前端耗时(p90)
-                        <div class="large">
-                            {{statisticData.frontend90}} ms
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="alert alert-danger" bs-tooltip="processingTooltip">
-                        DOM解析耗时(p90)
-                        <div class="large">
-                            {{statisticData.processing90}} ms
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="alert alert-danger" bs-tooltip="onLoadTooltip">
-                        页面渲染耗时(p90)
-                        <div class="large">
-                            {{statisticData.onLoad90}} ms
                         </div>
                     </div>
                 </div>
@@ -400,10 +244,6 @@
                 <i class="fa fa-pie-chart"></i> 分布
             </tab-heading>
             <highchart config="timingPie"></highchart>
-            <hr />
-            <highchart config="timingPie50"></highchart>
-            <hr />
-            <highchart config="timingPie90"></highchart>
         </tab>
     </tabset>
     <div class="alert alert-danger text-center" role="alert" data-ng-show="!showData">

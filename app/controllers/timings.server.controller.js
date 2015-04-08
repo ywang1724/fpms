@@ -64,6 +64,7 @@ exports.create = function (req, res) {
                                         if (err) {
                                             console.log(errorHandler.getErrorMessage(err));
                                         }
+                                        console.log(Date.now());
                                     });
                                 }, function (err) {
                                     if (err) {
@@ -361,6 +362,15 @@ exports.statisticList = function (req, res) {
                             result.connectData.push([Number(key), Number(statistics.mean(buckets.connect[key]).toFixed(2))]);
                             result.processingData.push([Number(key), Number(statistics.mean(buckets.processing[key]).toFixed(2))]);
                             result.onLoadData.push([Number(key), Number(statistics.mean(buckets.onLoad[key]).toFixed(2))]);
+                            result.statisticData.pageLoad = statistics.mean(tempArr.pageLoad).toFixed(2);
+                            result.statisticData.network = statistics.mean(tempArr.network).toFixed(2);
+                            result.statisticData.backend = statistics.mean(tempArr.backend).toFixed(2);
+                            result.statisticData.frontend = statistics.mean(tempArr.frontend).toFixed(2);
+                            result.statisticData.redirect = statistics.mean(tempArr.redirect).toFixed(2);
+                            result.statisticData.dns = statistics.mean(tempArr.dns).toFixed(2);
+                            result.statisticData.connect = statistics.mean(tempArr.connect).toFixed(2);
+                            result.statisticData.processing = statistics.mean(tempArr.processing).toFixed(2);
+                            result.statisticData.onLoad = statistics.mean(tempArr.onLoad).toFixed(2);
                             break;
                         case 'median':
                             result.pageLoadData.push([Number(key), Number(statistics.median(buckets.pageLoad[key]).toFixed(2))]);
@@ -372,6 +382,15 @@ exports.statisticList = function (req, res) {
                             result.connectData.push([Number(key), Number(statistics.median(buckets.connect[key]).toFixed(2))]);
                             result.processingData.push([Number(key), Number(statistics.median(buckets.processing[key]).toFixed(2))]);
                             result.onLoadData.push([Number(key), Number(statistics.median(buckets.onLoad[key]).toFixed(2))]);
+                            result.statisticData.pageLoad = statistics.median(tempArr.pageLoad).toFixed(2);
+                            result.statisticData.network = statistics.median(tempArr.network).toFixed(2);
+                            result.statisticData.backend = statistics.median(tempArr.backend).toFixed(2);
+                            result.statisticData.frontend = statistics.median(tempArr.frontend).toFixed(2);
+                            result.statisticData.redirect = statistics.median(tempArr.redirect).toFixed(2);
+                            result.statisticData.dns = statistics.median(tempArr.dns).toFixed(2);
+                            result.statisticData.connect = statistics.median(tempArr.connect).toFixed(2);
+                            result.statisticData.processing = statistics.median(tempArr.processing).toFixed(2);
+                            result.statisticData.onLoad = statistics.median(tempArr.onLoad).toFixed(2);
                             break;
                         case 'quantile_90':
                             result.pageLoadData.push([Number(key), Number(statistics.quantile(buckets.pageLoad[key], 0.9).toFixed(2))]);
@@ -383,36 +402,18 @@ exports.statisticList = function (req, res) {
                             result.connectData.push([Number(key), Number(statistics.quantile(buckets.connect[key], 0.9).toFixed(2))]);
                             result.processingData.push([Number(key), Number(statistics.quantile(buckets.processing[key], 0.9).toFixed(2))]);
                             result.onLoadData.push([Number(key), Number(statistics.quantile(buckets.onLoad[key], 0.9).toFixed(2))]);
+                            result.statisticData.pageLoad = statistics.quantile(tempArr.pageLoad, 0.9).toFixed(2);
+                            result.statisticData.network = statistics.quantile(tempArr.network, 0.9).toFixed(2);
+                            result.statisticData.backend = statistics.quantile(tempArr.backend, 0.9).toFixed(2);
+                            result.statisticData.frontend = statistics.quantile(tempArr.frontend, 0.9).toFixed(2);
+                            result.statisticData.redirect = statistics.quantile(tempArr.redirect, 0.9).toFixed(2);
+                            result.statisticData.dns = statistics.quantile(tempArr.dns, 0.9).toFixed(2);
+                            result.statisticData.connect = statistics.quantile(tempArr.connect, 0.9).toFixed(2);
+                            result.statisticData.processing = statistics.quantile(tempArr.processing, 0.9).toFixed(2);
+                            result.statisticData.onLoad = statistics.quantile(tempArr.onLoad, 0.9).toFixed(2);
                             break;
                     }
                     result.numData.push([Number(key), num]);
-                    result.statisticData.pageLoad = statistics.mean(tempArr.pageLoad).toFixed(2);
-                    result.statisticData.network = statistics.mean(tempArr.network).toFixed(2);
-                    result.statisticData.backend = statistics.mean(tempArr.backend).toFixed(2);
-                    result.statisticData.frontend = statistics.mean(tempArr.frontend).toFixed(2);
-                    result.statisticData.redirect = statistics.mean(tempArr.redirect).toFixed(2);
-                    result.statisticData.dns = statistics.mean(tempArr.dns).toFixed(2);
-                    result.statisticData.connect = statistics.mean(tempArr.connect).toFixed(2);
-                    result.statisticData.processing = statistics.mean(tempArr.processing).toFixed(2);
-                    result.statisticData.onLoad = statistics.mean(tempArr.onLoad).toFixed(2);
-                    result.statisticData.pageLoad50 = statistics.median(tempArr.pageLoad).toFixed(2);
-                    result.statisticData.network50 = statistics.median(tempArr.network).toFixed(2);
-                    result.statisticData.backend50 = statistics.median(tempArr.backend).toFixed(2);
-                    result.statisticData.frontend50 = statistics.median(tempArr.frontend).toFixed(2);
-                    result.statisticData.redirect50 = statistics.median(tempArr.redirect).toFixed(2);
-                    result.statisticData.dns50 = statistics.median(tempArr.dns).toFixed(2);
-                    result.statisticData.connect50 = statistics.median(tempArr.connect).toFixed(2);
-                    result.statisticData.processing50 = statistics.median(tempArr.processing).toFixed(2);
-                    result.statisticData.onLoad50 = statistics.median(tempArr.onLoad).toFixed(2);
-                    result.statisticData.pageLoad90 = statistics.quantile(tempArr.pageLoad, 0.9).toFixed(2);
-                    result.statisticData.network90 = statistics.quantile(tempArr.network, 0.9).toFixed(2);
-                    result.statisticData.backend90 = statistics.quantile(tempArr.backend, 0.9).toFixed(2);
-                    result.statisticData.frontend90 = statistics.quantile(tempArr.frontend, 0.9).toFixed(2);
-                    result.statisticData.redirect90 = statistics.quantile(tempArr.redirect, 0.9).toFixed(2);
-                    result.statisticData.dns90 = statistics.quantile(tempArr.dns, 0.9).toFixed(2);
-                    result.statisticData.connect90 = statistics.quantile(tempArr.connect, 0.9).toFixed(2);
-                    result.statisticData.processing90 = statistics.quantile(tempArr.processing, 0.9).toFixed(2);
-                    result.statisticData.onLoad90 = statistics.quantile(tempArr.onLoad, 0.9).toFixed(2);
                 }
                 res.jsonp(result);
             }

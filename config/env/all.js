@@ -8,7 +8,7 @@ module.exports = {
 		description: 'For test.',
 		keywords: 'Front-end, Performance, Monitor, System'
 	},
-	port: process.env.PORT || 3000,
+	port: process.env.PORT || 8088,
 	templateEngine: 'swig',
 	sessionSecret: 'FPMS',
 	sessionCollection: 'sessions',

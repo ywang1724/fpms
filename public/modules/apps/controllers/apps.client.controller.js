@@ -97,16 +97,19 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                     $scope.pagesNum = data.length || 0;
                     if (data.length) {
                         $scope.showChart = true;
+                        //页面选择
                         var ids = [];
                         for (var i = 0; i < data.length; i++) {
                             ids.push(data[i]._id);
                         }
                         $scope.pages = [{'_id':ids, 'pathname':'全部'}].concat(data);
                         $scope.selectPage = $scope.pages[0];
+                        //统计间隔
                         $scope.intervals = [
                             {'name': '日', 'id': 'day'}, {'name': '月', 'id': 'month'}, {'name': '年', 'id': 'year'}
                         ];
                         $scope.selectInterval = $scope.intervals[0];
+                        //浏览器分类
                         $scope.browsers = [
                             {'name': '全部', 'id': 'all'},
                             {'name': 'Internet Explorer', 'id': 'Internet Explorer'}, {'name': 'Chrome', 'id': 'Chrome'},
@@ -114,12 +117,13 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                             {'name': 'Firefox', 'id': 'Firefox'}, {'name': 'Safari', 'id': 'Safari'}
                         ];
                         $scope.selectBrowser = $scope.browsers[0];
+                        //统计量
                         $scope.statistics = [
-                            {'name': '平均值', 'id': 'mean'}, {'name': 'p50', 'id': 'median'},
+                            {'name': '平均值', 'id': 'mean'}, {'name': '中位数', 'id': 'median'},
                             {'name': 'p90', 'id': 'quantile_90'}
                         ];
                         $scope.selectStatistic = $scope.statistics[0];
-                        // 日期范围初始化
+                        //日期范围初始化
                         var now = new Date();
                         $scope.nowDate = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
                         $scope.fromDate = $scope.nowDate - 1296000000; //往前15天
@@ -157,7 +161,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     $scope.chartConfig.title.text = '页面性能总体趋势图（平均值）';
                                     break;
                                 case 'median':
-                                    $scope.chartConfig.title.text = '页面性能总体趋势图（p50）';
+                                    $scope.chartConfig.title.text = '页面性能总体趋势图（中位数）';
                                     break;
                                 case 'quantile_90':
                                     $scope.chartConfig.title.text = '页面性能总体趋势图（p90）';
@@ -196,30 +200,6 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                         ['其它', ((result.statisticData.pageLoad - result.statisticData.network -
                                         result.statisticData.backend - result.statisticData.frontend) /
                                         result.statisticData.pageLoad) * 100]];
-                                    $scope.timingPie50.series[0].data = [
-                                        ['网络', (result.statisticData.network50 / result.statisticData.pageLoad50) * 100],
-                                        ['后端', (result.statisticData.backend50 / result.statisticData.pageLoad50) * 100],
-                                        {
-                                            name: '前端',
-                                            y: (result.statisticData.frontend50 / result.statisticData.pageLoad50) *100,
-                                            sliced: true,
-                                            selected: true
-                                        },
-                                        ['其它', ((result.statisticData.pageLoad50 - result.statisticData.network50 -
-                                        result.statisticData.backend50 - result.statisticData.frontend50) /
-                                        result.statisticData.pageLoad50) * 100]];
-                                    $scope.timingPie90.series[0].data = [
-                                        ['网络', (result.statisticData.network90 / result.statisticData.pageLoad90) * 100],
-                                        ['后端', (result.statisticData.backend90 / result.statisticData.pageLoad90) * 100],
-                                        {
-                                            name: '前端',
-                                            y: (result.statisticData.frontend90 / result.statisticData.pageLoad90) *100,
-                                            sliced: true,
-                                            selected: true
-                                        },
-                                        ['其它', ((result.statisticData.pageLoad90 - result.statisticData.network90 -
-                                        result.statisticData.backend90 - result.statisticData.frontend90) /
-                                        result.statisticData.pageLoad90) * 100]];
                                     $scope.statisticData = result.statisticData;
                                     $scope.showData = true;
                                 } else {
@@ -419,80 +399,6 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                             },
                             title: {
                                 text: '页面加载耗时分布图(平均值)'
-                            },
-                            series: [{
-                                type: 'pie',
-                                name: '占总耗时比率',
-                                data: []
-                            }]
-                        };
-                        $scope.timingPie50 = {
-                            options: {
-                                chart: {
-                                    plotBackgroundColor: null,
-                                    plotBorderWidth: null,
-                                    plotShadow: false,
-                                    marginTop: 30
-                                },
-                                tooltip: {
-                                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                                },
-                                plotOptions: {
-                                    pie: {
-                                        allowPointSelect: true,
-                                        cursor: 'pointer',
-                                        dataLabels: {
-                                            enabled: true,
-                                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                                            style: {
-                                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            credits: {
-                                enabled: false
-                            },
-                            title: {
-                                text: '页面加载耗时分布图(p50)'
-                            },
-                            series: [{
-                                type: 'pie',
-                                name: '占总耗时比率',
-                                data: []
-                            }]
-                        };
-                        $scope.timingPie90 = {
-                            options: {
-                                chart: {
-                                    plotBackgroundColor: null,
-                                    plotBorderWidth: null,
-                                    plotShadow: false,
-                                    marginTop: 30
-                                },
-                                tooltip: {
-                                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                                },
-                                plotOptions: {
-                                    pie: {
-                                        allowPointSelect: true,
-                                        cursor: 'pointer',
-                                        dataLabels: {
-                                            enabled: true,
-                                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                                            style: {
-                                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            credits: {
-                                enabled: false
-                            },
-                            title: {
-                                text: '页面加载耗时分布图(p90)'
                             },
                             series: [{
                                 type: 'pie',
