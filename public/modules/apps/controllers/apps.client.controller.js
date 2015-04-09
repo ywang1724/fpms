@@ -155,7 +155,6 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     $scope.chartConfig.options.tooltip.xDateFormat = '%Y';
                                     break;
                             }
-                            console.log($scope.chartConfig);
                             switch ($scope.selectStatistic.id) {
                                 case 'mean':
                                     $scope.chartConfig.title.text = '页面性能总体趋势图（平均值）';
@@ -186,8 +185,11 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     $scope.chartConfig.series[5].data = result.redirectData;
                                     $scope.chartConfig.series[6].data = result.dnsData;
                                     $scope.chartConfig.series[7].data = result.connectData;
-                                    $scope.chartConfig.series[8].data = result.processingData;
-                                    $scope.chartConfig.series[9].data = result.onLoadData;
+                                    $scope.chartConfig.series[8].data = result.waitingData;
+                                    $scope.chartConfig.series[9].data = result.receivingData;
+                                    $scope.chartConfig.series[10].data = result.processingData;
+                                    $scope.chartConfig.series[11].data = result.contentLoadedData;
+                                    $scope.chartConfig.series[12].data = result.onLoadData;
                                     $scope.timingPie.series[0].data = [
                                         ['网络', (result.statisticData.network / result.statisticData.pageLoad) * 100],
                                         ['后端', (result.statisticData.backend / result.statisticData.pageLoad) * 100],
@@ -200,6 +202,16 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                         ['其它', ((result.statisticData.pageLoad - result.statisticData.network -
                                         result.statisticData.backend - result.statisticData.frontend) /
                                         result.statisticData.pageLoad) * 100]];
+                                    $scope.timingline.series[0].data = [
+                                        [result.statisticData.dnsTime * 1, (result.statisticData.dnsTime * 1) + (result.statisticData.dns * 1)],
+                                        [result.statisticData.connectTime * 1, (result.statisticData.connectTime * 1) + (result.statisticData.connect * 1)],
+                                        [result.statisticData.requestTime * 1, (result.statisticData.requestTime * 1) + (result.statisticData.waiting * 1)],
+                                        [result.statisticData.receiveTime * 1, (result.statisticData.receiveTime * 1) + (result.statisticData.receiving * 1)],
+                                        [result.statisticData.processTime * 1, (result.statisticData.processTime * 1) + (result.statisticData.processing * 1)],
+                                        [result.statisticData.contentLoadedTime * 1, (result.statisticData.contentLoadedTime * 1) + (result.statisticData.contentLoaded * 1)],
+                                        [result.statisticData.onLoadTime * 1, (result.statisticData.onLoadTime * 1) + (result.statisticData.onLoad * 1)],
+                                        [0, result.statisticData.pageLoadTime * 1]
+                                    ];
                                     $scope.statisticData = result.statisticData;
                                     $scope.showData = true;
                                 } else {
@@ -229,15 +241,15 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                                         }
                                                     }).success(function (result) {
                                                         $scope.details = result.data;
-                                                        var pageLoad = [], network = [], backend = [], frontend = [],
-                                                            redirect = [], dns = [], connect = [], processing = [],
+                                                        var pageLoad = [], redirect = [], dns = [], connect = [],
+                                                            waiting = [], receiving = [], processing = [], contentLoaded = [],
                                                             onLoad = [];
                                                         for (var i = 0; i < result.data.length; i++) {
                                                             var dateNum = Date.parse(result.data[i].created);
                                                             pageLoad.push([dateNum, result.data[i].pageLoad]);
-                                                            network.push([dateNum, result.data[i].network]);
-                                                            backend.push([dateNum, result.data[i].backend]);
-                                                            frontend.push([dateNum, result.data[i].frontend]);
+                                                            waiting.push([dateNum, result.data[i].waiting]);
+                                                            receiving.push([dateNum, result.data[i].receiving]);
+                                                            contentLoaded.push([dateNum, result.data[i].contentLoaded]);
                                                             redirect.push([dateNum, result.data[i].redirect]);
                                                             dns.push([dateNum, result.data[i].dns]);
                                                             connect.push([dateNum, result.data[i].connect]);
@@ -245,13 +257,13 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                                             onLoad.push([dateNum, result.data[i].onLoad]);
                                                         }
                                                         $scope.timingArea.series[0].data = pageLoad;
-                                                        $scope.timingArea.series[1].data = network;
-                                                        $scope.timingArea.series[2].data = backend;
-                                                        $scope.timingArea.series[3].data = frontend;
-                                                        $scope.timingArea.series[4].data = redirect;
-                                                        $scope.timingArea.series[5].data = dns;
-                                                        $scope.timingArea.series[6].data = connect;
-                                                        $scope.timingArea.series[7].data = processing;
+                                                        $scope.timingArea.series[1].data = redirect;
+                                                        $scope.timingArea.series[2].data = dns;
+                                                        $scope.timingArea.series[3].data = connect;
+                                                        $scope.timingArea.series[4].data = waiting;
+                                                        $scope.timingArea.series[5].data = receiving;
+                                                        $scope.timingArea.series[6].data = processing;
+                                                        $scope.timingArea.series[7].data = contentLoaded;
                                                         $scope.timingArea.series[8].data = onLoad;
                                                     });
                                                 }
@@ -336,7 +348,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 },
                                 data: []
                             }, {
-                                name: '域名查询耗时',
+                                name: 'DNS查询耗时',
                                 type: 'spline',
                                 tooltip: {
                                     valueSuffix: ' ms'
@@ -350,14 +362,35 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 },
                                 data: []
                             }, {
-                                name: 'DOM解析耗时',
+                                name: '等待响应耗时',
                                 type: 'spline',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
-                                name: '页面渲染耗时',
+                                name: '接收文档耗时',
+                                type: 'spline',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: 'DOM处理耗时',
+                                type: 'spline',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: 'DOM内容加载耗时',
+                                type: 'spline',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: 'load事件耗时',
                                 type: 'spline',
                                 tooltip: {
                                     valueSuffix: ' ms'
@@ -374,7 +407,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     plotBackgroundColor: null,
                                     plotBorderWidth: null,
                                     plotShadow: false,
-                                    marginTop: 30
+                                    marginTop: 50
                                 },
                                 tooltip: {
                                     pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -410,7 +443,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                             options: {
                                 chart: {
                                     type: 'areaspline',
-                                    zoomType: 'x'
+                                    zoomType: 'x',
+                                    marginTop: 50
                                 },
                                 plotOptions: {
                                     areaspline: {
@@ -446,31 +480,13 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 },
                                 data: []
                             }, {
-                                name: '网络耗时',
-                                tooltip: {
-                                    valueSuffix: ' ms'
-                                },
-                                data: []
-                            }, {
-                                name: '后端耗时',
-                                tooltip: {
-                                    valueSuffix: ' ms'
-                                },
-                                data: []
-                            }, {
-                                name: '前端耗时',
-                                tooltip: {
-                                    valueSuffix: ' ms'
-                                },
-                                data: []
-                            }, {
                                 name: '页面跳转耗时',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
-                                name: '域名查询耗时',
+                                name: 'DNS查询耗时',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
@@ -482,20 +498,87 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 },
                                 data: []
                             }, {
-                                name: 'DOM解析耗时',
+                                name: '等待响应耗时',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }, {
-                                name: '页面渲染耗时',
+                                name: '接收文档耗时',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: 'DOM处理耗时',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: 'DOM内容加载耗时',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }, {
+                                name: 'load事件耗时',
                                 tooltip: {
                                     valueSuffix: ' ms'
                                 },
                                 data: []
                             }],
                             title: {
-                                text: '页面性能趋势图'
+                                text: '真实请求趋势图'
+                            }
+                        };
+                        $scope.timingline = {
+                            options: {
+                                chart: {
+                                    type: 'columnrange',
+                                    inverted: true,
+                                    marginTop: 50
+                                },
+                                legend: {
+                                    enabled: false
+                                },
+                                tooltip: {
+                                    formatter: function () {
+                                        return '<h6>' + this.key + '</h6><br/><table><tr><td>耗时: </td><td><b>' +
+                                            (this.point.high - this.point.low).toFixed(2) + ' ms' + '</b></td></tr></table>';
+                                    }
+                                },
+                                plotOptions: {
+                                    columnrange: {
+                                        dataLabels: {
+                                            enabled: true,
+                                            formatter: function () {
+                                                return this.y.toFixed(2) + 'ms';
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            xAxis: {
+                                categories: ['DNS查询', '连接', '等待响应', '接收文档', 'DOM处理', 'DOM内容加载', 'load事件', '总耗时']
+                            },
+                            yAxis: {
+                                title: {
+                                    text: '时间线（ms）'
+                                }
+                            },
+                            series: [{
+                                name: '耗时',
+                                tooltip: {
+                                    valueSuffix: ' ms'
+                                },
+                                data: []
+                            }],
+                            title: {
+                                text: '加载时间线'
                             }
                         };
                         $scope.refrashChart = getTimings;

@@ -30,6 +30,7 @@ module.exports = {
                 'public/lib/angular-strap/dist/angular-strap.tpl.min.js',
                 'public/lib/angular-i18n/angular-locale_zh-cn.js',
                 'public/lib/highcharts/highcharts.js',
+                'public/lib/highcharts/highcharts-more.js',
                 'public/lib/highcharts/modules/exporting.js',
                 'public/lib/highcharts-ng/dist/highcharts-ng.min.js',
                 'public/lib/ng-clip/dest/ng-clip.min.js',
