@@ -39,7 +39,7 @@ if (cluster.isMaster) {
         console.log('核心' + i + ' pid:' + worker.process.pid);
     });
     cluster.on('exit', function (worker, code, signal) {
-        console.log('核心' + i + ' pid:' + worker.process.pid + ' 重启')
+        console.log('核心' + i + ' pid:' + worker.process.pid + ' 重启');
         setTimeout(function () {
             cluster.fork();
         }, 2000);
