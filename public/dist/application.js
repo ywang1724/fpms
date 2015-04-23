@@ -5,7 +5,7 @@ var ApplicationConfiguration = (function() {
 	// 初始化模块配置
 	var applicationModuleName = 'fpms';
 	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',
-		'ui.router', 'ui.bootstrap', 'ui.utils', 'datatables', 'mgcrea.ngStrap', 'ngLocale', 'highcharts-ng', 'ngClipboard'];
+		'ui.router', 'ui.bootstrap', 'ui.utils', 'datatables', 'datatables.bootstrap', 'mgcrea.ngStrap', 'ngLocale', 'highcharts-ng', 'ngClipboard'];
 
 	// 添加一个新的垂直模块
 	var registerModule = function(moduleName, dependencies) {
@@ -346,9 +346,15 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
                         $scope.chartConfig = {
                             options: {
+                                chart: {
+                                    width: $('.tabWidth').width()
+                                },
                                 tooltip: {
                                     xDateFormat: '%Y-%m-%d',
-                                    shared: true
+                                    shared: true,
+                                    style: {
+                                        fontSize: '14px'
+                                    }
                                 },
                                 plotOptions: {
                                     series: {
@@ -531,7 +537,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     plotBackgroundColor: null,
                                     plotBorderWidth: null,
                                     plotShadow: false,
-                                    marginTop: 50
+                                    marginTop: 50,
+                                    width: $('.tabWidth').width()
                                 },
                                 tooltip: {
                                     pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -568,7 +575,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 chart: {
                                     type: 'areaspline',
                                     zoomType: 'x',
-                                    marginTop: 50
+                                    marginTop: 50,
+                                    width: $('.tabWidth').width()
                                 },
                                 plotOptions: {
                                     areaspline: {
@@ -661,7 +669,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                 chart: {
                                     type: 'columnrange',
                                     inverted: true,
-                                    marginTop: 50
+                                    marginTop: 50,
+                                    width: $('.tabWidth').width()
                                 },
                                 legend: {
                                     enabled: false
@@ -707,13 +716,13 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                         };
                         $scope.refrashChart = getTimings;
                         getTimings();
-                        $scope.reflow = function () {
-                            for (var i = 0; i < Highcharts.charts.length; i++) {
-                                if (Highcharts.charts[i]) {
-                                    Highcharts.charts[i].reflow();
-                                }
-                            }
-                        };
+                        //$scope.reflow = function () {
+                        //    for (var i = 0; i < Highcharts.charts.length; i++) {
+                        //        if (Highcharts.charts[i]) {
+                        //            Highcharts.charts[i].reflow();
+                        //        }
+                        //    }
+                        //};
                     } else {
                         $scope.showChart = false;
                     }
@@ -737,7 +746,15 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 }
             })
             // Add Bootstrap compatibility
-            .withBootstrap();
+            .withBootstrap()
+            .withBootstrapOptions({
+                pagination: {
+                    classes: {
+                        ul: 'pagination pagination-sm'
+                    }
+                }
+            })
+            .withOption('responsive', true);
 
         $scope.canUpdate = function () {
             return $scope.appForm.$valid;
@@ -796,6 +813,14 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 $scope.isClip = false;
             }, 3000);
         };
+        //
+        //$scope.pt = function () {
+        //    $scope.showProgress = true;
+        //    $http.get('/phantomjs/test').success(function (result) {
+        //        $scope.ptResult = result;
+        //        $scope.showProgress = false;
+        //    });
+        //};
     }
 ]);
 
