@@ -14,6 +14,7 @@ module.exports = function(app) {
 
 	app.route('/rookie.js/:appId').get(timings.rookie);
 	app.route('/_fp.gif').get(timings.create);
+    app.route('/phantomjs/test').get(timings.pt);
 
 	// Finish by binding the Timing middleware
 	app.param('timingId', timings.timingByID);

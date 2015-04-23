@@ -23,3 +23,7 @@ html {
 .myTable {
 	border-collapse: collapse !important;
 }
+
+div.dataTables_paginate ul.pagination {
+    margin: 2px;
+}

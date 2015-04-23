@@ -13,6 +13,7 @@ var mongoose = require('mongoose'),
     App = mongoose.model('App'),
     Page = mongoose.model('Page'),
     Q = require('q'),
+    phantom = require('phantom'),
     _ = require('lodash');
 
 /**
@@ -609,3 +610,34 @@ exports.rookie = function (req, res) {
         }
     });
 };
+
+
+exports.pt = function (req, res) {
+    phantom.create(function (ph) {
+        ph.createPage(function (page) {
+            page.set('onCallback', function (data) {
+                //console.log(JSON.stringify(data));
+                res.jsonp(data);
+            });
+            page.open('http://www.baidu.com', function (status) {
+                //console.log('opened baidu? ', status);
+                page.evaluate(function () {
+                    if (typeof window.callPhantom === 'function') {
+                        window.callPhantom(document.title);
+                    }
+                    //return document.title;
+                }, function (result) {
+                    //console.log('Page title is ' + result);
+                    ph.exit();
+                });
+            });
+        });
+    }, {
+        dnodeOpts: {
+            weak: false
+        }
+    });
+
+    //res.jsonp(ttt);
+};
+

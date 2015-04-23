@@ -13,6 +13,7 @@ module.exports = {
                 'public/lib/bootstrap-additions/dist/bootstrap-additions.min.css',
                 'public/lib/angular-motion/dist/angular-motion.min.css',
 				'public/lib/datatables/media/css/jquery.dataTables.min.css',
+                'public/lib/datatables-responsive/css/dataTables.responsive.css',
                 'public/lib/font-awesome/css/font-awesome.min.css'
 			],
 			js: [
@@ -28,6 +29,8 @@ module.exports = {
 				'public/lib/angular-ui-utils/ui-utils.min.js',
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
 				'public/lib/angular-datatables/dist/angular-datatables.min.js',
+                'public/lib/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js',
+                'public/lib/datatables-responsive/js/dataTables.responsive.js',
                 'public/lib/angular-strap/dist/angular-strap.min.js',
                 'public/lib/angular-strap/dist/angular-strap.tpl.min.js',
                 'public/lib/angular-i18n/angular-locale_zh-cn.js',

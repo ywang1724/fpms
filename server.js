@@ -30,7 +30,7 @@ require('./config/passport')();
 
 // 启动应用并开启监听端口
 if (cluster.isMaster) {
-    console.log("宿主启动...");
+    console.log('宿主启动...');
 
     for (var i = 0; i < numCPUs; i++) {
         cluster.fork();
