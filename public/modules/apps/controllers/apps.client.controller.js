@@ -90,6 +90,9 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                     downloadPDF: '下载PDF',
                     downloadPNG: '下载PNG',
                     downloadSVG: '下载SVG'
+                },
+                global: {
+                    useUTC: false
                 }
             });
             $http.get('pages/' + $stateParams.appId).
@@ -417,7 +420,10 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     width: $('.tabWidth').width()
                                 },
                                 tooltip: {
-                                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>',
+                                    style: {
+                                        fontSize: '14px'
+                                    }
                                 },
                                 plotOptions: {
                                     pie: {
@@ -463,7 +469,11 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     }
                                 },
                                 tooltip: {
-                                    shared: true
+                                    xDateFormat: '%Y-%m-%d %H:%M:%S',
+                                    shared: true,
+                                    style: {
+                                        fontSize: '14px'
+                                    }
                                 }
                             },
                             credits: {
@@ -555,6 +565,9 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     formatter: function () {
                                         return '<h6>' + this.key + '</h6><br/><table><tr><td>耗时: </td><td><b>' +
                                             (this.point.high - this.point.low).toFixed(2) + ' ms' + '</b></td></tr></table>';
+                                    },
+                                    style: {
+                                        fontSize: '14px'
                                     }
                                 },
                                 plotOptions: {
@@ -652,35 +665,74 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             });
         };
 
-        $scope.sumTooltip = {
-            'title': '页面请求总数'
+        $scope.httpNumTooltip = {
+            'title': '包括HTML页面请求，CSS文件、JavaScript文件、图片等资源下载及其它网络请求。'
+        };
+        $scope.dnsTimeTooltip = {
+            'title': '开始进行DNS查询的时间。'
+        };
+        $scope.connectTimeTooltip = {
+            'title': '开始请求连接的时间。'
+        };
+        $scope.reqTimeTooltip = {
+            'title': '浏览器开始请求文档时间。'
+        };
+        $scope.resTimeTooltip = {
+            'title': '浏览器开始接收文档时间。'
+        };
+        $scope.parseTimeTooltip = {
+            'title': '浏览器开始解析HTML文档第一批收到的字节。'
+        };
+        $scope.reactiveTimeTooltip = {
+            'title': '浏览器完成解析并且所有HTML和DOM构建完毕的时间点。'
+        };
+        $scope.DOMReadyTimeTooltip = {
+            'title': '浏览器触发DOMContentLoaded事件的时间。'
+        };
+        $scope.ResourcesLoadedTimeTooltip = {
+            'title': '浏览器完成网页及其所有附属资源下载的时间。'
+        };
+        $scope.onLoadTimeTooltip = {
+            'title': '浏览器开始触发load事件的时间。'
+        };
+        $scope.pageLoadTimeTooltip = {
+            'title': '浏览器完成页面完全加载时间，包括所有onLoad事件以及相关的动态资源加载完成。'
         };
         $scope.pageLoadTooltip = {
-            'title': '页面请求加载总耗时'
+            'title': '从页面请求到页面完全加载的时间。'
         };
         $scope.networkTooltip = {
-            'title': '包括页面跳转、域名查询、请求连接耗时'
+            'title': '从发出请求到完成连接建立的时间。'
         };
         $scope.backendTooltip = {
-            'title': '包括从客户端发出请求到服务端完成响应耗时'
+            'title': '指收到请求后服务器逻辑处理的时间。'
         };
         $scope.frontendTooltip = {
-            'title': '包括DOM加载、页面渲染耗时'
+            'title': '从开始解析文档到页面完全加载的时间。'
         };
         $scope.redirectTooltip = {
-            'title': '页面页面跳转耗时'
+            'title': '页面请求后进行页面跳转所消耗的时间。'
         };
         $scope.dnsTooltip = {
-            'title': '域名查询耗时'
+            'title': 'DNS查询的时间。页面请求会产生一次寻找该页面资源所在主机的DNS查询。在同个域名进行页面切换不会造成新的DNS查询。'
         };
         $scope.connectTooltip = {
-            'title': '请求连接耗时'
+            'title': '指浏览器和服务器之间建立TCP/IP连接的时间，对于SSL连接包括握手的时间。'
         };
-        $scope.processingTooltip = {
-            'title': 'DOM加载耗时'
+        $scope.waitingTooltip = {
+            'title': '指从开始请求当前文档到开始接收响应的时间。'
+        };
+        $scope.receivingTooltip = {
+            'title': '指开始接收响应到完成收到响应的时间。'
+        };
+        $scope.DOMProcessingTooltip = {
+            'title': '指从完成收到响应到文档的readyState变为complete的时间。'
+        };
+        $scope.DOMContentLoadedTooltip = {
+            'title': '指从文档的DOMContentLoaded事件被触发到文档的DOMContentLoaded事件完成的时间。'
         };
         $scope.onLoadTooltip = {
-            'title': '页面渲染耗时'
+            'title': '指从文档的load事件被触发到文档的load事件完成的时间。'
         };
 
         $scope.clip = function () {
