@@ -2,7 +2,11 @@
   "name": "fpms",
   "description": "For test.",
   "version": "0.0.1",
-  "author": "Wangyi",
+  "author": "ywang1724",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ywang1724/fpms.git"
+  },
   "engines": {
     "node": "0.10.x",
     "npm": "1.4.x"
