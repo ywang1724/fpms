@@ -1,8 +1,18 @@
 /**
- * Rookie.js v0.0.1
- * Copyright (c) 2014 wangyi
+ * Rookie.js v0.0.2
+ * Copyright (c) 2015 wangyi xujiangwei
  */
-window.onload = function () {
+
+/*扩展extend，避免onload覆盖页面本身的onload函数*/
+Function.prototype.extend = function(fn) {
+    var self = this;
+    return function(){
+        self.apply(this, arguments);
+        fn.apply(this, arguments);
+    };
+};
+
+window.onload = window.onload.extend(function() {
     'use strict';
 
     /*定义变量*/
@@ -45,4 +55,4 @@ window.onload = function () {
         img.src = serverHost + '/_fp.gif?' + JSON.stringify(rookie);
     }, 0);
 
-};
+});
