@@ -3,16 +3,7 @@
  * Copyright (c) 2015 wangyi xujiangwei
  */
 
-/*扩展extend，避免onload覆盖页面本身的onload函数*/
-Function.prototype.extend = function(fn) {
-    var self = this;
-    return function(){
-        self.apply(this, arguments);
-        fn.apply(this, arguments);
-    };
-};
-
-window.onload = window.onload.extend(function() {
+(function() {
     'use strict';
 
     /*定义变量*/
@@ -55,4 +46,4 @@ window.onload = window.onload.extend(function() {
         img.src = serverHost + '/_fp.gif?' + JSON.stringify(rookie);
     }, 0);
 
-});
+})();

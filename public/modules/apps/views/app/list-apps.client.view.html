@@ -7,6 +7,7 @@
         <thead>
         <tr>
             <th>名称</th>
+            <th>监控类型</th>
             <th data-ng-show="showName">用户名</th>
             <th>类型</th>
             <th>域</th>
@@ -16,6 +17,7 @@
         <tbody>
         <tr data-ng-repeat="app in apps">
             <td><a data-ng-href="#!/apps/{{app._id}}">{{ app.name }}</a></td>
+            <td><a data-ng-href="#!/apps/performance/{{app._id}}">性能</a>/<a data-ng-href="#!/apps/exception/{{app._id}}">异常</a></td>
             <td data-ng-show="showName">{{ app.user.displayName }}</td>
             <td>{{ app.type }}</td>
             <td>{{ app.host }}</td>

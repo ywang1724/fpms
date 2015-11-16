@@ -20,4 +20,8 @@ module.exports = function(app) {
 
 	// 绑定App中间件
 	app.param('appId', apps.appByID);
+
+	// 性能详情页面路由
+	app.route('/apps/performance/:appId')
+		.get(users.requiresLogin, apps.read);
 };
