@@ -1,30 +1,12 @@
-<section data-ng-controller="AppsPerformanceController" ng-init="findOne()">
+<section data-ng-controller="AppsPerformanceController" ng-init="viewPerformance()">
     <div class="pull-right" data-ng-show="(authentication.user)">
         <a title="返回" class="btn btn-primary btn-sm" data-ng-click="back();">
             <i class="glyphicon glyphicon-arrow-left"></i>
-        </a>
-        <a title="设置" class="btn btn-primary btn-sm" href="/#!/apps/{{app._id}}/edit" data-ng-show="(authentication.user._id == app.user._id)">
-            <i class="glyphicon glyphicon-edit"></i>
-        </a>
-        <a title="删除" class="btn btn-primary btn-sm" data-ng-click="remove();"
-           data-ng-show="(authentication.user._id == app.user._id)" my-confirm-click="您确定要删除吗？">
-            <i class="glyphicon glyphicon-trash"></i>
         </a>
     </div>
 	<div class="page-header">
 		<h1 data-ng-bind="app.name"></h1>
 	</div>
-    <div class="panel panel-info">
-        <div class="panel-heading">请复制以下代码到您需采集数据的所属页面html代码的body底部：
-            <span class="pull-right fa fa-copy fa-lg cursor" title="复制代码" clip-copy="script" clip-click="clip()"></span>
-        </div>
-        <div class="panel-body">
-            <code class="center-block">{{script}}</code>
-            <div class="text-center text-success" data-ng-show="isClip">
-                <strong>已复制代码到剪贴板。</strong>
-            </div>
-        </div>
-    </div>
     <div class="panel panel-success">
         <div class="panel-heading">查询参数配置：</div>
         <div class="panel-body">

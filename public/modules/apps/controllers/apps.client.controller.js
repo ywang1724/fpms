@@ -77,7 +77,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         };
 
         // Find existing App
-        $scope.findOne = function () {
+        $scope.intApp = function () {
             $scope.app = Apps.get({
                 appId: $stateParams.appId
             });
