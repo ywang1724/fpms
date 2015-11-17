@@ -128,6 +128,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 {label: '内存异常', value: 7, checked: false}
             ];
 
+            //angularjs默认按需加载，因此将代码放入then中
             $scope.app.$promise.then(function(data){
                 for(var i=0; i < $scope.app.alarmkind.length; i++){
                     var j = $scope.app.alarmkind[i];
@@ -136,8 +137,6 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                     }
                 }
             });
-
-
 
         };
 

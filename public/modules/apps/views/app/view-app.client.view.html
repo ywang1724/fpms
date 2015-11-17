@@ -15,6 +15,71 @@
 		<h1 data-ng-bind="app.name"></h1>
 	</div>
     <div class="panel panel-info">
+        <div class="panel-heading">
+            应用配置信息如下：
+        </div>
+        <div class="panel-body">
+
+
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="type" class="col-sm-2 control-label">类型</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="type" data-ng-model="app.type" ng-readonly="true">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="host" class="col-sm-2 control-label">域</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="host" data-ng-model="app.host" ng-readonly="true">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">报警类型</label>
+                    <div class="col-sm-10">
+                        <label ng-repeat="alarmitmen in alarmkinds | filter: {checked: true}">
+                            <input
+                                    type="checkbox"
+                                    name="alarmkind[]"
+                                    value="{{alarmitmen.value}}"
+                                    ng-model="alarmkind"
+                                    ng-checked="alarmitmen.checked"
+                                    ng-click="toggleSelection($event, 2)"
+                                    ng-disabled="true"
+                                    > {{alarmitmen.label}}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="deadLinkInterval" class="col-sm-2 control-label">死链接检测间隔</label>
+                    <div class="col-sm-10">
+                        <div ng-switch on="app.deadLinkInterval" id="deadLinkInterval">
+                            <div ng-switch-when="1800000">
+                                <input type="text" class="form-control" value="30分钟" ng-readonly="true">
+                            </div>
+                            <div ng-switch-when="3600000">
+                                <input type="text" class="form-control" value="1个小时" ng-readonly="true">
+                            </div>
+                            <div ng-switch-when="43200000">
+                                <input type="text" class="form-control" value="半天" ng-readonly="true">
+                            </div>
+                            <div ng-switch-when="86400000">
+                                <input type="text" class="form-control" value="1天" ng-readonly="true">
+                            </div>
+                            <div ng-switch-when="604800000">
+                                <input type="text" class="form-control" value="1周" ng-readonly="true">
+                            </div>
+                            <div ng-switch-when="2592000000">
+                                <input type="text" class="form-control" value="1个月" ng-readonly="true">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="panel panel-info">
         <div class="panel-heading">请复制以下代码到您需采集数据的所属页面html代码的body底部：
             <span class="pull-right fa fa-copy fa-lg cursor" title="复制代码" clip-copy="script" clip-click="clip()"></span>
         </div>
