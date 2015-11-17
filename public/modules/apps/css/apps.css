@@ -29,3 +29,7 @@ a[ng-click] {
 .myMT16 {
     margin-top: 16px;
 }
+
+.alarm-kind {
+    border-bottom: 1px solid #eee;
+}

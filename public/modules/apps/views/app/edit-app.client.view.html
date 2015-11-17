@@ -33,6 +33,33 @@
                                placeholder="请填写您的应用所在域" data-ng-change="removeErr()" required>
                     </div>
                 </div>
+                <div class="form-group"
+                     ng-class="{ 'has-error': appForm.alarmkind.$dirty && appForm.alarmkind.$invalid }">
+                    <div class="alarm-kind">
+                        勾选异常报警类型(默认前四种)
+                    </div>
+                    <div class="controls">
+                        <label ng-repeat="alarmitmen in alarmkinds">
+                            <input
+                                    type="checkbox"
+                                    name="alarmkind[]"
+                                    value="{{alarmitmen.value}}"
+                                    ng-model="alarmkind"
+                                    ng-checked="alarmitmen.checked"
+                                    ng-click="toggleSelection($event, 2)"
+                                    > {{alarmitmen.label}}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group"
+                     ng-class="{ 'has-error': appForm.deadLinkInterval.$dirty && appForm.deadLinkInterval.$invalid }">
+                    <label class="control-label" for="deadLinkInterval">死链接检测间隔</label>
+                    <div class="controls">
+                        <select id="deadLinkInterval" name="deadLinkInterval" data-ng-model="app.deadLinkInterval" ng-options="deadLinkInterval.value as deadLinkInterval.label for deadLinkInterval in deadLinkIntervals"
+                                class="form-control" required>
+                        </select>
+                    </div>
+                </div>
                 <div class="form-group text-center">
                     <input type="submit" value="更新" class="btn btn-primary" ng-disabled="!canUpdate()">
                     <input type="button" value="取消" class="btn btn-default" ng-click="back()">

@@ -32,6 +32,18 @@ var AppSchema = new Schema({
 	host: {
 		type: String,
 		required: '请填写您的应用所在域'
+	},
+	deadLinkInterval: {
+		type: Number,
+		default: 3600000
+	},
+	lastchecktime: {
+		type: Number,
+		default: 0
+	},
+	alarmkind: {
+		type: Array,
+		default: [1, 2, 3, 4]
 	}
 });
 
