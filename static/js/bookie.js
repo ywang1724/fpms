@@ -1,6 +1,6 @@
 /**
  * Bookie.js v0.0.1
- * Copyright (c) 2015 xujiangwei
+ * Copyright (c) 2015 xujiangwei liujia
  */
 
 
@@ -41,8 +41,14 @@
 
         function onReadyStateChange() {
             if(self.readyState == 4 /* complete */) {
-                /* This is where you can put code that you want to execute post-complete*/
-                /* URL is kept in this._url */
+                if(self.status == 404){
+                    var scripts = document.getElementsByTagName("script");
+                    var errorurl = scripts[scripts.length - 1].src;
+                    var msg = self.statusText;
+                    var requrl = self._url;
+
+                    reportException(2, msg, errorurl, requrl, null);
+                }
                 console.log(self);
             }
 
@@ -51,7 +57,6 @@
             }
         }
 
-        /* Set xhr.noIntercept to true to disable the interceptor for a particular call */
         if(!this.noIntercept) {
             if(this.addEventListener) {
                 this.addEventListener("readystatechange", onReadyStateChange, false);
@@ -70,7 +75,9 @@
  * 捕获JavaScript异常
  *
  */
-window.onerror = function () {
+window.onerror = function (msg, url, line, column) {
+    var stack = '错误文件: ' + url + '; ' + '错误位置: ' + '第' + line + '行，第' + column + '列.';
+    reportException(1, msg, url, null, stack);
     return true;
 };
 
@@ -78,7 +85,7 @@ window.onerror = function () {
  * 捕获静态资源请求异常
  *
  */
-window.addEventListener("error", function (e) {
+window.addEventListener("error", function (e, url) {
     var eleArray = ["IMG", "SCRIPT", "LINK"];
     var resourceMap = {
         "IMG": "图片",
@@ -90,6 +97,12 @@ window.addEventListener("error", function (e) {
         var url = ele.tagName == "LINK" ? ele.href: ele.src;
         console.log("地址为：" + url + "的" + resourceMap[ele.tagName] + "加载失败");
     }
+
+    var msg = resourceMap[ele.tagName] + '加载失败';
+    var errorurl = ele.baseURI;
+    var requrl = url;
+    reportException(3, msg, errorurl, requrl, null);
+
     return true;
 }, true);
 
@@ -99,7 +112,7 @@ window.addEventListener("error", function (e) {
  * 获取用户客户端平台信息
  *
  */
-function getUserInfo (){
+function getPlatformInfo (){
     return {
         pathname : window.location.pathname,
         appHost : window.location.host,
@@ -110,9 +123,18 @@ function getUserInfo (){
 
 /**
  * 异常上报函数
- *
+ * @param(type:异常类型; message:异常信息; errorurl: 错误文件url; requrl: 请求错误url; stack: 错误堆栈信息)
+ * 注意: 参数没值则传递null
  */
-function reportException (){
+function reportException (type, message, errorurl, requrl, stack){
     var bookie = {};
+    bookie.occurTime = new Date();
+    bookie.type = type;
+    bookie.userPlatformInfo = getPlatformInfo();
+    bookie.message = message;
+    bookie.errorurl = errorurl;
+    bookie.requrl = requrl;
+    bookie.stack = stack;
+    console.log('sending......');
 
 };
