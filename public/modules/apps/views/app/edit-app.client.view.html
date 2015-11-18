@@ -2,72 +2,70 @@
     <div class="page-header text-center">
         <h1>设置</h1>
     </div>
-    <div class="col-xs-offset-2 col-xs-8 col-md-offset-4 col-md-4">
-        <form name="appForm" class="form-horizontal" data-ng-submit="update()" novalidate>
-            <fieldset>
-                <div class="form-group"
-                     ng-class="{ 'has-error': appForm.name.$invalid }">
-                    <label class="control-label" for="name">名称</label>
-                    <div class="controls">
-                        <input name="name" type="text" data-ng-model="app.name" id="name" class="form-control"
-                               placeholder="请填写您的应用名称" data-ng-change="removeErr()" required>
+    <div class="rowpanel panel-info">
+        <div class="panel-heading">
+            请配置您的应用：
+        </div>
+        <div class="panel-body">
+            <form name="appForm" class="form-horizontal" data-ng-submit="update()" novalidate>
+                <fieldset>
+                    <div class="form-group" ng-class="{ 'has-error': appForm.name.$dirty }">
+                        <label for="name" class="col-sm-2 control-label">名称</label>
+                        <div class="col-sm-10 controls">
+                            <input name="name" type="text" data-ng-model="app.name" id="name" class="form-control"
+                                   placeholder="请填写您的应用名称" data-ng-change="removeErr()" required>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group"
-                     ng-class="{ 'has-error': appForm.type.$invalid }">
-                    <label class="control-label" for="type">类型</label>
-                    <div class="controls">
-                        <select id="type" name="type" data-ng-model="app.type" class="form-control" required>
-                            <option value="java" ng-selected="app.type=='java'">java</option>
-                            <option value="node.js" ng-selected="app.type=='node.js'">node.js</option>
-                            <option value="android" ng-selected="app.type=='android'">android</option>
-                            <option value="ios" ng-selected="app.type=='ios'">ios</option>
-                        </select>
+                    <div class="form-group" ng-class="{ 'has-error': appForm.type.$dirty }">
+                        <label for="type" class="col-sm-2 control-label">类型</label>
+                        <div class="col-sm-10 controls">
+                            <select id="type" name="type" data-ng-model="app.type" class="form-control" required>
+                                <option value="java" ng-selected="app.type=='java'">java</option>
+                                <option value="node.js" ng-selected="app.type=='node.js'">node.js</option>
+                                <option value="android" ng-selected="app.type=='android'">android</option>
+                                <option value="ios" ng-selected="app.type=='ios'">ios</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group"
-                     ng-class="{ 'has-error': appForm.host.$invalid }">
-                    <label class="control-label" for="host">域</label>
-                    <div class="controls">
-                        <input name="host" type="text" data-ng-model="app.host" id="host" class="form-control"
-                               placeholder="请填写您的应用所在域" data-ng-change="removeErr()" required>
+                    <div class="form-group" ng-class="{ 'has-error': appForm.host.$dirty }">
+                        <label for="host" class="col-sm-2 control-label">域</label>
+                        <div class="col-sm-10 controls">
+                            <input name="host" type="text" data-ng-model="app.host" id="host" class="form-control"
+                                   placeholder="请填写您的应用所在域" data-ng-change="removeErr()" required>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group"
-                     ng-class="{ 'has-error': appForm.alarmkind.$dirty && appForm.alarmkind.$invalid }">
-                    <div class="alarm-kind">
-                        勾选异常报警类型(默认前四种)
+                    <div class="form-group" ng-class="{ 'has-error': appForm.alarmkind.$dirty && appForm.alarmkind.$invalid }">
+                        <label class="col-sm-2 control-label">报警类型</label>
+                        <div class="col-sm-10 controls">
+                            <label ng-repeat="alarmitmen in alarmkinds">
+                                <input
+                                        type="checkbox"
+                                        name="alarmkind[]"
+                                        value="{{alarmitmen.value}}"
+                                        ng-model="alarmkind"
+                                        ng-checked="alarmitmen.checked"
+                                        ng-click="toggleSelection($event, 2)"
+                                        > {{alarmitmen.label}}
+                            </label>
+                        </div>
                     </div>
-                    <div class="controls">
-                        <label ng-repeat="alarmitmen in alarmkinds">
-                            <input
-                                    type="checkbox"
-                                    name="alarmkind[]"
-                                    value="{{alarmitmen.value}}"
-                                    ng-model="alarmkind"
-                                    ng-checked="alarmitmen.checked"
-                                    ng-click="toggleSelection($event, 2)"
-                                    > {{alarmitmen.label}}
-                        </label>
+                    <div class="form-group" ng-class="{ 'has-error': appForm.deadLinkInterval.$dirty && appForm.deadLinkInterval.$invalid }">
+                        <label for="deadLinkInterval" class="col-sm-2 control-label">死链接检测间隔</label>
+                        <div class="col-sm-10 controls">
+                            <select id="deadLinkInterval" name="deadLinkInterval" data-ng-model="app.deadLinkInterval" ng-options="deadLinkInterval.value as deadLinkInterval.label for deadLinkInterval in deadLinkIntervals"
+                                    class="form-control" required>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group"
-                     ng-class="{ 'has-error': appForm.deadLinkInterval.$dirty && appForm.deadLinkInterval.$invalid }">
-                    <label class="control-label" for="deadLinkInterval">死链接检测间隔</label>
-                    <div class="controls">
-                        <select id="deadLinkInterval" name="deadLinkInterval" data-ng-model="app.deadLinkInterval" ng-options="deadLinkInterval.value as deadLinkInterval.label for deadLinkInterval in deadLinkIntervals"
-                                class="form-control" required>
-                        </select>
+                    <div class="form-group text-center">
+                        <input type="submit" value="更新" class="btn btn-primary" ng-disabled="!canUpdate()">
+                        <input type="button" value="取消" class="btn btn-default" ng-click="back()">
                     </div>
-                </div>
-                <div class="form-group text-center">
-                    <input type="submit" value="更新" class="btn btn-primary" ng-disabled="!canUpdate()">
-                    <input type="button" value="取消" class="btn btn-default" ng-click="back()">
-                </div>
-				<div data-ng-show="error" class="text-danger">
-					<strong data-ng-bind="error"></strong>
-				</div>
-            </fieldset>
-        </form>
+                    <div data-ng-show="error" class="text-danger">
+                        <strong data-ng-bind="error"></strong>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
     </div>
 </section>
