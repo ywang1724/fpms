@@ -1,0 +1,19 @@
+<section data-ng-controller="ExceptionsController" data-ng-init="find()">
+    <div class="page-header">
+        <h1>Exceptions</h1>
+    </div>
+    <div class="list-group">
+        <a data-ng-repeat="exception in exceptions" data-ng-href="#!/exceptions/{{exception._id}}" class="list-group-item">
+			<small class="list-group-item-text">
+				Posted on
+				<span data-ng-bind="exception.created | date:'medium'"></span>
+				by
+				<span data-ng-bind="exception.user.displayName"></span>
+			</small>
+			<h4 class="list-group-item-heading" data-ng-bind="exception.name"></h4>
+        </a>
+    </div>
+    <div class="alert alert-warning text-center" data-ng-hide="!exceptions.$resolved || exceptions.length">
+    	No Exceptions yet, why don't you <a href="/#!/exceptions/create">create one</a>?
+    </div>
+</section>
