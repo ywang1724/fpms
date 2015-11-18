@@ -41,7 +41,7 @@ var AppSchema = new Schema({
 		type: Number,
 		default: 0
 	},
-	alarmkind: {
+	alarmtype: {
 		type: Array,
 		default: [1, 2, 3, 4]
 	}

@@ -37,12 +37,12 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label">报警类型</label>
                     <div class="col-sm-10">
-                        <label ng-repeat="alarmitmen in alarmkinds | filter: {checked: true}">
+                        <label ng-repeat="alarmitmen in alarmtypes | filter: {checked: true}">
                             <input
                                     type="checkbox"
-                                    name="alarmkind[]"
+                                    name="alarmtype[]"
                                     value="{{alarmitmen.value}}"
-                                    ng-model="alarmkind"
+                                    ng-model="alarmtype"
                                     ng-checked="alarmitmen.checked"
                                     ng-click="toggleSelection($event, 2)"
                                     ng-disabled="true"

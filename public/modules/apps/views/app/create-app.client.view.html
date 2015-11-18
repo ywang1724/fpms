@@ -31,15 +31,15 @@
                                    placeholder="请填写您的应用所在域" data-ng-change="removeErr()" required>
                         </div>
                     </div>
-                    <div class="form-group" ng-class="{ 'has-error': appForm.alarmkind.$dirty && appForm.alarmkind.$invalid }">
+                    <div class="form-group" ng-class="{ 'has-error': appForm.alarmtype.$dirty && appForm.alarmtype.$invalid }">
                         <label class="col-sm-2 control-label">报警类型(默认前四种)</label>
                         <div class="col-sm-10 controls">
-                            <label ng-repeat="alarmitmen in alarmkinds">
+                            <label ng-repeat="alarmitmen in alarmtypes">
                                 <input
                                         type="checkbox"
-                                        name="alarmkind[]"
+                                        name="alarmtype[]"
                                         value="{{alarmitmen.value}}"
-                                        ng-model="alarmkind"
+                                        ng-model="alarmtype"
                                         ng-checked="alarmitmen.checked"
                                         ng-click="toggleSelection($event, 1)"
                                         > {{alarmitmen.label}}

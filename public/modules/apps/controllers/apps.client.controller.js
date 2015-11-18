@@ -20,8 +20,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             {label: '1个月', value: 2592000000}
         ];
 
-        $scope.alarmkind = [1, 2, 3, 4];
-        $scope.alarmkinds = [
+        $scope.alarmtype = [1, 2, 3, 4];
+        $scope.alarmtypes = [
             {label: 'JavaScript异常', value: 1, checked: true},
             {label: 'Ajax请求异常', value: 2, checked: true},
             {label: '静态资源请求异常', value: 3, checked: true},
@@ -34,9 +34,9 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         $scope.toggleSelection = function (obj, i) {
             var objValue = parseInt(obj.target.value);
             if(obj.target.checked){
-                i == 1 ? $scope.alarmkind.push(objValue) : $scope.app.alarmkind.push(objValue);
+                i == 1 ? $scope.typekind.push(objValue) : $scope.app.alarmtype.push(objValue);
             }else{
-                i == 1 ? $scope.alarmkind.splice($scope.alarmkind.indexOf(objValue), 1) : $scope.app.alarmkind.splice($scope.app.alarmkind.indexOf(objValue), 1);
+                i == 1 ? $scope.alarmtype.splice($scope.alarmtype.indexOf(objValue), 1) : $scope.app.alarmtype.splice($scope.app.alarmtype.indexOf(objValue), 1);
             }
         };
 
@@ -59,7 +59,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 type: this.type,
                 host: this.host,
                 deadLinkInterval: this.deadLinkInterval,
-                alarmkind: this.alarmkind
+                alarmtype: this.alarmtype
             });
 
             // Redirect after save
@@ -70,7 +70,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 $scope.name = '';
                 $scope.type = 'java';
                 $scope.host = '';
-                $scope.alarmkind = [1, 2, 3, 4];
+                $scope.alarmtype = [1, 2, 3, 4];
                 $scope.deadLinkInterval = 3600000;
             }, function (errorResponse) {
                 $scope.error = errorResponse.data.message;
@@ -118,7 +118,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
 
             //修改APP配置初始化报警类型
-            $scope.alarmkinds = [
+            $scope.alarmtypes = [
                 {label: 'JavaScript异常', value: 1, checked: false},
                 {label: 'Ajax请求异常', value: 2, checked: false},
                 {label: '静态资源请求异常', value: 3, checked: false},
@@ -130,10 +130,10 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
             //angularjs默认按需加载，因此将代码放入then中
             $scope.app.$promise.then(function(data){
-                for(var i=0; i < $scope.app.alarmkind.length; i++){
-                    var j = $scope.app.alarmkind[i];
+                for(var i=0; i < $scope.app.alarmtype.length; i++){
+                    var j = $scope.app.alarmtype[i];
                     if(j){
-                        $scope.alarmkinds[j-1].checked = true;
+                        $scope.alarmtypes[j-1].checked = true;
                     }
                 }
             });
