@@ -5,23 +5,83 @@
  */
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
+	detect = require('./../tools/detect'),
 	Exception = mongoose.model('Exception'),
+	App = mongoose.model('App'),
+	Page = mongoose.model('Page'),
+	Q = require('q'),
 	_ = require('lodash');
 
 /**
  * Create a Exception
  */
 exports.create = function(req, res) {
-	var exception = new Exception(req.body);
-	exception.user = req.user;
+	if (req.session.appId) {
+		App.findById(req.session.appId).exec(function (err, app) {
+			if (err) {
+				console.log(errorHandler.getErrorMessage(err));
+			} else {
+				var string = req.url.indexOf('?');
+				var subString = req.url.substring(req.url.indexOf('?') + 1);
+				var bookie = JSON.parse(decodeURI(subString));
+				bookie.errorurl = decodeURI(bookie.errorurl);
+				bookie.requrl = decodeURI(bookie.requrl);
+				if (bookie.userPlatformInfo.appHost === app.host) {
+					//定义页面对象
+					var page = {};
+					//查找Web应用对应页面，如果存在则返回，如果不存在则新建
+					Page.findOneAndUpdate({app: app, pathname: bookie.pathname}, page, {upsert: true})
+						.exec(function (err, obj) {
+							if (err) {
+								console.log(errorHandler.getErrorMessage(err));
+							} else {
+								page = obj;
 
-	exception.save(function(err) {
+								//页面和用户相关信息赋值
+								bookie.page = page;
+								bookie.ui = detect.getUserInformation(bookie.userPlatformInfo.userAgent, bookie.userPlatformInfo.platform, req.ip);
+
+								//按序存储数据
+								/*
+								Q.all([promise1, promise2]).then(function () {
+									new Timing(rookie).save(function (err) {
+										if (err) {
+											console.log(errorHandler.getErrorMessage(err));
+										}
+										console.log(Date.now());
+									});
+								}, function (err) {
+									if (err) {
+										console.log(errorHandler.getErrorMessage(err));
+									}
+								});
+								*/
+							}
+						});
+				}
+			}
+		});
+	}
+	var options = {
+			root: 'static/img/',
+			dotfiles: 'allow',
+			headers: {
+				'Content-Type': 'image/gif',
+				'Pragma': 'no-cache',
+				'Cache-Control': 'private, no-cache, no-cache=Set-Cookie, proxy-revalidate'
+			}
+		},
+		fileName = '_fp.gif';
+	res.sendFile(fileName, options, function (err) {
 		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
+			if (err.code === 'ECONNABORT' && res.statusCode === 304) {
+				console.log(new Date() + '304 cache hit for ' + fileName);
+				return;
+			}
+			console.log(err);
+			res.status(err.status).end();
 		} else {
-			res.jsonp(exception);
+			console.log(new Date() + 'Sent:', fileName);
 		}
 	});
 };

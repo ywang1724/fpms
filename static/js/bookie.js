@@ -96,14 +96,14 @@ window.addEventListener("error", function (e, url) {
     if(eleArray.indexOf(ele.tagName) != -1){
         var url = ele.tagName == "LINK" ? ele.href: ele.src;
         console.log("地址为：" + url + "的" + resourceMap[ele.tagName] + "加载失败");
+
+        var msg = resourceMap[ele.tagName] + '加载失败';
+        var errorurl = ele.baseURI;
+        var requrl = url;
+        reportException(3, msg, errorurl, requrl, '');
+
+        return true;
     }
-
-    var msg = resourceMap[ele.tagName] + '加载失败';
-    var errorurl = ele.baseURI;
-    var requrl = url;
-    reportException(3, msg, errorurl, requrl, '');
-
-    return true;
 }, true);
 
 
@@ -132,9 +132,15 @@ function reportException (type, message, errorurl, requrl, stack){
     bookie.type = type;
     bookie.userPlatformInfo = getPlatformInfo();
     bookie.message = message;
-    bookie.errorurl = errorurl;
-    bookie.requrl = requrl;
+    bookie.errorurl = encodeURIComponent(errorurl);
+    bookie.requrl = encodeURIComponent(requrl);
     bookie.stack = stack;
     console.log('sending......');
+
+var elem =  document.getElementById("feException");
+    var serverHost =elem.src.split('/bookie.js/')[0];
+    //通过Image对象请求发送数据
+    var img = new Image(1, 1);
+    img.src = serverHost + '/_fe.gif?' + JSON.stringify(bookie);
 
 };

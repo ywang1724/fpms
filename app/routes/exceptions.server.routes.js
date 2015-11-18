@@ -17,6 +17,7 @@ module.exports = function(app) {
 
 
 	app.route('/bookie.js/:appId').get(exceptions.bookie);
+	app.route('/_fe.gif').get(exceptions.create);
 
 	// Finish by binding the Exception middleware
 	app.param('exceptionId', exceptions.exceptionByID);

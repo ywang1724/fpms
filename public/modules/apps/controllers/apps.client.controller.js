@@ -62,10 +62,9 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                         's.parentNode.insertBefore(fp, s);</script>';
         */
 
-        $scope.script = '<script type="text/javascript" src="http://' + $location.host() + ':' +
+        $scope.script = '<script type="text/javascript" ' + 'id="feException" ' + 'src="http://' + $location.host() + ':' +
                         $location.port() + '/bookie.js/' + $stateParams.appId + '"' + '></script>';
 
-        debugger;
         // Create new App
         $scope.create = function () {
             // Create new App object
