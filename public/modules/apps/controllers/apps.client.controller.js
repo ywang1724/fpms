@@ -34,15 +34,25 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         $scope.toggleSelection = function (obj, i) {
             var objValue = parseInt(obj.target.value);
             if(obj.target.checked){
-                i == 1 ? $scope.typekind.push(objValue) : $scope.app.alarmtype.push(objValue);
+                if(i === 1){
+                    $scope.typekind.push(objValue);
+                }else {
+                    $scope.app.alarmtype.push(objValue);
+                }
             }else{
-                i == 1 ? $scope.alarmtype.splice($scope.alarmtype.indexOf(objValue), 1) : $scope.app.alarmtype.splice($scope.app.alarmtype.indexOf(objValue), 1);
+                if(i === 1){
+                    $scope.alarmtype.splice($scope.alarmtype.indexOf(objValue), 1);
+                }else {
+                    $scope.app.alarmtype.splice($scope.app.alarmtype.indexOf(objValue), 1);
+                }
             }
         };
 
         if (Authentication.user) {
             $scope.showName = Authentication.user.roles[0] === 'admin' ? true : false;
         }
+
+        /*
         $scope.script = '<script type="text/javascript">var fp = document.createElement("script");' +
                         'fp.type = "text/javascript";' +
                         'fp.async = true;' +
@@ -50,7 +60,12 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                             $stateParams.appId + '";' +
                         'var s = document.getElementsByTagName("script")[0];' +
                         's.parentNode.insertBefore(fp, s);</script>';
+        */
 
+        $scope.script = '<script type="text/javascript" src="http://' + $location.host() + ':' +
+                        $location.port() + '/bookie.js/' + $stateParams.appId + '"' + '></script>';
+
+        debugger;
         // Create new App
         $scope.create = function () {
             // Create new App object

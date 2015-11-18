@@ -105,3 +105,36 @@ exports.hasAuthorization = function(req, res, next) {
 	}
 	next();
 };
+
+
+/**
+ * 获取bookie.js
+ */
+exports.bookie = function (req, res) {
+	//配置文件参数
+	var options = {
+			root: process.env.NODE_ENV === 'production' ? 'static/dist/' : 'static/js/',
+			dotfiles: 'allow',
+			headers: {
+				'Content-Type': 'text/javascript; charset=UTF-8',
+				'x-timestamp': Date.now(),
+				'x-sent': true
+			}
+		},
+		fileName = 'bookie.js';
+	//存储appId到session
+	req.session.appId = req.app._id;
+	//发送文件
+	res.sendFile(fileName, options, function (err) {
+		if (err) {
+			if (err.code === 'ECONNABORT' && res.statusCode === 304) {
+				console.log(new Date() + '304 cache hit for ' + fileName);
+				return;
+			}
+			console.log(err);
+			res.status(err.status).end();
+		} else {
+			console.log(new Date() + 'Sent:', fileName);
+		}
+	});
+};

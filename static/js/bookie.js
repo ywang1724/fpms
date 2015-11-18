@@ -47,7 +47,7 @@
                     var msg = self.statusText;
                     var requrl = self._url;
 
-                    reportException(2, msg, errorurl, requrl, null);
+                    reportException(2, msg, errorurl, requrl, '');
                 }
                 console.log(self);
             }
@@ -77,7 +77,7 @@
  */
 window.onerror = function (msg, url, line, column) {
     var stack = '错误文件: ' + url + '; ' + '错误位置: ' + '第' + line + '行，第' + column + '列.';
-    reportException(1, msg, url, null, stack);
+    reportException(1, msg, url, '', stack);
     return true;
 };
 
@@ -101,7 +101,7 @@ window.addEventListener("error", function (e, url) {
     var msg = resourceMap[ele.tagName] + '加载失败';
     var errorurl = ele.baseURI;
     var requrl = url;
-    reportException(3, msg, errorurl, requrl, null);
+    reportException(3, msg, errorurl, requrl, '');
 
     return true;
 }, true);
