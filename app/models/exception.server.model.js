@@ -48,7 +48,7 @@ var ExceptionSchema = new Schema({
 			default: ''
 		}
 	},
-	errorrl: {
+	errorurl: {
 		type: String,
 		default: ''
 	},

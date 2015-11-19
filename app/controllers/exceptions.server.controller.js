@@ -24,8 +24,8 @@ exports.create = function(req, res) {
 				var string = req.url.indexOf('?');
 				var subString = req.url.substring(req.url.indexOf('?') + 1);
 				var bookie = JSON.parse(decodeURI(subString));
-				bookie.errorurl = decodeURI(bookie.errorurl);
-				bookie.requrl = decodeURI(bookie.requrl);
+				bookie.errorurl = decodeURIComponent(bookie.errorurl);
+				bookie.requrl = decodeURIComponent(bookie.requrl);
 				if (bookie.userPlatformInfo.appHost === app.host) {
 					//定义页面对象
 					var page = {};
@@ -40,6 +40,13 @@ exports.create = function(req, res) {
 								//页面和用户相关信息赋值
 								bookie.page = page;
 								bookie.ui = detect.getUserInformation(bookie.userPlatformInfo.userAgent, bookie.userPlatformInfo.platform, req.ip);
+
+								new Exception(bookie).save(function (err) {
+									if (err) {
+										console.log(errorHandler.getErrorMessage(err));
+									}
+									console.log(Date.now());
+								});
 
 								//按序存储数据
 								/*
