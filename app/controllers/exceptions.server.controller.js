@@ -47,22 +47,6 @@ exports.create = function(req, res) {
 									}
 									console.log(Date.now());
 								});
-
-								//按序存储数据
-								/*
-								Q.all([promise1, promise2]).then(function () {
-									new Timing(rookie).save(function (err) {
-										if (err) {
-											console.log(errorHandler.getErrorMessage(err));
-										}
-										console.log(Date.now());
-									});
-								}, function (err) {
-									if (err) {
-										console.log(errorHandler.getErrorMessage(err));
-									}
-								});
-								*/
 							}
 						});
 				}
