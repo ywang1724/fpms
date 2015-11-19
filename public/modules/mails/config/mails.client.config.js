@@ -4,8 +4,8 @@
 angular.module('mails').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Mails', 'mails', 'dropdown', '/mails(/create)?');
-		Menus.addSubMenuItem('topbar', 'mails', 'List Mails', 'mails');
-		Menus.addSubMenuItem('topbar', 'mails', 'New Mail', 'mails/create');
+		Menus.addMenuItem('topbar', '我的邮件', 'mails', 'dropdown', '/mails(/create)?');
+		Menus.addSubMenuItem('topbar', 'mails', '邮件列表', 'mails');
+		Menus.addSubMenuItem('topbar', 'mails', '新建邮件', 'mails/create');
 	}
 ]);
