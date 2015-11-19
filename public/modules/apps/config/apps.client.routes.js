@@ -24,6 +24,10 @@ angular.module('apps').config(['$stateProvider',
 		state('viewAppPerformance', {
 			url: '/apps/performance/:appId',
 			templateUrl: 'modules/apps/views/performance/view-performance.client.view.html'
+		}).
+		state('viewAppException', {
+			url: '/apps/exception/:appId',
+			templateUrl: 'modules/apps/views/exception/view-exception.client.view.html'
 		});
 	}
 ]);
