@@ -44,7 +44,6 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                     staticDay: new Date($scope.staticDay)
                                 }
                             }).success(function(result){
-                                debugger;
                                 if(result){
                                     $scope.exceptionPie.series[0].data = result.data.pieData;
                                     $scope.showChart = true;

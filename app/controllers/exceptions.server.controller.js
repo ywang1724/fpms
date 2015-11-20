@@ -220,13 +220,13 @@ exports.statisticList = function(req, res){
 				item.errorurl = exceptions[i].message;
 				item.requrl = exceptions[i].requrl;
 				result.data.exceptions.push(item);
-				pieData[item.type].y++;
+				pieData[item.type-1].y++;
 			}
 
 			//返回异常统计饼状图信息
-			for(var i=0; i<pieData.length; i++){
-				if(pieData[i].y !== 0){
-					result.data.pieData.push(pieData[i]);
+			for(var j=0; j<pieData.length; j++){
+				if(pieData[j].y !== 0){
+					result.data.pieData.push(pieData[j]);
 				}
 			}
 
