@@ -62,21 +62,21 @@
 						</thead>
 						<tbody>
 						<tr data-ng-repeat="exception in exceptions">
-							<td ng-switch="{{ exception.type }}" style="width:20%;">
-								<span ng-switch-when="1" style="width:20%;">JavaScript异常</span>
-								<span ng-switch-when="2" style="width:20%;">Ajax请求异常</span>
-								<span ng-switch-when="3" style="width:20%;">静态资源获取异常</span>
-								<span ng-switch-when="4" style="width:10%;">死链接异常</span>
-								<span ng-switch-when="5" style="width:10%;">页面加载异常</span>
-								<span ng-switch-when="6" style="width:10%;">DOM结构异常</span>
-								<span ng-switch-when="7" style="width:10%;">内存异常</span>
+							<td ng-switch="{{ exception.type }}" style="width:15% !important;">
+								<span ng-switch-when="1">JavaScript异常</span>
+								<span ng-switch-when="2">Ajax请求异常</span>
+								<span ng-switch-when="3">静态资源获取异常</span>
+								<span ng-switch-when="4">死链接异常</span>
+								<span ng-switch-when="5">页面加载异常</span>
+								<span ng-switch-when="6">DOM结构异常</span>
+								<span ng-switch-when="7">内存异常</span>
 							</td>
-							<td>{{ exception.time | date:'yyyy-MM-dd HH:mm:ss' }}</td>
-							<td>{{ exception.message }}</td>
-							<td>{{ exception.ui.os }}</td>
-							<td>{{ exception.ui.browser }}</td>
-							<td>{{ exception.ui.ip }}</td>
-							<td ng-click="viewDetail()">查看详情</td>
+							<td style="width:15% !important;">{{ exception.time | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+							<td style="width:30% !important;">{{ exception.message }}</td>
+							<td style="width:10% !important;">{{ exception.ui.os }}</td>
+							<td style="width:10% !important;">{{ exception.ui.browser }}</td>
+							<td style="width:10% !important;">{{ exception.ui.ip }}</td>
+							<td ng-click="viewDetail()" style="width:10% !important;">查看详情</td>
 						</tr>
 						</tbody>
 					</table>
