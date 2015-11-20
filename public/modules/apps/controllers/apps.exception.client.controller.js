@@ -43,8 +43,10 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                     pageId: $scope.selectPage._id,
                                     staticDay: new Date($scope.staticDay)
                                 }
-                            }).success(function(data){
-                                if(data){
+                            }).success(function(result){
+                                debugger;
+                                if(result){
+                                    $scope.exceptionPie.series[0].data = result.data.pieData;
                                     $scope.showChart = true;
                                 }else {
                                     $scope.showChart = false;
@@ -62,7 +64,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                     width: $('.tabWidth').width()
                                 },
                                 tooltip: {
-                                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>',
+                                    pointFormat: '数量为:{point.y},{series.name}: <b>{point.percentage:.1f}%</b>',
                                     style: {
                                         fontSize: '14px'
                                     }

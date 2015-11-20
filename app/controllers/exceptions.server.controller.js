@@ -175,7 +175,64 @@ exports.statisticList = function(req, res){
 			$lt: staticDayLt
 		}
 	}).exec(function (err, exceptions) {
-		var a = 1;
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			var pieData = [{
+				name: 'JavaScript异常',
+				y: 0
+			},{
+				name: 'Ajax请求异常',
+				y: 0
+			},{
+				name: '静态资源请求异常',
+				y: 0
+			},{
+				name: '死链接',
+				y: 0
+			},{
+				name: '页面加载异常',
+				y: 0
+			},{
+				name: 'DOM结构异常',
+				y: 0
+			},{
+				name: '内存异常',
+				y: 0
+			}];
+			var result = {
+				data: {
+					exceptions: [],
+					pieData: []
+				}
+			};
+
+			//返回异常JSON数据
+			for(var i=0; i<exceptions.length; i++){
+				var item = {};
+				item.id = exceptions[i]._id;
+				item.type = exceptions[i].type;
+				item.time = exceptions[i].time;
+				item.stack = exceptions[i].stack;
+				item.message = exceptions[i].message;
+				item.errorurl = exceptions[i].message;
+				item.requrl = exceptions[i].requrl;
+				result.data.exceptions.push(item);
+				pieData[item.type].y++;
+			}
+
+			//返回异常统计饼状图信息
+			for(var i=0; i<pieData.length; i++){
+				if(pieData[i].y !== 0){
+					result.data.pieData.push(pieData[i]);
+				}
+			}
+
+
+			res.json(result);
+		}
 	});
 };
 
