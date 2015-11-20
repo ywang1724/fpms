@@ -14,6 +14,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
             $scope.showName = Authentication.user.roles[0] === 'admin' ? true : false;
         }
 
+
         $scope.viewException = function () {
             $scope.showData = true;
             $scope.app = Apps.get({
@@ -46,6 +47,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                             }).success(function(result){
                                 if(result){
                                     $scope.exceptionPie.series[0].data = result.data.pieData;
+                                    $scope.exceptions = result.data.exceptions;
                                     $scope.showChart = true;
                                 }else {
                                     $scope.showChart = false;

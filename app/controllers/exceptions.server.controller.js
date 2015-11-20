@@ -219,6 +219,7 @@ exports.statisticList = function(req, res){
 				item.message = exceptions[i].message;
 				item.errorurl = exceptions[i].message;
 				item.requrl = exceptions[i].requrl;
+				item.ui = exceptions[i].ui;
 				result.data.exceptions.push(item);
 				pieData[item.type-1].y++;
 			}
