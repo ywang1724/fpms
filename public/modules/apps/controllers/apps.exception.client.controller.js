@@ -34,22 +34,69 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
 
                         $scope.pages = [{'_id':ids, 'pathname':'全部'}].concat(data);
                         $scope.selectPage = $scope.pages[0];
-                        //统计间隔
-                        $scope.intervals = [
-                            {'name': '日', 'id': 'day'}, {'name': '月', 'id': 'month'}, {'name': '年', 'id': 'year'}
-                        ];
-                        $scope.selectInterval = $scope.intervals[0];
 
+                        $scope.staticDay = new Date();
 
-                        //日期范围初始化
-                        var now = new Date();
-                        $scope.nowDate = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
-                        $scope.fromDate = $scope.nowDate - 1296000000; //往前15天
-                        $scope.untilDate = $scope.nowDate;
+                        var getExceptions = function () {
+                            $http.get('exceptions', {
+                                params: {
+                                    pageId: $scope.selectPage._id,
+                                    staticDay: new Date($scope.staticDay)
+                                }
+                            }).success(function(data){
+                                if(data){
+                                    $scope.showChart = true;
+                                }else {
+                                    $scope.showChart = false;
+                                }
+                            });
+                        };
 
+                        $scope.exceptionPie = {
+                            options: {
+                                chart: {
+                                    plotBackgroundColor: null,
+                                    plotBorderWidth: null,
+                                    plotShadow: false,
+                                    marginTop: 50,
+                                    width: $('.tabWidth').width()
+                                },
+                                tooltip: {
+                                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>',
+                                    style: {
+                                        fontSize: '14px'
+                                    }
+                                },
+                                plotOptions: {
+                                    pie: {
+                                        allowPointSelect: true,
+                                        cursor: 'pointer',
+                                        dataLabels: {
+                                            enabled: true,
+                                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                            style: {
+                                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
 
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            title: {
+                                text: '异常分布图'
+                            },
+                            series: [{
+                                type: 'pie',
+                                name: '占总异常比率',
+                                data: []
+                            }]
+                        };
+                        getExceptions();
                     } else {
-
+                        $scope.showChart = false;
                     }
                 });
 

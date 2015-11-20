@@ -7,7 +7,7 @@ module.exports = function(app) {
 
 	// Exceptions Routes
 	app.route('/exceptions')
-		.get(exceptions.list)
+		.get(users.requiresLogin, exceptions.statisticList)
 		.post(users.requiresLogin, exceptions.create);
 
 	app.route('/exceptions/:exceptionId')

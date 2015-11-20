@@ -157,6 +157,27 @@ exports.hasAuthorization = function(req, res, next) {
 	next();
 };
 
+/**
+ * 获取统计分析数据
+ */
+exports.statisticList = function(req, res){
+	var pages = (typeof req.query.pageId === 'string') ? [req.query.pageId] : req.query.pageId;
+
+	//初始化查询日期
+	var staticDay = new Date(req.query.staticDay);
+	var tommorow = new Date(Date.parse(staticDay) + 86400000);
+	var staticDayGte = new Date(staticDay.getFullYear(), staticDay.getMonth(), staticDay.getDate());
+	var staticDayLt = new Date(tommorow.getFullYear(), tommorow.getMonth(), tommorow.getDate());
+	Exception.find({
+		page: {$in: pages},
+		time: {
+			$gte: staticDayGte,
+			$lt: staticDayLt
+		}
+	}).exec(function (err, exceptions) {
+		var a = 1;
+	});
+};
 
 /**
  * 获取bookie.js

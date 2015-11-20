@@ -20,35 +20,12 @@
 					<button class="btn btn-default" name="selectPage" data-ng-model="selectPage"
 							placeholder="暂无监控页面" ng-options="page.pathname for page in pages" bs-select>
 					</button>
+					<label class="control-label">统计日期：</label>
+					<input class="btn btn-default" ng-model="staticDay"
+						   placeholder="统计日期" bs-datepicker type="text" data-date-format="yyyy-MM-dd">
 				</div>
 				<div class="form-group">
-					<label class="control-label">统计间隔：</label>
-					<button class="btn btn-default" name="selectInterval" data-ng-model="selectInterval"
-							ng-options="item.name for item in intervals" bs-select>
-					</button>
-					<label class="control-label">统计区间：</label>
-					<input class="btn btn-default" ng-model="fromDate" data-max-date="{{untilDate}}"
-						   placeholder="开始日期" bs-datepicker type="text" data-date-format="yyyy-MM-dd"
-						   data-ng-show="selectInterval.id === 'day'">
-					<input class="btn btn-default" ng-model="fromDate" placeholder="开始月份" bs-datepicker type="text"
-						   data-min-view="1" data-date-format="yyyy-MM" data-ng-show="selectInterval.id === 'month'"
-						   data-max-date="{{untilDate}}">
-					<input class="btn btn-default" ng-model="fromDate" data-max-date="{{untilDate}}"
-						   placeholder="开始年份" bs-datepicker type="text" data-min-view="2" data-date-format="yyyy"
-						   data-ng-show="selectInterval.id === 'year'">
-					至
-					<input class="btn btn-default" ng-model="untilDate" data-min-date="{{fromDate}}"
-						   data-max-date="{{nowDate}}" placeholder="截止日期" bs-datepicker type="text"
-						   data-date-format="yyyy-MM-dd" data-ng-show="selectInterval.id === 'day'">
-					<input class="btn btn-default" ng-model="untilDate" placeholder="截止月份" bs-datepicker type="text"
-						   data-date-format="yyyy-MM" data-ng-show="selectInterval.id === 'month'" data-min-date="{{fromDate}}"
-						   data-min-view="1" data-max-date="{{nowDate}}">
-					<input class="btn btn-default" ng-model="untilDate" data-min-date="{{fromDate}}"
-						   data-max-date="{{nowDate}}" placeholder="截止年份" bs-datepicker type="text" data-min-view="2"
-						   data-date-format="yyyy" data-ng-show="selectInterval.id === 'year'">
-				</div>
-				<div class="form-group">
-					<button type="button" class="btn btn-success center-block" ng-click="refrashChart()">
+					<button type="button" class="btn btn-success" ng-click="refrashChart()">
 						<span class="fa fa-refresh"></span> 刷新
 					</button>
 				</div>
@@ -84,9 +61,7 @@
 				<tab-heading>
 					<i class="fa fa-pie-chart"></i> 统计概况
 				</tab-heading>
-				<div>
-					不同异常发生的统计总数
-				</div>
+				<highchart config="exceptionPie"></highchart>
 			</tab>
 		</tabset>
 	</div>
