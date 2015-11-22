@@ -21,7 +21,7 @@
 
 
 /**
- * XMLHttprequest异常捕获
+ * XMLHttprequest异常捕获，异常类型2
  *
  */
 (function(XHR) {
@@ -72,7 +72,7 @@
 
 
 /**
- * 捕获JavaScript异常
+ * 捕获JavaScript异常，异常类型1
  *
  */
 window.onerror = function (msg, url, line, column) {
@@ -82,7 +82,7 @@ window.onerror = function (msg, url, line, column) {
 };
 
 /**
- * 捕获静态资源请求异常
+ * 捕获静态资源请求异常异常类型3
  *
  */
 window.addEventListener("error", function (e, url) {
@@ -137,10 +137,25 @@ function reportException (type, message, errorurl, requrl, stack){
     bookie.stack = stack;
     console.log('sending......');
 
-var elem =  document.getElementById("feException");
+    var elem =  document.getElementById("feException");
     var serverHost =elem.src.split('/bookie.js/')[0];
     //通过Image对象请求发送数据
     var img = new Image(1, 1);
     img.src = serverHost + '/_fe.gif?' + JSON.stringify(bookie);
 
 };
+
+/**
+ * 插入性能监控脚本
+ *
+ */
+(function addPerformanceJS(document){
+    var script   = document.createElement("script");
+    script.type  = "text/javascript";
+    script.async = 'true';
+    var elem =  document.getElementById("feException");
+    script.src   = elem.src.replace('bookie', 'rookie');
+    setTimeout(function(){
+        document.body.appendChild(script);
+    }, 2000);
+})(document);

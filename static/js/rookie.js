@@ -3,6 +3,10 @@
  * Copyright (c) 2015 wangyi xujiangwei
  */
 
+
+/**
+ * 性能采集脚本
+ */
 (function() {
     'use strict';
 
@@ -40,10 +44,55 @@
             rookie.errs.push('页面还在加载，获取数据失败！');
         }
         //通过埋点脚本变量获取监测平台地址
-        var serverHost = fp.src.split('/rookie.js/')[0];
+        var elem =  document.getElementById("feException");
+        var serverHost =elem.src.split('/bookie.js/')[0];
         //通过Image对象请求发送数据
         var img = new Image(1, 1);
         img.src = serverHost + '/_fp.gif?' + JSON.stringify(rookie);
     }, 0);
 
 })();
+
+/**
+ * DOM ID重复检测
+ */
+var DOMReplicateIDDect = function (){
+    var nodes = document.querySelectorAll('[id]');
+    var ids = {};
+    var totalNodes = nodes.length;
+
+    for(var i=0; i<totalNodes; i++) {
+        var currentId = nodes[i].id ? nodes[i].id : "undefined";
+        if(isNaN(ids[currentId])) {
+            ids[currentId] = 0;
+        }
+        ids[currentId]++;
+    }
+    var duplicateIDs = [];
+    for(i in ids){
+        if(ids[i] >1){
+            duplicateIDs.push(i);
+        }
+    }
+
+    if(duplicateIDs.length === 0){
+        return null;
+    }else {
+        return duplicateIDs;
+    }
+};
+
+/**
+ * DOM异常捕获-6
+ */
+(function DOMException (){
+    if(document.doctype == null || document.doctype == undefined){
+        reportException(6, '未声明DOCTYPE', '', '', '');
+    }
+    var ids = DOMReplicateIDDect();
+    if(ids != null && ids != undefined){
+        reportException(6, 'ID重复:' + ids.toString(), '', '', 'ID重复:' + ids.toString());
+    }
+})();
+
+
