@@ -95,4 +95,16 @@ var DOMReplicateIDDect = function (){
     }
 })();
 
-
+/**
+ * Link收集并上传
+ */
+(function (){
+    var linkNodesArray = Array.prototype.slice.call(document.querySelectorAll("a"));
+    var linkArray = linkNodesArray.filter(function(ele){
+        return !/^[#|javascript:]/.test(ele.getAttribute("href")) &&  /^[http|https]/.test(ele.href) && (ele.getAttribute("href") !== "");
+    });
+    var linkArray = linkArray.map(function(ele){
+        return ele.href;
+    });
+    //reportException(4, '', '', '', linkArray.toString());
+})();

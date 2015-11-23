@@ -132,8 +132,8 @@ function reportException (type, message, errorurl, requrl, stack){
     bookie.type = type;
     bookie.userPlatformInfo = getPlatformInfo();
     bookie.message = message;
-    bookie.errorurl = encodeURIComponent(errorurl);
-    bookie.requrl = encodeURIComponent(requrl);
+    bookie.errorurl = errorurl;
+    bookie.requrl = requrl;
     bookie.stack = stack;
     console.log('sending......');
 
@@ -141,7 +141,7 @@ function reportException (type, message, errorurl, requrl, stack){
     var serverHost =elem.src.split('/bookie.js/')[0];
     //通过Image对象请求发送数据
     var img = new Image(1, 1);
-    img.src = serverHost + '/_fe.gif?' + JSON.stringify(bookie);
+    img.src = serverHost + '/_fe.gif?' + encodeURIComponent(JSON.stringify(bookie));
 
 };
 

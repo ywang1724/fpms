@@ -22,9 +22,7 @@ exports.create = function(req, res) {
 				console.log(errorHandler.getErrorMessage(err));
 			} else {
 				var subString = req.url.substring(req.url.indexOf('?') + 1);
-				var bookie = JSON.parse(decodeURI(subString));
-				bookie.errorurl = decodeURIComponent(bookie.errorurl);
-				bookie.requrl = decodeURIComponent(bookie.requrl);
+				var bookie = JSON.parse(decodeURIComponent(subString));
 				if (bookie.userPlatformInfo.appHost === app.host) {
 					//定义页面对象
 					var page = {};
