@@ -97,6 +97,9 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                 data: []
                             }]
                         };
+
+                        //刷新页面图表
+                        $scope.refrashChart = getExceptions;
                         getExceptions();
                     } else {
                         $scope.showChart = false;
