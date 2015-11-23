@@ -21,7 +21,6 @@ exports.create = function(req, res) {
 			if (err) {
 				console.log(errorHandler.getErrorMessage(err));
 			} else {
-				var string = req.url.indexOf('?');
 				var subString = req.url.substring(req.url.indexOf('?') + 1);
 				var bookie = JSON.parse(decodeURI(subString));
 				bookie.errorurl = decodeURIComponent(bookie.errorurl);
