@@ -48,7 +48,7 @@
         var serverHost =elem.src.split('/bookie.js/')[0];
         //通过Image对象请求发送数据
         var img = new Image(1, 1);
-        img.src = serverHost + '/_fp.gif?' + JSON.stringify(rookie);
+        img.src = serverHost + '/_fp.gif?' + encodeURIComponent(JSON.stringify(rookie));
     }, 0);
 
 })();

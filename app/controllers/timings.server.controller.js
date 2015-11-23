@@ -25,7 +25,7 @@ exports.create = function (req, res) {
             if (err) {
                 console.log(errorHandler.getErrorMessage(err));
             } else {
-                var rookie = JSON.parse(decodeURI(req.url.substring(req.url.indexOf('?') + 1)));
+                var rookie = JSON.parse(decodeURIComponent(req.url.substring(req.url.indexOf('?') + 1)));
                 if (rookie.appHost === app.host) {
                     //定义页面对象
                     var page = {};
