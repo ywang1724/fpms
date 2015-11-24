@@ -16,14 +16,14 @@ exports.getUserInformation = function (ua, platform, ip) {
             mobile = 1;
         }
         version = /MSIE \d+[.]\d+/.exec(ua)[0].split(' ')[1];
-    } else if (/Chrome/.test(ua)) {
+    } else if (/Chrome/.test(ua) && !/OPR/.test(ua)) {
         // Platform override for Chromebooks
         if (/CrOS/.test(ua)) {
             platform = 'CrOS';
         }
         browser = 'Chrome';
         version = /Chrome\/[\d\.]+/.exec(ua)[0].split('/')[1];
-    } else if (/Opera/.test(ua)) {
+    } else if (/OPR/.test(ua)) {
         browser = 'Opera';
         if (/mini/.test(ua) || /Mobile/.test(ua)) {
             mobile = 1;
@@ -50,7 +50,7 @@ exports.getUserInformation = function (ua, platform, ip) {
         if (version) {
             version = version[0].split('/')[1];
         } else {
-            version = /Opera\/[\.\d]+/.exec(ua)[0].split('/')[1];
+            version = /OPR\/[\.\d]+/.exec(ua)[0].split('/')[1];
         }
     }
     if (platform === 'MacIntel' || platform === 'MacPPC') {
