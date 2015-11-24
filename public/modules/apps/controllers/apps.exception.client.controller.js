@@ -47,6 +47,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                             }).success(function(result){
                                 if(result.data.exceptions.length >= 1){
                                     $scope.exceptionPie.series[0].data = result.data.pieData;
+                                    $scope.exceptionBrowserBar.series[0].data = result.data.browserData;
                                     $scope.exceptions = result.data.exceptions;
                                     $scope.showData = true;
                                 }else {
@@ -55,6 +56,61 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                             });
                         };
 
+                        $scope.exceptionBrowserBar = {
+                            options: {
+                                chart: {
+                                    type: 'column',
+                                    marginTop: 50,
+                                    width: $('.tabWidth').width()
+                                },
+                                legend: {
+                                    enabled: false
+                                },
+                                tooltip: {
+                                    formatter: function () {
+                                        return '<h6>' + this.key + '下</h6><br/>' +
+                                            '异常数目为：' + this.y;
+                                    },
+                                    style: {
+                                        fontSize: '14px'
+                                    }
+                                },
+                                plotOptions: {
+                                    column: {
+                                        dataLabels: {
+                                            enabled: true,
+                                            formatter: function () {
+                                                return this.y + '个异常';
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            xAxis: {
+                                categories: ['Chrome', 'FireFox', 'Internet Explorer', 'Safari', 'Opera', '其它']
+                            },
+                            yAxis: {
+                                title: {
+                                    text: '异常数量'
+                                }
+                            },
+                            series: [{
+                                name: '异常量',
+                                tooltip: {
+                                    valueSuffix: ' 个'
+                                },
+                                data: []
+                            }],
+                            title: {
+                                text: '异常浏览器分布概况'
+                            }
+                        };
+
+
+                        //统计分布异常饼状图
                         $scope.exceptionPie = {
                             options: {
                                 chart: {
