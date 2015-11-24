@@ -27,7 +27,7 @@ exports.create = function(req, res) {
 					//定义页面对象
 					var page = {};
 					//查找Web应用对应页面，如果存在则返回，如果不存在则新建
-					Page.findOneAndUpdate({app: app, pathname: bookie.pathname}, page, {upsert: true})
+					Page.findOneAndUpdate({app: app, pathname: bookie.userPlatformInfo.pathname}, page, {upsert: true})
 						.exec(function (err, obj) {
 							if (err) {
 								console.log(errorHandler.getErrorMessage(err));
