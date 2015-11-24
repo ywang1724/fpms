@@ -202,7 +202,8 @@ exports.statisticList = function(req, res){
 			var result = {
 				data: {
 					exceptions: [],
-					pieData: []
+					pieData: [],
+					browserData: [0, 0, 0, 0, 0, 0]
 				}
 			};
 
@@ -219,9 +220,32 @@ exports.statisticList = function(req, res){
 				item.ui = exceptions[i].ui;
 				result.data.exceptions.push(item);
 				pieData[item.type-1].y++;
+
+				//浏览器分布情况统计
+				switch (exceptions[i].ui.browser){
+					case 'Chrome':
+						result.data.browserData[0]++;
+						break;
+					case 'Firefox':
+						result.data.browserData[1]++;
+						break;
+					case 'Internet Explorer':
+						result.data.browserData[2]++;
+						break;
+					case 'Safari':
+						result.data.browserData[3]++;
+						break;
+					case 'Opera':
+						result.data.browserData[4]++;
+						break;
+					default:
+						result.data.browserData[5]++;
+						break;
+
+				}
 			}
 
-			//返回异常统计饼状图信息
+			//返回有效的异常统计饼状图信息
 			for(var j=0; j<pieData.length; j++){
 				if(pieData[j].y !== 0){
 					result.data.pieData.push(pieData[j]);
