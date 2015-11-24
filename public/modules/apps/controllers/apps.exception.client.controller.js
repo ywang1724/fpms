@@ -45,12 +45,12 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                     staticDay: new Date($scope.staticDay)
                                 }
                             }).success(function(result){
-                                if(result){
+                                if(result.data.exceptions.length >= 1){
                                     $scope.exceptionPie.series[0].data = result.data.pieData;
                                     $scope.exceptions = result.data.exceptions;
-                                    $scope.showChart = true;
+                                    $scope.showData = true;
                                 }else {
-                                    $scope.showChart = false;
+                                    $scope.showData = false;
                                 }
                             });
                         };
