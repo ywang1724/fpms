@@ -56,6 +56,70 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                             });
                         };
 
+                        $scope.exceptionTrendLine = {
+                            options: {
+                                chart: {
+                                    type: 'line',
+                                    marginTop: 50,
+                                    width: $('.tabWidth').width()
+                                },
+                                legend: {
+                                    enabled: false
+                                },
+                                tooltip: {
+                                    formatter: function () {
+                                        return '<h6>' + this.key + '下</h6><br/>' +
+                                            '异常数目为：' + this.y;
+                                    },
+                                    style: {
+                                        fontSize: '14px'
+                                    }
+                                },
+                                plotOptions: {
+                                    column: {
+                                        dataLabels: {
+                                            enabled: true,
+                                            formatter: function () {
+                                                return this.y + '个异常';
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            xAxis: {
+                                categories: ['0:00', '1:00', '2:00', '3:00', '4:00', '5:00',
+                                             '6:00', '7:00', '8:00', '9:00', '10:00', '11:00',
+                                             '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
+                                             '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
+                            },
+                            yAxis: {
+                                title: {
+                                    text: '异常数量'
+                                }
+                            },
+                            series: [{
+                                name: '异常量',
+                                tooltip: {
+                                    valueSuffix: ' 个'
+                                },
+                                data: [3, 3, 2, 2, 3,1 ,5, 7, 5,7 ,5 ,7,5,1,22,14,34,18,23,21,14,23,44,33 ]
+                            },{
+                                name: '历史异常情况平均值',
+                                tooltip: {
+                                    valueSuffix: ' 个'
+                                },
+                                data: [11,2,3,4,5,4,2,1,2,3,4,5,6,3,5,6,7,4,3,2,11,22,3,4]
+                            }],
+                            title: {
+                                text: '异常发生趋势'
+                            }
+                        };
+
+
+                        //异常浏览器分布情况统计
                         $scope.exceptionBrowserBar = {
                             options: {
                                 chart: {
