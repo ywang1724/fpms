@@ -102,7 +102,7 @@ exports.historyTimeDist = function(arr){
     }
     var diffDays = diffDay[1] - diffDay[0] + 1;
     var newResult = result.map(function(ele){
-        return (ele/diffDays).toFixed(1);
+        return parseFloat((ele/diffDays).toFixed(1));
     });
 
     return newResult;

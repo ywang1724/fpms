@@ -67,7 +67,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                     width: $('.tabWidth').width()
                                 },
                                 legend: {
-                                    enabled: false
+                                    enabled: true
                                 },
                                 tooltip: {
                                     formatter: function () {
@@ -79,12 +79,9 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                     }
                                 },
                                 plotOptions: {
-                                    column: {
+                                    line: {
                                         dataLabels: {
-                                            enabled: true,
-                                            formatter: function () {
-                                                return this.y + '个异常';
-                                            }
+                                            enabled: false
                                         }
                                     }
                                 }
