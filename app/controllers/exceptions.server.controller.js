@@ -214,7 +214,7 @@ exports.statisticList = function(req, res){
 			result.data.trendData[0] = ((timeDisData !== null) ? timeDisData:[0]);
 
 			//返回历史时间异常分布曲线数据
-			Exception.find({
+			var promise1 = Exception.find({
 				page: {$in: pages}
 			}).exec(function (err, exceptions) {
 				var historyTimeDis = statistics.historyTimeDist(exceptions);
@@ -271,8 +271,9 @@ exports.statisticList = function(req, res){
 				}
 			}
 
-
-			res.json(result);
+			Q.all([promise1]).then(function (){
+				res.json(result);
+			});
 		}
 	});
 };
