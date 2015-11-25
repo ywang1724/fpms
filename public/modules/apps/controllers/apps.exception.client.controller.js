@@ -48,6 +48,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                 if(result.data.exceptions.length >= 1){
                                     $scope.exceptionPie.series[0].data = result.data.pieData;
                                     $scope.exceptionBrowserBar.series[0].data = result.data.browserData;
+                                    $scope.exceptionTrendLine.series[0].data = result.data.trendData[0];
                                     $scope.exceptions = result.data.exceptions;
                                     $scope.showData = true;
                                 }else {
@@ -101,11 +102,11 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                 }
                             },
                             series: [{
-                                name: '异常量',
+                                name: '当前异常发生趋势',
                                 tooltip: {
                                     valueSuffix: ' 个'
                                 },
-                                data: [3, 3, 2, 2, 3,1 ,5, 7, 5,7 ,5 ,7,5,1,22,14,34,18,23,21,14,23,44,33 ]
+                                data: []
                             },{
                                 name: '历史异常情况平均值',
                                 tooltip: {

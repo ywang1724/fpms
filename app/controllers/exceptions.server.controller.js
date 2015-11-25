@@ -6,6 +6,7 @@
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
 	detect = require('./../tools/detect'),
+	statistics = require('./../tools/statistics'),
 	Exception = mongoose.model('Exception'),
 	App = mongoose.model('App'),
 	Page = mongoose.model('Page'),
@@ -203,9 +204,14 @@ exports.statisticList = function(req, res){
 				data: {
 					exceptions: [],
 					pieData: [],
-					browserData: [0, 0, 0, 0, 0, 0]
+					browserData: [0, 0, 0, 0, 0, 0],
+					trendData:[]
 				}
 			};
+
+			//返回当前时间异常分布曲线
+			var timeDisData = statistics.timeDistribute(exceptions);
+			result.data.trendData[0] = ((timeDisData !== null) ? timeDisData:[0]);
 
 			//返回异常JSON数据
 			for(var i=0; i<exceptions.length; i++){

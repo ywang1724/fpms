@@ -70,3 +70,15 @@ exports.quantile = function (arr, p) {
         return quantileSorted(sorted, p);
     }
 };
+
+/**
+ * 获取异常数量时间分布
+ */
+exports.timeDistribute = function (arr){
+    if (arr.length === 0) return null;
+    var result = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    for(var i=0; i<arr.length; i++){
+        result[arr[i].time.getHours()]++;
+    }
+    return result;
+};
