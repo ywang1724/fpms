@@ -213,6 +213,19 @@ exports.statisticList = function(req, res){
 			var timeDisData = statistics.timeDistribute(exceptions);
 			result.data.trendData[0] = ((timeDisData !== null) ? timeDisData:[0]);
 
+			//返回历史时间异常分布曲线数据
+			Exception.find({
+				page: {$in: pages}
+			}).exec(function (err, exceptions) {
+				var historyTimeDis = statistics.historyTimeDist(exceptions);
+				if(historyTimeDis){
+					result.data.trendData[1] = historyTimeDis;
+				}else{
+					result.data.trendData[1] = [0];
+				}
+
+			});
+
 			//返回异常JSON数据
 			for(var i=0; i<exceptions.length; i++){
 				var item = {};

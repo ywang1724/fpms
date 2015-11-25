@@ -49,8 +49,10 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                     $scope.exceptionPie.series[0].data = result.data.pieData;
                                     $scope.exceptionBrowserBar.series[0].data = result.data.browserData;
                                     $scope.exceptionTrendLine.series[0].data = result.data.trendData[0];
+                                    $scope.exceptionTrendLine.series[1].data = result.data.trendData[1];
                                     $scope.exceptions = result.data.exceptions;
                                     $scope.showData = true;
+                                    debugger;
                                 }else {
                                     $scope.showData = false;
                                 }
@@ -112,7 +114,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                 tooltip: {
                                     valueSuffix: ' 个'
                                 },
-                                data: [11,2,3,4,5,4,2,1,2,3,4,5,6,3,5,6,7,4,3,2,11,22,3,4]
+                                data: []
                             }],
                             title: {
                                 text: '异常发生趋势'

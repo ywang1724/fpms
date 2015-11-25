@@ -82,3 +82,28 @@ exports.timeDistribute = function (arr){
     }
     return result;
 };
+
+/**
+ * 获取历史异常数量时间分布
+ */
+exports.historyTimeDist = function(arr){
+    if (arr.length === 0) return null;
+    var diffDay = [arr[0].time.getDate(), arr[0].time.getDate()];
+    var result = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    for(var i=0; i<arr.length; i++){
+        var currentDate = arr[i].time.getDate();
+        if(currentDate < diffDay[0]){
+            diffDay[0] = currentDate;
+        }
+        if(currentDate > diffDay[1]){
+            diffDay[1] = currentDate;
+        }
+        result[arr[i].time.getHours()]++;
+    }
+    var diffDays = diffDay[1] - diffDay[0] + 1;
+    var newResult = result.map(function(ele){
+        return (ele/diffDays).toFixed(1);
+    });
+
+    return newResult;
+};
