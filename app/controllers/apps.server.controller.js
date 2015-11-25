@@ -168,3 +168,20 @@ exports.pageList = function (req, res) {
         }
     });
 };
+
+/**
+ * delete A page
+ */
+exports.pageDelete = function (req, res){
+    var app = req.app;
+    var pageId = req.query.pageId;
+    Page.find({'_id': pageId}).remove(function(err) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(app);
+        }
+    });
+};

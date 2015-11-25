@@ -159,17 +159,28 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
         };
 
-
+        //跳转至性能详情
         $scope.gotoPerformance = function(page){
             PageService.setCurrentPage({'_id': page._id, 'pathname': page.pathname});
             PageService.setIdentifier(2);
             $location.path('apps/performance/' + $scope.app._id);
         };
 
+        //跳转至异常详情
         $scope.gotoException = function(page){
             PageService.setCurrentPage({'_id': page._id, 'pathname': page.pathname});
             PageService.setIdentifier(2);
             $location.path('apps/exception/' + $scope.app._id);
+        };
+
+        //删除页面
+        $scope.deletePage = function(page){
+            $scope.pages = $scope.pages.filter(function(elem){
+                return elem._id !== page._id;
+            });
+            $http.delete('pages/' + $scope.app._id, {
+                params: {pageId: page._id}
+            });
         };
 
         $scope.canUpdate = function () {

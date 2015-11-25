@@ -16,7 +16,8 @@ module.exports = function(app) {
 
 	// 页面路由
 	app.route('/pages/:appId')
-		.get(users.requiresLogin, apps.pageList);
+		.get(users.requiresLogin, apps.pageList)
+		.delete(users.requiresLogin, apps.pageDelete);
 
 	// 绑定App中间件
 	app.param('appId', apps.appByID);
