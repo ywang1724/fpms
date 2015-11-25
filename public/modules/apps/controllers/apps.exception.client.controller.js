@@ -52,7 +52,6 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                     $scope.exceptionTrendLine.series[1].data = result.data.trendData[1];
                                     $scope.exceptions = result.data.exceptions;
                                     $scope.showData = true;
-                                    debugger;
                                 }else {
                                     $scope.showData = false;
                                 }
@@ -62,7 +61,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                         $scope.exceptionTrendLine = {
                             options: {
                                 chart: {
-                                    type: 'line',
+                                    type: 'area',
                                     marginTop: 50,
                                     width: $('.tabWidth').width()
                                 },
@@ -79,7 +78,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                     }
                                 },
                                 plotOptions: {
-                                    line: {
+                                    area: {
                                         dataLabels: {
                                             enabled: false
                                         }
