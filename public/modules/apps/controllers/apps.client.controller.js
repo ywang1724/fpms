@@ -2,8 +2,8 @@
 
 // Apps controller
 angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
-    'DTOptionsBuilder', '$http', '$timeout',
-    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout) {
+    'DTOptionsBuilder', '$http', '$timeout', 'PageService',
+    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService) {
         $scope.authentication = Authentication;
 
         //可从后台动态获取数据，以后有时间完成
@@ -131,6 +131,11 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             });
 
 
+            $http.get('pages/' + $stateParams.appId).
+                success(function (data) {
+                    $scope.pages = data;
+                });
+
             //修改APP配置初始化报警类型
             $scope.alarmtypes = [
                 {label: 'JavaScript异常', value: 1, checked: false},
@@ -154,6 +159,18 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
         };
 
+
+        $scope.gotoPerformance = function(page){
+            PageService.setCurrentPage({'_id': page._id, 'pathname': page.pathname});
+            PageService.setIdentifier(2);
+            $location.path('apps/performance/' + $scope.app._id);
+        };
+
+        $scope.gotoException = function(page){
+            PageService.setCurrentPage({'_id': page._id, 'pathname': page.pathname});
+            PageService.setIdentifier(2);
+            $location.path('apps/exception/' + $scope.app._id);
+        };
 
         $scope.canUpdate = function () {
             return $scope.appForm.$valid;

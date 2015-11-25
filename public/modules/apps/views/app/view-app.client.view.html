@@ -90,4 +90,29 @@
             </div>
         </div>
     </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">该应用下监控的页面</div>
+        <div class="panel-body">
+            <table datatable="ng" dt-options="dtPageOptions" class="table table-striped table-bordered table-hover myTable"
+                   data-ng-if="pages.length">
+                <thead>
+                    <tr>
+                        <th>页面路径</th>
+                        <th>性能详情</th>
+                        <th>异常详情</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-ng-repeat="page in pages">
+                        <td>{{ page.pathname }}</td>
+                        <td><a ng-click="gotoPerformance(page)">性能详情</a></td>
+                        <td><a ng-click="gotoException(page)">异常详情</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="alert alert-warning text-center" data-ng-if="!pages.length">
+                没有任何页面，将以上脚本复制到您需要监控的页面即可添加页面。
+            </div>
+        </div>
+    </div>
 </section>

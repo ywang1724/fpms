@@ -2,8 +2,8 @@
 
 // Apps controller
 angular.module('apps').controller('AppsPerformanceController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
-    'DTOptionsBuilder', '$http', '$timeout',
-    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout) {
+    'DTOptionsBuilder', '$http', '$timeout', 'PageService',
+    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService) {
         $scope.authentication = Authentication;
 
         //可从后台动态获取数据，以后有时间完成
@@ -44,7 +44,14 @@ angular.module('apps').controller('AppsPerformanceController', ['$scope', '$stat
                             ids.push(data[i]._id);
                         }
                         $scope.pages = [{'_id':ids, 'pathname':'全部'}].concat(data);
-                        $scope.selectPage = $scope.pages[0];
+                        if(PageService.getIdentifier() === 2){
+                            //表示从应用详情跳转过来
+                            $scope.selectPage = $scope.pages.filter(function(elem){
+                                return elem._id === PageService.getCurrentPage()._id;
+                            })[0];
+                        }else{
+                            $scope.selectPage = $scope.pages[0];
+                        }
                         //统计间隔
                         $scope.intervals = [
                             {'name': '日', 'id': 'day'}, {'name': '月', 'id': 'month'}, {'name': '年', 'id': 'year'}
@@ -117,6 +124,7 @@ angular.module('apps').controller('AppsPerformanceController', ['$scope', '$stat
                                     statistic: $scope.selectStatistic.id
                                 }
                             }).success(function (result) {
+                                PageService.setIdentifier(1);
                                 if (result.statisticData.sum > 0) {
                                     $scope.chartConfig.series[0].data = result.numData;
                                     $scope.chartConfig.series[1].data = result.pageLoadData;
