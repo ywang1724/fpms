@@ -175,8 +175,18 @@ exports.pageList = function (req, res) {
  */
 exports.pageDelete = function (req, res){
     var app = req.app;
-    var pageId = req.query.pageId;
+    var pageId = req.query.pageId,
+        errCallback = function (err) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            }
+        };
 
+    /**
+     * Delete cascade exceptions
+     */
     Exception.find({page: pageId}).exec(function (err, exceptions) {
         if (err) {
             return res.status(400).send({
@@ -185,6 +195,23 @@ exports.pageDelete = function (req, res){
         } else {
             for (var i = 0; i < exceptions.length; i++) {
                 exceptions[i].remove();
+            }
+        }
+    });
+
+    /**
+     * Delete cascade timings and their children
+     */
+    Timing.find({page: pageId}).exec(function (err, timings) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            for (var j = 0; j < timings.length; j++) {
+                NavTiming.findById(timings[j].navTiming).remove(errCallback);
+                ResTiming.find({_id: {$in: timings[j].resTimings}}).remove(errCallback);
+                timings[j].remove();
             }
         }
     });
