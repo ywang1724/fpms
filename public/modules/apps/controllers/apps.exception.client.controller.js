@@ -241,8 +241,18 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
         };
 
 
-
-
+        /**
+         * 切换至性能监控页面
+         */
+        $scope.gotoPerformance = function (){
+            if($scope.selectPage.pathname === '全部'){
+                $location.path('apps/performance/' + $scope.app._id);
+            } else {
+                PageService.setCurrentPage({'_id': $scope.selectPage._id, 'pathname': $scope.selectPage.pathname});
+                PageService.setIdentifier(2);
+                $location.path('apps/performance/' + $scope.app._id);
+            }
+        };
 
 
 
