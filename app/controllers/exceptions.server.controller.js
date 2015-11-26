@@ -8,6 +8,7 @@ var mongoose = require('mongoose'),
 	detect = require('./../tools/detect'),
 	statistics = require('./../tools/statistics'),
 	Exception = mongoose.model('Exception'),
+	ExceptionKind = mongoose.model('ExceptionKind'),
 	App = mongoose.model('App'),
 	Page = mongoose.model('Page'),
 	Q = require('q'),
@@ -44,6 +45,30 @@ exports.create = function(req, res) {
 										console.log(errorHandler.getErrorMessage(err));
 									}
 									console.log(Date.now());
+								});
+
+								//判断是否有该异常种类,没有的话新建一个，有的话更新
+								ExceptionKind.findOne({page: bookie.page, type: bookie.type,
+									errorurl: bookie.errorurl, stack: bookie.stack,
+									message: bookie.message, requrl: bookie.requrl}).exec(function (err, exceptionKind){
+									if (err) {
+										console.log(errorHandler.getErrorMessage(err));
+									} else {
+										//长度为0即表示没有，添加一个即可；否则更新
+										if (!exceptionKind) {
+											new ExceptionKind({page: bookie.page, type: bookie.type,
+												errorurl: bookie.errorurl, stack: bookie.stack,
+												message: bookie.message, requrl: bookie.requrl,
+												lastAlarmTime: new Date(), isAlarm: 1}).save(function (err) {
+												if (err) {
+													console.log(errorHandler.getErrorMessage(err));
+												}
+												console.log(Date.now());
+											});
+										} else {
+											//TODO更新种类,报警并更新部分异常种类字段
+										}
+									}
 								});
 							}
 						});
