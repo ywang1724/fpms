@@ -7,6 +7,7 @@ var mongoose = require('mongoose'),
     errorHandler = require('./errors.server.controller'),
     App = mongoose.model('App'),
     Page = mongoose.model('Page'),
+    Exception = mongoose.model('Exception'),
     Timing = mongoose.model('Timing'),
     NavTiming = mongoose.model('NavTiming'),
     ResTiming = mongoose.model('ResTiming'),
@@ -175,6 +176,19 @@ exports.pageList = function (req, res) {
 exports.pageDelete = function (req, res){
     var app = req.app;
     var pageId = req.query.pageId;
+
+    Exception.find({page: pageId}).exec(function (err, exceptions) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            for (var i = 0; i < exceptions.length; i++) {
+                exceptions[i].remove();
+            }
+        }
+    });
+
     Page.find({'_id': pageId}).remove(function(err) {
         if (err) {
             return res.status(400).send({
