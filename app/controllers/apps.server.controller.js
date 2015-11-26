@@ -75,6 +75,17 @@ exports.delete = function (req, res) {
                 }
             }
         },
+        efCallback = function (err, exceptions) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                for (var i = 0; i < exceptions.length; i++) {
+                    exceptions[i].remove();
+                }
+            }
+        },
         errCallback = function (err) {
             if (err) {
                 return res.status(400).send({
@@ -91,6 +102,7 @@ exports.delete = function (req, res) {
         } else {
             for (var i = 0; i < pages.length; i++) {
                 Timing.find({page: pages[i].id}).exec(tfCallback);
+                Exception.find({page: pages[i].id}).exec(efCallback);
                 pages[i].remove();
             }
         }
