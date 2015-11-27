@@ -10,6 +10,11 @@ var mongoose = require('mongoose'),
  * ExceptionKind Schema
  */
 var ExceptionKindSchema = new Schema({
+    count: {
+        type: Number,
+        required: '请添加异常发生次数',
+        default: 1
+    },
     lastAlarmTime: {
         type: Date,
         required: '请添加异常种类上次报警时间'
