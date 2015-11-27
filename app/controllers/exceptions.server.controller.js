@@ -16,6 +16,7 @@ var mongoose = require('mongoose'),
 
 /**
  * Create a Exception
+ * TODO:报警，死链接检测
  */
 exports.create = function(req, res) {
 	if (req.session.appId) {
@@ -54,8 +55,9 @@ exports.create = function(req, res) {
 									if (err) {
 										console.log(errorHandler.getErrorMessage(err));
 									} else {
-										//长度为0即表示没有，添加一个即可；否则更新
+										//长度为0即表示没有，添加一个即可,同时报警；否则检查是否要报警并更新
 										if (!exceptionKind) {
+											//报警，然后新建
 											new ExceptionKind({page: bookie.page, type: bookie.type,
 												errorurl: bookie.errorurl, stack: bookie.stack,
 												message: bookie.message, requrl: bookie.requrl,
