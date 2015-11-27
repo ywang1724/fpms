@@ -242,6 +242,22 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
 
 
         /**
+         * 异常详细信息查看
+         * TODO：弹出层查看异常详情信息
+         */
+        $scope.viewExceptionDetail = function () {
+            //查看本次异常详情
+        };
+
+        /**
+         * 异常种类详情查看
+         * TODO：弹出层查看异常种类信息
+         */
+        $scope.viewExceptionKindDetail = function () {
+            //异常种类详情查看
+        };
+
+        /**
          * 切换至性能监控页面
          */
         $scope.gotoPerformance = function (){
