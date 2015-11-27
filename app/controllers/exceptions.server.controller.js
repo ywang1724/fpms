@@ -69,6 +69,8 @@ exports.create = function(req, res) {
 											});
 										} else {
 											//TODO更新种类,报警并更新部分异常种类字段
+											console.log('alarm.....');
+											console.log('update exceptionKind');
 										}
 									}
 								});
