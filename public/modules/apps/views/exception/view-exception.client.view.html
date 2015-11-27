@@ -53,42 +53,38 @@
 					<table datatable="ng" dt-options="dtOptions" class="table table-striped table-bordered table-hover myTable"
 						   data-ng-if="exceptionKinds.length">
 						<thead>
-						<tr>
-							<th>类型</th>
-							<th>发生次数</th>
-							<th>消息提示</th>
-							<th>异常文件</th>
-							<th>异常请求地址</th>
-							<th>异常堆栈</th>
-							<th>是否报警</th>
-							<th>上次报警时间</th>
-							<th>查看详情</th>
-						</tr>
+							<tr>
+								<th>类型</th>
+								<th>发生次数</th>
+								<th>消息提示</th>
+								<th>是否报警</th>
+								<th>上次报警时间</th>
+								<th>查看详情</th>
+							</tr>
 						</thead>
 						<tbody>
-						<tr data-ng-repeat="exceptionKind in exceptionKinds">
-							<td ng-switch="{{ exceptionKind.type }}" style="width:15% !important;">
-								<span ng-switch-when="1">JavaScript异常</span>
-								<span ng-switch-when="2">Ajax请求异常</span>
-								<span ng-switch-when="3">静态资源获取异常</span>
-								<span ng-switch-when="4">死链接异常</span>
-								<span ng-switch-when="5">页面加载异常</span>
-								<span ng-switch-when="6">DOM结构异常</span>
-								<span ng-switch-when="7">内存异常</span>
-							</td>
-							<td style="width:15% !important;">{{ exceptionKind.type }}</td>
-							<td style="width:10% !important;">{{ exceptionKind.count }}</td>
-							<td>{{ exceptionKind.message }}</td>
-							<td>{{ exceptionKind.errorurl }}</td>
-							<td>{{ exceptionKind.requrl }}</td>
-							<td>{{ exceptionKind.stack }}</td>
-							<td>{{ exceptionKind.isAlarm }}</td>
-							<td>{{ exceptionKind.lastAlarmTime }}</td>
-							<td ng-click="viewExceptionKindDetail()" style="width:10% !important;">查看详情</td>
-						</tr>
+							<tr data-ng-repeat="exceptionKind in exceptionKinds">
+								<td ng-switch="{{ exceptionKind.type }}" style="width:15% !important;">
+									<span ng-switch-when="1">JavaScript异常</span>
+									<span ng-switch-when="2">Ajax请求异常</span>
+									<span ng-switch-when="3">静态资源获取异常</span>
+									<span ng-switch-when="4">死链接异常</span>
+									<span ng-switch-when="5">页面加载异常</span>
+									<span ng-switch-when="6">DOM结构异常</span>
+									<span ng-switch-when="7">内存异常</span>
+								</td>
+								<td style="width:10% !important;">{{ exceptionKind.count }}</td>
+								<td style="width:25% !important;">{{ exceptionKind.message }}</td>
+								<td ng-switch="{{ exceptionKind.isAlarm }}" style="width:15% !important;">
+									<span ng-switch-when="1">是</span>
+									<span ng-switch-when="2">否</span>
+								</td>
+								<td style="width:20% !important;">{{ exceptionKind.lastAlarmTime }}</td>
+								<td ng-click="viewExceptionKindDetail()" style="width:15% !important;">查看详情</td>
+							</tr>
 						</tbody>
 					</table>
-					<div class="alert alert-warning text-center" data-ng-if="exceptions.$resolved && !exceptions.length">
+					<div class="alert alert-warning text-center" data-ng-if="!exceptionKinds.length">
 						没有任何异常。
 					</div>
 				</div>

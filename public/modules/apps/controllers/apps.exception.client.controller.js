@@ -59,6 +59,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                     $scope.exceptionTrendLine.series[0].data = result.data.trendData[0];
                                     $scope.exceptionTrendLine.series[1].data = result.data.trendData[1];
                                     $scope.exceptions = result.data.exceptions;
+                                    $scope.exceptionKinds = result.data.exceptionKinds;
                                     $scope.showData = true;
                                 }else {
                                     $scope.showData = false;
@@ -66,6 +67,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                             });
                         };
 
+                        //异常趋势
                         $scope.exceptionTrendLine = {
                             options: {
                                 chart: {
@@ -270,14 +272,38 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
             }
         };
 
-
-
-
-
         //返回
         $scope.back = function () {
             window.history.back();
         };
+
+        //datatble配置
+        $scope.dtOptions = DTOptionsBuilder
+            .newOptions()
+            .withLanguage({
+                'sLengthMenu': '每页显示 _MENU_ 条数据',
+                'sInfo': '从 _START_ 到 _END_ /共 _TOTAL_ 条数据',
+                'sInfoEmpty': '没有数据',
+                'sInfoFiltered': '(从 _MAX_ 条数据中检索)',
+                'sZeroRecords': '没有检索到数据',
+                'sSearch': '检索:',
+                'oPaginate': {
+                    'sFirst': '首页',
+                    'sPrevious': '上一页',
+                    'sNext': '下一页',
+                    'sLast': '末页'
+                }
+            })
+            // Add Bootstrap compatibility
+            .withBootstrap()
+            .withBootstrapOptions({
+                pagination: {
+                    classes: {
+                        ul: 'pagination pagination-sm'
+                    }
+                }
+            })
+            .withOption('responsive', true);
 
     }
 ]);

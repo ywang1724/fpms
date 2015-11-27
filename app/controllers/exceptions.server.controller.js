@@ -234,7 +234,8 @@ exports.statisticList = function(req, res){
 					exceptions: [],
 					pieData: [],
 					browserData: [0, 0, 0, 0, 0, 0],
-					trendData:[]
+					trendData:[],
+					exceptionKinds: []
 				}
 			};
 
@@ -251,6 +252,20 @@ exports.statisticList = function(req, res){
 					result.data.trendData[1] = historyTimeDis;
 				}else{
 					result.data.trendData[1] = [0];
+				}
+
+			});
+
+			//返回异常种类列表信息数据
+			var promise2 = ExceptionKind.find({
+				page: {$in: pages}
+			}).exec(function (err, exceptionKinds) {
+				if (err) {
+					return res.status(400).send({
+						message: errorHandler.getErrorMessage(err)
+					});
+				} else {
+					result.data.exceptionKinds = exceptionKinds;
 				}
 
 			});
@@ -300,7 +315,7 @@ exports.statisticList = function(req, res){
 				}
 			}
 
-			Q.all([promise1]).then(function (){
+			Q.all([promise1, promise2]).then(function (){
 				res.json(result);
 			});
 		}
