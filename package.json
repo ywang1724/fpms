@@ -41,6 +41,7 @@
     "passport-local": "~1.0.0",
     "phantom": "^0.7.2",
     "q": "^1.1.2",
+    "request-promise": "^1.0.2",
     "swig": "~1.4.1"
   },
   "devDependencies": {
