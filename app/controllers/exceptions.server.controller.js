@@ -41,6 +41,7 @@ exports.create = function(req, res) {
 								bookie.page = page;
 								bookie.ui = detect.getUserInformation(bookie.userPlatformInfo.userAgent, bookie.userPlatformInfo.platform, req.ip);
 
+								//新建异常并保存
 								new Exception(bookie).save(function (err) {
 									if (err) {
 										console.log(errorHandler.getErrorMessage(err));
@@ -69,13 +70,20 @@ exports.create = function(req, res) {
 											});
 										} else {
 											//TODO更新种类,报警并更新部分异常种类字段
+											ExceptionKind.findOneAndUpdate({_id: exceptionKind._id}, {count: exceptionKind.count+1}).exec(function (err){
+												if (err) {
+													return res.status(400).send({
+														message: errorHandler.getErrorMessage(err)
+													});
+												}
+											});
 											console.log('alarm.....');
 											console.log('update exceptionKind');
 										}
 									}
 								});
 							}
-						});
+					});
 				}
 			}
 		});
