@@ -44,7 +44,7 @@
                 if(self.status == 404){
                     var scripts = document.getElementsByTagName("script");
                     var errorurl = scripts[scripts.length - 1].src;
-                    var msg = self.statusText;
+                    var msg = self._url + '的请求' + self.statusText;
                     var requrl = self._url;
 
                     reportException(2, msg, errorurl, requrl, '');
@@ -97,7 +97,7 @@ window.addEventListener("error", function (e, url) {
         var url = ele.tagName == "LINK" ? ele.href: ele.src;
         console.log("地址为：" + url + "的" + resourceMap[ele.tagName] + "加载失败");
 
-        var msg = resourceMap[ele.tagName] + '加载失败';
+        var msg = url.substring(url.lastIndexOf('/') + 1) + '的' + resourceMap[ele.tagName] + '加载失败';
         var errorurl = ele.baseURI;
         var requrl = url;
         reportException(3, msg, errorurl, requrl, '');
