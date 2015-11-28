@@ -8,7 +8,7 @@ var mongoose = require('mongoose'),
 	detect = require('./../tools/detect'),
 	statistics = require('./../tools/statistics'),
 	Exception = mongoose.model('Exception'),
-	ExceptionKind = mongoose.model('ExceptionKind'),
+	//ExceptionKind = mongoose.model('ExceptionKind'),
 	App = mongoose.model('App'),
 	Page = mongoose.model('Page'),
 	Q = require('q'),
@@ -46,28 +46,23 @@ exports.create = function(req, res) {
 								if (bookie.type !== 4) {
 									//死链接外的异常
 
-									//新建异常并保存
-									new Exception(bookie).save(function (err) {
-										if (err) {
-											console.log(errorHandler.getErrorMessage(err));
-										}
-										console.log(Date.now());
-									});
-
 									//判断是否有该异常种类,没有的话新建一个，有的话更新
-									ExceptionKind.findOne({page: bookie.page, type: bookie.type,
+									Exception.findOne({page: bookie.page, type: bookie.type,
 										errorurl: bookie.errorurl, stack: bookie.stack,
-										message: bookie.message, requrl: bookie.requrl}).exec(function (err, exceptionKind){
+										message: bookie.message, requrl: bookie.requrl}).exec(function (err, exception){
 										if (err) {
 											console.log(errorHandler.getErrorMessage(err));
 										} else {
 											//长度为0即表示没有，添加一个即可,同时报警；否则检查是否要报警并更新
-											if (!exceptionKind) {
+											if (!exception) {
 												//报警，然后新建
-												new ExceptionKind({page: bookie.page, type: bookie.type,
+												new Exception({page: bookie.page, type: bookie.type,
 													errorurl: bookie.errorurl, stack: bookie.stack,
 													message: bookie.message, requrl: bookie.requrl,
-													lastAlarmTime: new Date(), isAlarm: 1}).save(function (err) {
+													lastAlarmTime: new Date(), isAlarm: 1,
+													createTime: bookie.occurTime, occurTime: [bookie.occurTime],
+													ui: bookie.ui
+												}).save(function (err) {
 														if (err) {
 															console.log(errorHandler.getErrorMessage(err));
 														}
@@ -75,7 +70,7 @@ exports.create = function(req, res) {
 													});
 											} else {
 												//TODO更新种类,报警并更新部分异常种类字段
-												ExceptionKind.findOneAndUpdate({_id: exceptionKind._id}, {count: exceptionKind.count+1}).exec(function (err){
+												Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: new Date(), $push: {occurTime: bookie.occurTime}}).exec(function (err){
 													if (err) {
 														return res.status(400).send({
 															message: errorHandler.getErrorMessage(err)
@@ -83,7 +78,7 @@ exports.create = function(req, res) {
 													}
 												});
 												console.log('alarm.....');
-												console.log('update exceptionKind');
+												console.log('update exception');
 											}
 										}
 									});
@@ -114,26 +109,24 @@ exports.create = function(req, res) {
 
 											(function (l){
 												//新建异常并保存
-												new Exception({type: 4, page: bookie.page, ui: bookie.ui, errorurl: '', requrl: deadLinks[l], message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接'}).save(function (err) {
-													if (err) {
-														console.log(errorHandler.getErrorMessage(err));
-													}
-													console.log(Date.now());
-												});
+
 
 												//处理异常种类信息
 												//判断是否有该异常种类,没有的话新建一个，有的话更新
-												ExceptionKind.findOne({type: 4, page: bookie.page, errorurl: '', requrl: deadLinks[l], message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接'}).exec(function (err, exceptionKind){
+												Exception.findOne({type: 4, page: bookie.page, errorurl: '', requrl: deadLinks[l], message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接'}).exec(function (err, exception){
 													if (err) {
 														console.log(errorHandler.getErrorMessage(err));
 													} else {
 														//长度为0即表示没有，添加一个即可,同时报警；否则检查是否要报警并更新
-														if (!exceptionKind) {
+														if (!exception) {
 															//报警，然后新建
-															new ExceptionKind({type: 4, page: bookie.page,
+															new Exception({type: 4, page: bookie.page,
 																errorurl: '', requrl: deadLinks[l],
 																message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接',
-																lastAlarmTime: new Date(), isAlarm: 1}).save(function (err) {
+																lastAlarmTime: new Date(), isAlarm: 1,
+																createTime: bookie.occurTime, occurTime: [bookie.occurTime],
+																ui: bookie.ui
+															}).save(function (err) {
 																	if (err) {
 																		console.log(errorHandler.getErrorMessage(err));
 																	}
@@ -141,7 +134,7 @@ exports.create = function(req, res) {
 																});
 														} else {
 															//TODO更新种类,报警并更新部分异常种类字段
-															ExceptionKind.findOneAndUpdate({_id: exceptionKind._id}, {count: exceptionKind.count+1}).exec(function (err){
+															Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: new Date(), $push: {occurTime: bookie.occurTime}}).exec(function (err){
 																if (err) {
 																	return res.status(400).send({
 																		message: errorHandler.getErrorMessage(err)
@@ -149,18 +142,13 @@ exports.create = function(req, res) {
 																}
 															});
 															console.log('alarm.....');
-															console.log('update exceptionKind');
+															console.log('update exception');
 														}
 													}
 												});
 
 											})(k);
 										}
-
-
-
-
-
 									},function (err){
 										console.log(err);
 									});
@@ -288,12 +276,9 @@ exports.statisticList = function(req, res){
 	var tommorow = new Date(Date.parse(staticDay) + 86400000);
 	var staticDayGte = new Date(staticDay.getFullYear(), staticDay.getMonth(), staticDay.getDate());
 	var staticDayLt = new Date(tommorow.getFullYear(), tommorow.getMonth(), tommorow.getDate());
+
 	Exception.find({
-		page: {$in: pages},
-		time: {
-			$gte: staticDayGte,
-			$lt: staticDayLt
-		}
+		page: {$in: pages}
 	}).exec(function (err, exceptions) {
 		if (err) {
 			return res.status(400).send({
@@ -332,15 +317,65 @@ exports.statisticList = function(req, res){
 				}
 			};
 
+
+			//返回异常种类
+			result.data.exceptionKinds = exceptions;
+
+			//返回所有的异常历史记录，每次发生时间一条
+			for (var i=0; i<exceptions.length; i++) {
+				if(exceptions[i].occurTime.length === 1){
+					result.data.exceptions.push({_id: exceptions[i]._id, createTime: exceptions[i].createTime,
+						occurTime: exceptions[i].occurTime[0], lastAlarmTime: exceptions[i].lastAlarmTime,
+						page: exceptions[i].page, type: exceptions[i].type,
+						ui: exceptions[i].ui, errorurl: exceptions[i].errorurl,
+						stack: exceptions[i].stack, message: exceptions[i].message,
+						requrl: exceptions[i].requrl, isAlarm: exceptions[i].isAlarm
+					});
+				} else {
+					for(var j=0; j<exceptions[i].occurTime.length; j++){
+						result.data.exceptions.push({_id: exceptions[i]._id, createTime: exceptions[i].createTime,
+							occurTime: exceptions[i].occurTime[j], lastAlarmTime: exceptions[i].lastAlarmTime,
+							page: exceptions[i].page, type: exceptions[i].type,
+							ui: exceptions[i].ui, errorurl: exceptions[i].errorurl,
+							stack: exceptions[i].stack, message: exceptions[i].message,
+							requrl: exceptions[i].requrl, isAlarm: exceptions[i].isAlarm
+						});
+					}
+				}
+			}
+
+
 			//返回当前时间异常分布曲线
-			var timeDisData = statistics.timeDistribute(exceptions);
+			var timeDisData = statistics.timeDistribute(result.data.exceptions);
 			result.data.trendData[0] = ((timeDisData !== null) ? timeDisData:[0]);
 
 			//返回历史时间异常分布曲线数据
 			var promise1 = Exception.find({
 				page: {$in: pages}
 			}).exec(function (err, exceptions) {
-				var historyTimeDis = statistics.historyTimeDist(exceptions);
+				var tempExceptions = [];
+				for (var i=0; i<exceptions.length; i++) {
+					if(exceptions[i].occurTime.length === 1){
+						tempExceptions.push({_id: exceptions[i]._id, createTime: exceptions[i].createTime,
+							occurTime: exceptions[i].occurTime[0], lastAlarmTime: exceptions[i].lastAlarmTime,
+							page: exceptions[i].page, type: exceptions[i].type,
+							ui: exceptions[i].ui, errorurl: exceptions[i].errorurl,
+							stack: exceptions[i].stack, message: exceptions[i].message,
+							requrl: exceptions[i].requrl, isAlarm: exceptions[i].isAlarm
+						});
+					} else {
+						for(var j=0; j<exceptions[i].occurTime.length; j++){
+							tempExceptions.push({_id: exceptions[i]._id, createTime: exceptions[i].createTime,
+								occurTime: exceptions[i].occurTime[j], lastAlarmTime: exceptions[i].lastAlarmTime,
+								page: exceptions[i].page, type: exceptions[i].type,
+								ui: exceptions[i].ui, errorurl: exceptions[i].errorurl,
+								stack: exceptions[i].stack, message: exceptions[i].message,
+								requrl: exceptions[i].requrl, isAlarm: exceptions[i].isAlarm
+							});
+						}
+					}
+				}
+				var historyTimeDis = statistics.historyTimeDist(tempExceptions);
 				if(historyTimeDis){
 					result.data.trendData[1] = historyTimeDis;
 				}else{
@@ -349,36 +384,21 @@ exports.statisticList = function(req, res){
 
 			});
 
-			//返回异常种类列表信息数据
-			var promise2 = ExceptionKind.find({
-				page: {$in: pages}
-			}).exec(function (err, exceptionKinds) {
-				if (err) {
-					return res.status(400).send({
-						message: errorHandler.getErrorMessage(err)
-					});
-				} else {
-					result.data.exceptionKinds = exceptionKinds;
-				}
-
-			});
-
 			//返回异常JSON数据
-			for(var i=0; i<exceptions.length; i++){
+			for(var k=0; k<exceptions.length; k++){
 				var item = {};
-				item.id = exceptions[i]._id;
-				item.type = exceptions[i].type;
-				item.time = exceptions[i].time;
-				item.stack = exceptions[i].stack;
-				item.message = exceptions[i].message;
-				item.errorurl = exceptions[i].message;
-				item.requrl = exceptions[i].requrl;
-				item.ui = exceptions[i].ui;
-				result.data.exceptions.push(item);
+				item.id = exceptions[k]._id;
+				item.type = exceptions[k].type;
+				item.time = exceptions[k].time;
+				item.stack = exceptions[k].stack;
+				item.message = exceptions[k].message;
+				item.errorurl = exceptions[k].message;
+				item.requrl = exceptions[k].requrl;
+				item.ui = exceptions[k].ui;
 				pieData[item.type-1].y++;
 
 				//浏览器分布情况统计
-				switch (exceptions[i].ui.browser){
+				switch (exceptions[k].ui.browser){
 					case 'Chrome':
 						result.data.browserData[0]++;
 						break;
@@ -402,13 +422,13 @@ exports.statisticList = function(req, res){
 			}
 
 			//返回有效的异常统计饼状图信息
-			for(var j=0; j<pieData.length; j++){
-				if(pieData[j].y !== 0){
-					result.data.pieData.push(pieData[j]);
+			for(var l=0; l<pieData.length; l++){
+				if(pieData[l].y !== 0){
+					result.data.pieData.push(pieData[l]);
 				}
 			}
 
-			Q.all([promise1, promise2]).then(function (){
+			Q.all([promise1]).then(function (){
 				res.json(result);
 			});
 		}

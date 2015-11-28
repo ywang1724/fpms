@@ -10,10 +10,20 @@ var mongoose = require('mongoose'),
  * Exception Schema
  */
 var ExceptionSchema = new Schema({
-	time: {
+	createTime: {
 		type: Date,
 		default: Date.now
 	},
+	lastAlarmTime: {
+		type: Date,
+		default: Date.now,
+		required: '请添加异常种类上次报警时间'
+	},
+	isAlarm: {
+		type: Number,
+		default: 1
+	},
+	occurTime: [Date],
 	type: {
 		type: Number,
 		required: '请添加异常类型'

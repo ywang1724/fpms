@@ -73,7 +73,7 @@
 									<span ng-switch-when="6">DOM结构异常</span>
 									<span ng-switch-when="7">内存异常</span>
 								</td>
-								<td style="width:10% !important;">{{ exceptionKind.count }}</td>
+								<td style="width:10% !important;">{{ exceptionKind.occurTime.length }}</td>
 								<td style="width:25% !important;">{{ exceptionKind.message }}</td>
 								<td ng-switch="{{ exceptionKind.isAlarm }}" style="width:15% !important;">
 									<span ng-switch-when="1">是</span>
@@ -119,7 +119,7 @@
 								<span ng-switch-when="6">DOM结构异常</span>
 								<span ng-switch-when="7">内存异常</span>
 							</td>
-							<td style="width:15% !important;">{{ exception.time | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+							<td style="width:15% !important;">{{ exception.occurTime | date:'yyyy-MM-dd HH:mm:ss' }}</td>
 							<td style="width:28% !important;">{{ exception.message }}</td>
 							<td style="width:10% !important;">{{ exception.ui.os }}</td>
 							<td style="width:12% !important;">{{ exception.ui.browser }}</td>
