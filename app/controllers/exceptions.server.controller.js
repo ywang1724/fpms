@@ -12,6 +12,7 @@ var mongoose = require('mongoose'),
 	App = mongoose.model('App'),
 	Page = mongoose.model('Page'),
 	Q = require('q'),
+	request = require('request-promise'),
 	_ = require('lodash');
 
 /**
@@ -41,47 +42,131 @@ exports.create = function(req, res) {
 								bookie.page = page;
 								bookie.ui = detect.getUserInformation(bookie.userPlatformInfo.userAgent, bookie.userPlatformInfo.platform, req.ip);
 
-								//新建异常并保存
-								new Exception(bookie).save(function (err) {
-									if (err) {
-										console.log(errorHandler.getErrorMessage(err));
-									}
-									console.log(Date.now());
-								});
+								//设置条件判断，区分对待死链接异常和其它异常
+								if (bookie.type !== 4) {
+									//死链接外的异常
 
-								//判断是否有该异常种类,没有的话新建一个，有的话更新
-								ExceptionKind.findOne({page: bookie.page, type: bookie.type,
-									errorurl: bookie.errorurl, stack: bookie.stack,
-									message: bookie.message, requrl: bookie.requrl}).exec(function (err, exceptionKind){
-									if (err) {
-										console.log(errorHandler.getErrorMessage(err));
-									} else {
-										//长度为0即表示没有，添加一个即可,同时报警；否则检查是否要报警并更新
-										if (!exceptionKind) {
-											//报警，然后新建
-											new ExceptionKind({page: bookie.page, type: bookie.type,
-												errorurl: bookie.errorurl, stack: bookie.stack,
-												message: bookie.message, requrl: bookie.requrl,
-												lastAlarmTime: new Date(), isAlarm: 1}).save(function (err) {
-												if (err) {
-													console.log(errorHandler.getErrorMessage(err));
-												}
-												console.log(Date.now());
-											});
-										} else {
-											//TODO更新种类,报警并更新部分异常种类字段
-											ExceptionKind.findOneAndUpdate({_id: exceptionKind._id}, {count: exceptionKind.count+1}).exec(function (err){
-												if (err) {
-													return res.status(400).send({
-														message: errorHandler.getErrorMessage(err)
-													});
-												}
-											});
-											console.log('alarm.....');
-											console.log('update exceptionKind');
+									//新建异常并保存
+									new Exception(bookie).save(function (err) {
+										if (err) {
+											console.log(errorHandler.getErrorMessage(err));
 										}
-									}
-								});
+										console.log(Date.now());
+									});
+
+									//判断是否有该异常种类,没有的话新建一个，有的话更新
+									ExceptionKind.findOne({page: bookie.page, type: bookie.type,
+										errorurl: bookie.errorurl, stack: bookie.stack,
+										message: bookie.message, requrl: bookie.requrl}).exec(function (err, exceptionKind){
+										if (err) {
+											console.log(errorHandler.getErrorMessage(err));
+										} else {
+											//长度为0即表示没有，添加一个即可,同时报警；否则检查是否要报警并更新
+											if (!exceptionKind) {
+												//报警，然后新建
+												new ExceptionKind({page: bookie.page, type: bookie.type,
+													errorurl: bookie.errorurl, stack: bookie.stack,
+													message: bookie.message, requrl: bookie.requrl,
+													lastAlarmTime: new Date(), isAlarm: 1}).save(function (err) {
+														if (err) {
+															console.log(errorHandler.getErrorMessage(err));
+														}
+														console.log(Date.now());
+													});
+											} else {
+												//TODO更新种类,报警并更新部分异常种类字段
+												ExceptionKind.findOneAndUpdate({_id: exceptionKind._id}, {count: exceptionKind.count+1}).exec(function (err){
+													if (err) {
+														return res.status(400).send({
+															message: errorHandler.getErrorMessage(err)
+														});
+													}
+												});
+												console.log('alarm.....');
+												console.log('update exceptionKind');
+											}
+										}
+									});
+								} else {
+
+									//死链接异常处理
+									var test = ['https://nodei.co/npm/request.png', 'http://xxxxx.dsa.ds.d.sd', 'http://ddddddedu.cn/cmis/notice/listNotice.action?status=inner', 'http://nadr.hust.edu.cn/cmis/notice/toAddNotice.action', 'http://nadr.hust.edu.cn/cmis/news/listNews.action?status=inner', 'http://nadr.hust.edu.cn/cmis/news/toAddNews.action', 'http://nadr.hust.edu.cn/cmis/mailer/listMail.action', 'http://nadr.hust.edu.cn/cmis/mailer/toAddMail.action', 'http://nadr.hust.edu.cn/cmis/msgboard/listMessage.action?status=inner', 'http://nadr.hust.edu.cn/cmis/msgboard/toAddMessage.action?status=inner', 'http://nadr.hust.edu.cn/cmis/msgboard/listMessage.action?status=unRead', 'https://nadr.hust.edu.cn/repos/anon/', 'https://nadr.hust.edu.cn/bugzilla/', 'http://nadr.hust.edu.cn/community/', 'http://www.cnzz.com/stat/website.php?web_id=4360695'];
+
+									//临时存放有效、无效链接
+									var validLinks = [],
+										deadLinks = [];
+
+									//将链接转换为promise
+									var optionsReq = test.map(function (item){
+										return request({url: item, method: 'HEAD'}, function (error, response, body) {
+											if (!error && response.statusCode === 200) {
+												validLinks.push(item);
+											}else {
+												deadLinks.push(item);
+											}
+										});
+									});
+
+									//链接结果检测完之后，存储失效链接
+									Q.allSettled(optionsReq).then(function (){
+
+										for (var k = 0; k < deadLinks.length; k ++) {
+
+											(function (l){
+												//新建异常并保存
+												new Exception({type: 4, page: bookie.page, ui: bookie.ui, errorurl: '', requrl: deadLinks[l], message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接'}).save(function (err) {
+													if (err) {
+														console.log(errorHandler.getErrorMessage(err));
+													}
+													console.log(Date.now());
+												});
+
+												//处理异常种类信息
+												//判断是否有该异常种类,没有的话新建一个，有的话更新
+												ExceptionKind.findOne({type: 4, page: bookie.page, errorurl: '', requrl: deadLinks[l], message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接'}).exec(function (err, exceptionKind){
+													if (err) {
+														console.log(errorHandler.getErrorMessage(err));
+													} else {
+														//长度为0即表示没有，添加一个即可,同时报警；否则检查是否要报警并更新
+														if (!exceptionKind) {
+															//报警，然后新建
+															new ExceptionKind({type: 4, page: bookie.page,
+																errorurl: '', requrl: deadLinks[l],
+																message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接',
+																lastAlarmTime: new Date(), isAlarm: 1}).save(function (err) {
+																	if (err) {
+																		console.log(errorHandler.getErrorMessage(err));
+																	}
+																	console.log(Date.now());
+																});
+														} else {
+															//TODO更新种类,报警并更新部分异常种类字段
+															ExceptionKind.findOneAndUpdate({_id: exceptionKind._id}, {count: exceptionKind.count+1}).exec(function (err){
+																if (err) {
+																	return res.status(400).send({
+																		message: errorHandler.getErrorMessage(err)
+																	});
+																}
+															});
+															console.log('alarm.....');
+															console.log('update exceptionKind');
+														}
+													}
+												});
+
+											})(k);
+										}
+
+
+
+
+
+									},function (err){
+										console.log(err);
+									});
+
+								}
+
 							}
 					});
 				}

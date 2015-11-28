@@ -16,6 +16,7 @@
 	"unused": false, // Warn unused variables.
 	"strict": true, // Require `use strict` pragma in every file.
 	"trailing": true, // Prohibit trailing whitespaces.
+  	"loopfunc": true,
 	"smarttabs": false, // Suppresses warnings about mixed tabs and spaces
 	"globals": { // Globals variables.
 		"jasmine": true,
