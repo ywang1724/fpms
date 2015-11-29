@@ -23,40 +23,42 @@ var ExceptionSchema = new Schema({
 		type: Number,
 		default: 1
 	},
-	occurTime: [Date],
+	occurTimeAndUi: [{
+		time: Date,
+		ui: {
+			browser: {
+				type: String,
+				default: ''
+			},
+			version: {
+				type: String,
+				default: ''
+			},
+			mobile: {
+				type: String,
+				default: ''
+			},
+			os: {
+				type: String,
+				default: ''
+			},
+			osversion: {
+				type: String,
+				default: ''
+			},
+			bit: {
+				type: String,
+				default: ''
+			},
+			ip: {
+				type: String,
+				default: ''
+			}
+		}
+	}],
 	type: {
 		type: Number,
 		required: '请添加异常类型'
-	},
-	ui: {
-		browser: {
-			type: String,
-			default: ''
-		},
-		version: {
-			type: String,
-			default: ''
-		},
-		mobile: {
-			type: String,
-			default: ''
-		},
-		os: {
-			type: String,
-			default: ''
-		},
-		osversion: {
-			type: String,
-			default: ''
-		},
-		bit: {
-			type: String,
-			default: ''
-		},
-		ip: {
-			type: String,
-			default: ''
-		}
 	},
 	errorurl: {
 		type: String,

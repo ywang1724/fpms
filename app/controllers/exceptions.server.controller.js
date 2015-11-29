@@ -60,8 +60,7 @@ exports.create = function(req, res) {
 													errorurl: bookie.errorurl, stack: bookie.stack,
 													message: bookie.message, requrl: bookie.requrl,
 													lastAlarmTime: new Date(), isAlarm: 1,
-													createTime: bookie.occurTime, occurTime: [bookie.occurTime],
-													ui: bookie.ui
+													createTime: bookie.occurTime, occurTimeAndUi: [{time: bookie.occurTime, ui: bookie.ui}]
 												}).save(function (err) {
 														if (err) {
 															console.log(errorHandler.getErrorMessage(err));
@@ -70,7 +69,7 @@ exports.create = function(req, res) {
 													});
 											} else {
 												//TODO更新种类,报警并更新部分异常种类字段
-												Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: new Date(), $push: {occurTime: bookie.occurTime}}).exec(function (err){
+												Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: new Date(), $push: {occurTimeAndUi: {time: bookie.occurTime, ui: bookie.ui}}}).exec(function (err){
 													if (err) {
 														return res.status(400).send({
 															message: errorHandler.getErrorMessage(err)
@@ -124,8 +123,7 @@ exports.create = function(req, res) {
 																errorurl: '', requrl: deadLinks[l],
 																message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接',
 																lastAlarmTime: new Date(), isAlarm: 1,
-																createTime: bookie.occurTime, occurTime: [bookie.occurTime],
-																ui: bookie.ui
+																createTime: bookie.occurTime, occurTimeAndUi: [{time: bookie.occurTime, ui: bookie.ui}]
 															}).save(function (err) {
 																	if (err) {
 																		console.log(errorHandler.getErrorMessage(err));
@@ -134,7 +132,7 @@ exports.create = function(req, res) {
 																});
 														} else {
 															//TODO更新种类,报警并更新部分异常种类字段
-															Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: new Date(), $push: {occurTime: bookie.occurTime}}).exec(function (err){
+															Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: new Date(), $push: {occurTimeAndUi: {time: bookie.occurTime, ui: bookie.ui}}}).exec(function (err){
 																if (err) {
 																	return res.status(400).send({
 																		message: errorHandler.getErrorMessage(err)
@@ -318,25 +316,25 @@ exports.statisticList = function(req, res){
 			};
 
 
-			//返回异常种类
+			//返回异常种类,注意这里查询出来的exceptions是异常的种类
 			result.data.exceptionKinds = exceptions;
 
 			//返回所有的异常历史记录，每次发生时间一条
 			for (var i=0; i<exceptions.length; i++) {
-				if(exceptions[i].occurTime.length === 1){
+				if(exceptions[i].occurTimeAndUi.length === 1){
 					result.data.exceptions.push({_id: exceptions[i]._id, createTime: exceptions[i].createTime,
-						occurTime: exceptions[i].occurTime[0], lastAlarmTime: exceptions[i].lastAlarmTime,
+						occurTimeAndUi: exceptions[i].occurTimeAndUi[0], lastAlarmTime: exceptions[i].lastAlarmTime,
 						page: exceptions[i].page, type: exceptions[i].type,
-						ui: exceptions[i].ui, errorurl: exceptions[i].errorurl,
+						errorurl: exceptions[i].errorurl,
 						stack: exceptions[i].stack, message: exceptions[i].message,
 						requrl: exceptions[i].requrl, isAlarm: exceptions[i].isAlarm
 					});
 				} else {
-					for(var j=0; j<exceptions[i].occurTime.length; j++){
+					for(var j=0; j<exceptions[i].occurTimeAndUi.length; j++){
 						result.data.exceptions.push({_id: exceptions[i]._id, createTime: exceptions[i].createTime,
-							occurTime: exceptions[i].occurTime[j], lastAlarmTime: exceptions[i].lastAlarmTime,
+							occurTimeAndUi: exceptions[i].occurTimeAndUi[j], lastAlarmTime: exceptions[i].lastAlarmTime,
 							page: exceptions[i].page, type: exceptions[i].type,
-							ui: exceptions[i].ui, errorurl: exceptions[i].errorurl,
+							errorurl: exceptions[i].errorurl,
 							stack: exceptions[i].stack, message: exceptions[i].message,
 							requrl: exceptions[i].requrl, isAlarm: exceptions[i].isAlarm
 						});
@@ -355,20 +353,20 @@ exports.statisticList = function(req, res){
 			}).exec(function (err, exceptions) {
 				var tempExceptions = [];
 				for (var i=0; i<exceptions.length; i++) {
-					if(exceptions[i].occurTime.length === 1){
+					if(exceptions[i].occurTimeAndUi.length === 1){
 						tempExceptions.push({_id: exceptions[i]._id, createTime: exceptions[i].createTime,
-							occurTime: exceptions[i].occurTime[0], lastAlarmTime: exceptions[i].lastAlarmTime,
+							occurTimeAndUi: exceptions[i].occurTimeAndUi[0], lastAlarmTime: exceptions[i].lastAlarmTime,
 							page: exceptions[i].page, type: exceptions[i].type,
-							ui: exceptions[i].ui, errorurl: exceptions[i].errorurl,
+							errorurl: exceptions[i].errorurl,
 							stack: exceptions[i].stack, message: exceptions[i].message,
 							requrl: exceptions[i].requrl, isAlarm: exceptions[i].isAlarm
 						});
 					} else {
-						for(var j=0; j<exceptions[i].occurTime.length; j++){
+						for(var j=0; j<exceptions[i].occurTimeAndUi.length; j++){
 							tempExceptions.push({_id: exceptions[i]._id, createTime: exceptions[i].createTime,
-								occurTime: exceptions[i].occurTime[j], lastAlarmTime: exceptions[i].lastAlarmTime,
+								occurTimeAndUi: exceptions[i].occurTimeAndUi[j], lastAlarmTime: exceptions[i].lastAlarmTime,
 								page: exceptions[i].page, type: exceptions[i].type,
-								ui: exceptions[i].ui, errorurl: exceptions[i].errorurl,
+								errorurl: exceptions[i].errorurl,
 								stack: exceptions[i].stack, message: exceptions[i].message,
 								requrl: exceptions[i].requrl, isAlarm: exceptions[i].isAlarm
 							});
@@ -385,20 +383,20 @@ exports.statisticList = function(req, res){
 			});
 
 			//返回异常JSON数据
-			for(var k=0; k<exceptions.length; k++){
+			for(var k=0; k<result.data.exceptions.length; k++){
 				var item = {};
-				item.id = exceptions[k]._id;
-				item.type = exceptions[k].type;
-				item.time = exceptions[k].time;
-				item.stack = exceptions[k].stack;
-				item.message = exceptions[k].message;
-				item.errorurl = exceptions[k].message;
-				item.requrl = exceptions[k].requrl;
-				item.ui = exceptions[k].ui;
+				item.id = result.data.exceptions[k]._id;
+				item.type = result.data.exceptions[k].type;
+				item.time = result.data.exceptions[k].time;
+				item.stack = result.data.exceptions[k].stack;
+				item.message = result.data.exceptions[k].message;
+				item.errorurl = result.data.exceptions[k].message;
+				item.requrl = result.data.exceptions[k].requrl;
+				item.occurTimeAndUi = result.data.exceptions[k].occurTimeAndUi;
 				pieData[item.type-1].y++;
 
 				//浏览器分布情况统计
-				switch (exceptions[k].ui.browser){
+				switch (result.data.exceptions[k].occurTimeAndUi.ui.browser){
 					case 'Chrome':
 						result.data.browserData[0]++;
 						break;
