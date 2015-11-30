@@ -119,7 +119,7 @@
 								<span ng-switch-when="6">DOM结构异常</span>
 								<span ng-switch-when="7">内存异常</span>
 							</td>
-							<td style="width:15% !important;">{{ exception.occurTime | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+							<td style="width:15% !important;">{{ exception.occurTimeAndUi.time | date:'yyyy-MM-dd HH:mm:ss' }}</td>
 							<td style="width:28% !important;">{{ exception.message }}</td>
 							<td style="width:10% !important;">{{ exception.occurTimeAndUi.ui.os }}</td>
 							<td style="width:12% !important;">{{ exception.occurTimeAndUi.ui.browser }}</td>
