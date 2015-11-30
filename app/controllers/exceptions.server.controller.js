@@ -84,14 +84,15 @@ exports.create = function(req, res) {
 								} else {
 
 									//死链接异常处理
-									var test = ['https://nodei.co/npm/request.png', 'http://xxxxx.dsa.ds.d.sd', 'http://ddddddedu.cn/cmis/notice/listNotice.action?status=inner', 'http://nadr.hust.edu.cn/cmis/notice/toAddNotice.action', 'http://nadr.hust.edu.cn/cmis/news/listNews.action?status=inner', 'http://nadr.hust.edu.cn/cmis/news/toAddNews.action', 'http://nadr.hust.edu.cn/cmis/mailer/listMail.action', 'http://nadr.hust.edu.cn/cmis/mailer/toAddMail.action', 'http://nadr.hust.edu.cn/cmis/msgboard/listMessage.action?status=inner', 'http://nadr.hust.edu.cn/cmis/msgboard/toAddMessage.action?status=inner', 'http://nadr.hust.edu.cn/cmis/msgboard/listMessage.action?status=unRead', 'https://nadr.hust.edu.cn/repos/anon/', 'https://nadr.hust.edu.cn/bugzilla/', 'http://nadr.hust.edu.cn/community/', 'http://www.cnzz.com/stat/website.php?web_id=4360695'];
+									//var test = ['https://nodei.co/npm/request.png', 'http://xxxxx.dsa.ds.d.sd', 'http://ddddddedu.cn/cmis/notice/listNotice.action?status=inner', 'http://nadr.hust.edu.cn/cmis/notice/toAddNotice.action', 'http://nadr.hust.edu.cn/cmis/news/listNews.action?status=inner', 'http://nadr.hust.edu.cn/cmis/news/toAddNews.action', 'http://nadr.hust.edu.cn/cmis/mailer/listMail.action', 'http://nadr.hust.edu.cn/cmis/mailer/toAddMail.action', 'http://nadr.hust.edu.cn/cmis/msgboard/listMessage.action?status=inner', 'http://nadr.hust.edu.cn/cmis/msgboard/toAddMessage.action?status=inner', 'http://nadr.hust.edu.cn/cmis/msgboard/listMessage.action?status=unRead', 'https://nadr.hust.edu.cn/repos/anon/', 'https://nadr.hust.edu.cn/bugzilla/', 'http://nadr.hust.edu.cn/community/', 'http://www.cnzz.com/stat/website.php?web_id=4360695'];
 
+									var urlArray = bookie.stack;
 									//临时存放有效、无效链接
 									var validLinks = [],
 										deadLinks = [];
 
 									//将链接转换为promise
-									var optionsReq = test.map(function (item){
+									var optionsReq = urlArray.map(function (item){
 										return request({url: item, method: 'HEAD'}, function (error, response, body) {
 											if (!error && response.statusCode === 200) {
 												validLinks.push(item);
