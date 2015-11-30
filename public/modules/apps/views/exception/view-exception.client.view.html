@@ -124,7 +124,7 @@
 							<td style="width:10% !important;">{{ exception.occurTimeAndUi.ui.os }}</td>
 							<td style="width:12% !important;">{{ exception.occurTimeAndUi.ui.browser }}</td>
 							<td style="width:10% !important;">{{ exception.occurTimeAndUi.ui.ip }}</td>
-							<td ng-click="viewExceptionDetail()" style="width:10% !important;">查看详情</td>
+							<td style="width:10% !important;"><button ng-click="viewExceptionDetail(exception)">查看详情</button></td>
 						</tr>
 						</tbody>
 					</table>
