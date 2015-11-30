@@ -342,6 +342,10 @@ exports.statisticList = function(req, res){
 				}
 			}
 
+			//返回统计时间区间内的exceptions
+			result.data.exceptions = result.data.exceptions.filter(function (elem){
+				return staticDayGte <= elem.occurTimeAndUi.time &&  elem.occurTimeAndUi.time <= staticDayLt;
+			});
 
 			//返回当前时间异常分布曲线
 			var timeDisData = statistics.timeDistribute(result.data.exceptions);

@@ -55,7 +55,7 @@
 						<thead>
 							<tr>
 								<th>类型</th>
-								<th>发生次数</th>
+								<th>历史发生次数</th>
 								<th>消息提示</th>
 								<th>是否报警</th>
 								<th>上次报警时间</th>
@@ -73,9 +73,9 @@
 									<span ng-switch-when="6">DOM结构异常</span>
 									<span ng-switch-when="7">内存异常</span>
 								</td>
-								<td style="width:10% !important;">{{ exceptionKind.occurTimeAndUi.length }}</td>
+								<td style="width:13% !important;">{{ exceptionKind.occurTimeAndUi.length }}</td>
 								<td style="width:25% !important;">{{ exceptionKind.message }}</td>
-								<td ng-switch="{{ exceptionKind.isAlarm }}" style="width:15% !important;">
+								<td ng-switch="{{ exceptionKind.isAlarm }}" style="width:12% !important;">
 									<span ng-switch-when="1">是</span>
 									<span ng-switch-when="2">否</span>
 								</td>
