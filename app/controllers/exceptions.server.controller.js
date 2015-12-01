@@ -309,6 +309,7 @@ exports.statisticList = function(req, res){
 			var result = {
 				data: {
 					exceptions: [],
+					exceptionsAll: [],
 					pieData: [],
 					browserData: [0, 0, 0, 0, 0, 0],
 					trendData:[],
@@ -343,7 +344,10 @@ exports.statisticList = function(req, res){
 				}
 			}
 
-			//返回统计时间区间内的exceptions
+			//返回统计区间内的所有exception
+			result.data.exceptionsAll = result.data.exceptions;
+
+			//过滤并返回统计时间区间内的exceptions
 			result.data.exceptions = result.data.exceptions.filter(function (elem){
 				return staticDayGte <= elem.occurTimeAndUi.time &&  elem.occurTimeAndUi.time <= staticDayLt;
 			});
