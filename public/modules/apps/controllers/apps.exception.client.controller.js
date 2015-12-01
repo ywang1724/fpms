@@ -290,7 +290,33 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                 return elem._id === exceptionKind._id;
             });
 
-            var dtOptions = $scope.dtOptions;
+            var dtOptions = DTOptionsBuilder
+                .newOptions()
+                .withLanguage({
+                    'sLengthMenu': '每页显示 _MENU_ 条数据',
+                    'sInfo': '从 _START_ 到 _END_ /共 _TOTAL_ 条数据',
+                    'sInfoEmpty': '没有数据',
+                    'sInfoFiltered': '(从 _MAX_ 条数据中检索)',
+                    'sZeroRecords': '没有检索到数据',
+                    'sSearch': '检索:',
+                    'oPaginate': {
+                        'sFirst': '首页',
+                        'sPrevious': '上一页',
+                        'sNext': '下一页',
+                        'sLast': '末页'
+                    }
+                })
+                // Add Bootstrap compatibility
+                .withBootstrap()
+                .withBootstrapOptions({
+                    pagination: {
+                        classes: {
+                            ul: 'pagination pagination-sm'
+                        }
+                    }
+                })
+                .withOption('responsive', true)
+                .withOption('scrollY', 220);;
             //查看本次异常详情
             ModalService.showModal({
                 templateUrl: 'modules/apps/views/exception/view-exceptionKindModal.client.view.html',
