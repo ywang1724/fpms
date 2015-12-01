@@ -59,6 +59,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                     $scope.exceptionTrendLine.series[0].data = result.data.trendData[0];
                                     $scope.exceptionTrendLine.series[1].data = result.data.trendData[1];
                                     $scope.exceptions = result.data.exceptions;
+                                    $scope.exceptionsAll = result.data.exceptionsAll;
                                     $scope.exceptionKinds = result.data.exceptionKinds;
                                     $scope.showData = true;
                                 }else {
@@ -265,7 +266,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                     $scope.exception = exception;
                     $scope.page = page;
                     $scope.close = function (result){
-                        close(result, 500);
+                        close(result, 200);
                     };
                 }
             }).then(function (modal) {
@@ -282,8 +283,36 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
          * 异常种类详情查看
          * TODO：弹出层查看异常种类信息
          */
-        $scope.viewExceptionKindDetail = function () {
+        $scope.viewExceptionKindDetail = function (exceptionKind) {
             //异常种类详情查看
+            console.log(exceptionKind);
+            var exceptions = $scope.exceptionsAll.filter(function (elem){
+                return elem._id === exceptionKind._id;
+            });
+
+            var dtOptions = $scope.dtOptions;
+            //查看本次异常详情
+            ModalService.showModal({
+                templateUrl: 'modules/apps/views/exception/view-exceptionKindModal.client.view.html',
+                inputs: {
+                    title: '该异常种类发生情况',
+                    exceptions: exceptions,
+                    dtOptions: dtOptions
+                },
+                controller: function($scope, close, title, exceptions, dtOptions){
+                    $scope.title = title;
+                    $scope.exceptions = exceptions;
+                    $scope.dtOptions = dtOptions;
+                    $scope.close = function (result){
+                        close(result, 200);
+                    };
+                }
+            }).then(function (modal) {
+                modal.element.show();
+                modal.close.then(function (result) {
+                    console.log(result);
+                });
+            });
         };
 
         /**
