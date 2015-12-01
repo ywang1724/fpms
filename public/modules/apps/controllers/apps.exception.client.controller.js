@@ -2,8 +2,8 @@
 
 // Apps controller
 angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
-    'DTOptionsBuilder', '$http', '$timeout', 'PageService',
-    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService) {
+    'DTOptionsBuilder', '$http', '$timeout', 'PageService', 'ModalService',
+    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService, ModalService) {
         $scope.authentication = Authentication;
 
         //可从后台动态获取数据，以后有时间完成
@@ -247,8 +247,29 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
          * 异常详细信息查看
          * TODO：弹出层查看异常详情信息
          */
-        $scope.viewExceptionDetail = function () {
+        $scope.viewExceptionDetail = function (exception) {
             //查看本次异常详情
+            ModalService.showModal({
+                templateUrl: 'modules/apps/views/exception/view-exceptionModal.client.view.html',
+                inputs: {
+                    title: "异常详情",
+                    exception: exception
+                },
+                controller: function($scope, close, title, exception){
+                    $scope.title = title;
+                    $scope.exception = exception;
+                    $scope.close = function (result){
+                        close(result, 500);
+                    };
+                }
+            }).then(function (modal) {
+                modal.element.show();
+                modal.close.then(function (result) {
+                    console.log(result);
+                });
+            });
+
+
         };
 
         /**

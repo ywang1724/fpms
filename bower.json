@@ -23,7 +23,8 @@
     "zeroclipboard": "~2.2.0",
     "ng-clip": "~0.2.6",
     "font-awesome": "~4.3.0",
-    "datatables-responsive": "~1.0.5"
+    "datatables-responsive": "~1.0.5",
+    "angular-modal-service": "~0.6.9"
   },
   "resolutions": {
     "angular": "~1.3"

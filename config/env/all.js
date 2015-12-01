@@ -53,7 +53,8 @@ module.exports = {
                 'public/lib/highcharts/modules/exporting.src.js',
                 'public/lib/highcharts-ng/dist/highcharts-ng.js',
                 'public/lib/ng-clip/src/ngClip.js',
-                'public/lib/zeroclipboard/dist/ZeroClipboard.js'
+                'public/lib/zeroclipboard/dist/ZeroClipboard.js',
+				'public/lib/angular-modal-service/dst/angular-modal-service.js'
 			]
 		},
 		css: [

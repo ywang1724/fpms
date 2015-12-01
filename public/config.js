@@ -5,7 +5,7 @@ var ApplicationConfiguration = (function() {
 	// 初始化模块配置
 	var applicationModuleName = 'fpms';
 	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',
-		'ui.router', 'ui.bootstrap', 'ui.utils', 'datatables', 'datatables.bootstrap', 'mgcrea.ngStrap', 'ngLocale', 'highcharts-ng', 'ngClipboard'];
+		'ui.router', 'ui.bootstrap', 'ui.utils', 'datatables', 'datatables.bootstrap', 'mgcrea.ngStrap', 'ngLocale', 'highcharts-ng', 'ngClipboard', 'angularModalService'];
 
 	// 添加一个新的垂直模块
 	var registerModule = function(moduleName, dependencies) {

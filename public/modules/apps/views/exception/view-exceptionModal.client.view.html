@@ -1,0 +1,30 @@
+<div class="modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="close()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{{title}}</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        {{title}}:
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">Ãû³Æ</label>
+                            <div class="col-sm-10 controls">
+                                <input name="name" type="text" id="name" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" ng-click="close()" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
