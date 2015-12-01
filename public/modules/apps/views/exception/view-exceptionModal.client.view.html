@@ -3,21 +3,70 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" ng-click="close()" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">{{title}}</h4>
+                <h4 class="modal-title">{{ title }}</h4>
             </div>
             <div class="modal-body">
 
                 <div class="panel panel-info">
                     <div class="panel-heading">
-                        {{title}}:
+                        详情:
                     </div>
                     <div class="panel-body">
-                        <div class="form-group">
-                            <label for="name" class="col-sm-2 control-label">����</label>
-                            <div class="col-sm-10 controls">
-                                <input name="name" type="text" id="name" class="form-control">
-                            </div>
-                        </div>
+                        <table class="table">
+                            <tr>
+                                <td class="text-right">异常类型:</td>
+                                <td>
+                                    <span ng-show="exception.type===1">JavaScript异常</span>
+                                    <span ng-show="exception.type===2">Ajax请求异常</span>
+                                    <span ng-show="exception.type===3">静态资源获取异常</span>
+                                    <span ng-show="exception.type===4">死链接异常</span>
+                                    <span ng-show="exception.type===5">页面加载异常</span>
+                                    <span ng-show="exception.type===6">DOM结构异常</span>
+                                    <span ng-show="exception.type===7">内存异常</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">异常消息:</td>
+                                <td>{{ exception.message}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">异常发生时间:</td>
+                                <td>{{ exception.occurTimeAndUi.time | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">异常发生浏览器:</td>
+                                <td>{{ exception.occurTimeAndUi.ui.browser }} 版本 {{ exception.occurTimeAndUi.ui.version }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">异常发生平台:</td>
+                                <td>{{ exception.occurTimeAndUi.ui.os}} 版本 {{ exception.occurTimeAndUi.ui.osversion }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">堆栈消息:</td>
+                                <td>
+                                    <span ng-show="exception.stack !== ''">{{ exception.stack }}</span>
+                                    <span ng-show="exception.stack === ''">{{ exception.message }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">请求链接:</td>
+                                <td>
+                                    <span ng-show="exception.requrl !== ''">{{ exception.requrl }}</span>
+                                    <span ng-show="exception.requrl === ''">未请求</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">异常文件:</td>
+                                <td>
+                                    <span ng-show="exception.errorurl !== ''">{{ exception.errorurl }}</span>
+                                    <span ng-show="exception.errorurl === ''">当前页面</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">异常发生页面:</td>
+                                <td>{{ page.pathname }}</td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
 

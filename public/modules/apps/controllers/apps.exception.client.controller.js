@@ -248,16 +248,22 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
          * TODO：弹出层查看异常详情信息
          */
         $scope.viewExceptionDetail = function (exception) {
+            console.log(exception);
+            var page = $scope.pages.filter(function (elem){
+                return elem._id === exception.page;
+            })[0];
             //查看本次异常详情
             ModalService.showModal({
                 templateUrl: 'modules/apps/views/exception/view-exceptionModal.client.view.html',
                 inputs: {
-                    title: "异常详情",
-                    exception: exception
+                    title: '异常详情',
+                    exception: exception,
+                    page: page
                 },
-                controller: function($scope, close, title, exception){
+                controller: function($scope, close, title, exception, page){
                     $scope.title = title;
                     $scope.exception = exception;
+                    $scope.page = page;
                     $scope.close = function (result){
                         close(result, 500);
                     };
