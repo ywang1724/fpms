@@ -57,7 +57,7 @@
 								<th>类型</th>
 								<th>历史发生次数</th>
 								<th>消息提示</th>
-								<th>是否报警</th>
+								<th data-ng-show="(authentication.user._id == app.user._id)">是否报警</th>
 								<th>上次报警时间</th>
 								<th class="text-center">查看详情</th>
 							</tr>
@@ -75,7 +75,7 @@
 								</td>
 								<td style="width:13% !important;">{{ exceptionKind.occurTimeAndUi.length }}</td>
 								<td style="width:25% !important;">{{ exceptionKind.message }}</td>
-								<td ng-switch="{{ exceptionKind.isAlarm }}" style="width:12% !important;">
+								<td data-ng-show="(authentication.user._id == app.user._id)" ng-switch="{{ exceptionKind.isAlarm }}" style="width:12% !important;">
 									<span ng-switch-when="1"><botton class="btn btn-primary btn-sm" ng-click="changeIsAlarm(exceptionKind)">是</botton></span>
 									<span ng-switch-when="2"><botton class="btn btn-primary btn-sm" ng-click="changeIsAlarm(exceptionKind)">否</botton></span>
 								</td>

@@ -2,8 +2,8 @@
 
 // Apps controller
 angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
-    'DTOptionsBuilder', '$http', '$timeout', 'PageService',
-    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService) {
+    'DTOptionsBuilder', '$http', '$timeout', 'PageService', 'SweetAlert',
+    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert) {
         $scope.authentication = Authentication;
 
         //可从后台动态获取数据，以后有时间完成
@@ -107,19 +107,37 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
         // Remove existing App
         $scope.remove = function (app) {
-            if (app) {
-                app.$remove();
-
-                for (var i in $scope.apps) {
-                    if ($scope.apps [i] === app) {
-                        $scope.apps.splice(i, 1);
+            SweetAlert.swal({
+                    title: '确定删除该应用?',
+                    text: '应用删除后不可恢复哟!',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#DD6B55',
+                    confirmButtonText: '确定，删掉它!',
+                    cancelButtonText: '不删，考虑一下!',
+                    closeOnConfirm: false,
+                    closeOnCancel: false },
+                function(isConfirm){
+                    if (isConfirm) {
+                        //删除应用代码
+                        if (app) {
+                            app.$remove();
+                            for (var i in $scope.apps) {
+                                if ($scope.apps [i] === app) {
+                                    $scope.apps.splice(i, 1);
+                                }
+                            }
+                            SweetAlert.swal('删除成功!', '该页面已被成功删除.', 'success');
+                        } else {
+                            SweetAlert.swal('删除成功!', '该页面已被成功删除.', 'success');
+                            $scope.app.$remove(function () {
+                                $location.path('apps');
+                            });
+                        }
+                    } else {
+                        SweetAlert.swal('删除取消!', '该应用仍然存在 :)', 'error');
                     }
-                }
-            } else {
-                $scope.app.$remove(function () {
-                    $location.path('apps');
                 });
-            }
         };
 
         // Update existing App
@@ -189,12 +207,28 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
         //删除页面
         $scope.deletePage = function(page){
-            $scope.pages = $scope.pages.filter(function(elem){
-                return elem._id !== page._id;
-            });
-            $http.delete('pages/' + $scope.app._id, {
-                params: {pageId: page._id}
-            });
+            SweetAlert.swal({
+                    title: '确定删除该页面?',
+                    text: '页面删除后不可恢复哟!',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#DD6B55',confirmButtonText: '确定，删掉它!',
+                    cancelButtonText: '不删，考虑一下!',
+                    closeOnConfirm: false,
+                    closeOnCancel: false },
+                function(isConfirm){
+                    if (isConfirm) {
+                        SweetAlert.swal('删除成功!', '该页面已被成功删除.', 'success');
+                        $scope.pages = $scope.pages.filter(function(elem){
+                            return elem._id !== page._id;
+                        });
+                        $http.delete('pages/' + $scope.app._id, {
+                            params: {pageId: page._id}
+                        });
+                    } else {
+                        SweetAlert.swal('删除取消!', '该页面仍然存在 :)', 'error');
+                    }
+                });
         };
 
         $scope.canUpdate = function () {
