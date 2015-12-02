@@ -8,7 +8,6 @@ var mongoose = require('mongoose'),
 	detect = require('./../tools/detect'),
 	statistics = require('./../tools/statistics'),
 	Exception = mongoose.model('Exception'),
-	//ExceptionKind = mongoose.model('ExceptionKind'),
 	App = mongoose.model('App'),
 	Page = mongoose.model('Page'),
 	Q = require('q'),
@@ -17,7 +16,7 @@ var mongoose = require('mongoose'),
 
 /**
  * Create a Exception
- * TODO:报警，死链接检测
+ * TODO:报警
  */
 exports.create = function(req, res) {
 	if (req.session.appId) {
