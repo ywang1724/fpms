@@ -15,7 +15,8 @@ module.exports = {
                 'public/lib/angular-motion/dist/angular-motion.min.css',
 				'public/lib/datatables/media/css/jquery.dataTables.min.css',
                 'public/lib/datatables-responsive/css/dataTables.responsive.css',
-                'public/lib/font-awesome/css/font-awesome.min.css'
+                'public/lib/font-awesome/css/font-awesome.min.css',
+				'public/lib/sweetalert/dist/sweetalert.css'
 			],
 			js: [
                 'public/lib/jquery/dist/jquery.min.js',
@@ -39,7 +40,9 @@ module.exports = {
                 'public/lib/highcharts-ng/dist/highcharts-ng.min.js',
                 'public/lib/ng-clip/dest/ng-clip.min.js',
                 'public/lib/zeroclipboard/dist/ZeroClipboard.min.js',
-				'public/lib/angular-modal-service/dst/angular-modal-service.min.js'
+				'public/lib/angular-modal-service/dst/angular-modal-service.min.js',
+				'public/lib/sweetalert/dist/sweetalert.min.js',
+				'public/lib/angular-sweetalert/SweetAlert.min.js'
 			]
 		},
 		css: 'public/dist/application.min.css',

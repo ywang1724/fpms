@@ -28,7 +28,8 @@ module.exports = {
                 'public/lib/angular-motion/dist/angular-motion.css',
 				'public/lib/datatables/media/css/jquery.dataTables.css',
                 'public/lib/datatables-responsive/css/dataTables.responsive.css',
-                'public/lib/font-awesome/css/font-awesome.css'
+				'public/lib/font-awesome/css/font-awesome.css',
+				'public/lib/sweetalert/dist/sweetalert.css'
 			],
 			js: [
 				'public/lib/jquery/dist/jquery.js',
@@ -55,7 +56,9 @@ module.exports = {
                 'public/lib/highcharts-ng/dist/highcharts-ng.js',
                 'public/lib/ng-clip/src/ngClip.js',
                 'public/lib/zeroclipboard/dist/ZeroClipboard.js',
-				'public/lib/angular-modal-service/dst/angular-modal-service.js'
+				'public/lib/angular-modal-service/dst/angular-modal-service.js',
+				'public/lib/sweetalert/dist/sweetalert.min.js',
+				'public/lib/angular-sweetalert/SweetAlert.js'
 			]
 		},
 		css: [

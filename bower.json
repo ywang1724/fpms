@@ -24,7 +24,8 @@
     "ng-clip": "~0.2.6",
     "font-awesome": "~4.3.0",
     "datatables-responsive": "~1.0.5",
-    "angular-modal-service": "~0.6.9"
+    "angular-modal-service": "~0.6.9",
+    "angular-sweetalert": "~1.1.0"
   },
   "resolutions": {
     "angular": "~1.3"
