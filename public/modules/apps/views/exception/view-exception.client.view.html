@@ -59,7 +59,7 @@
 								<th>消息提示</th>
 								<th>是否报警</th>
 								<th>上次报警时间</th>
-								<th>查看详情</th>
+								<th class="text-center">查看详情</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -80,7 +80,7 @@
 									<span ng-switch-when="2">否</span>
 								</td>
 								<td style="width:20% !important;">{{ exceptionKind.lastAlarmTime | date:'yyyy-MM-dd HH:mm:ss' }}</td>
-								<td style="width:15% !important;"><button ng-click="viewExceptionKindDetail(exceptionKind)">查看详情</button></td>
+								<td style="width:15% !important;" class="text-center"><button class="btn btn-primary btn-sm glyphicon glyphicon-eye-open" ng-click="viewExceptionKindDetail(exceptionKind)"></button></td>
 							</tr>
 						</tbody>
 					</table>
@@ -105,7 +105,7 @@
 							<th>发生平台</th>
 							<th>浏览器版本</th>
 							<th>IP地址</th>
-							<th>查看详情</th>
+							<th class="text-center">查看详情</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -124,7 +124,7 @@
 							<td style="width:10% !important;">{{ exception.occurTimeAndUi.ui.os }}</td>
 							<td style="width:12% !important;">{{ exception.occurTimeAndUi.ui.browser }}</td>
 							<td style="width:10% !important;">{{ exception.occurTimeAndUi.ui.ip }}</td>
-							<td style="width:10% !important;"><button ng-click="viewExceptionDetail(exception)">查看详情</button></td>
+							<td style="width:10% !important;" class="text-center"><button class="btn btn-primary btn-sm glyphicon glyphicon-eye-open" ng-click="viewExceptionDetail(exception)"></button></td>
 						</tr>
 						</tbody>
 					</table>
