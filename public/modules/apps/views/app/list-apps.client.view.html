@@ -13,6 +13,7 @@
             <th>类型</th>
             <th>域</th>
             <th>创建时间</th>
+            <th data-ng-show="authentication.user._id">删除</th>
         </tr>
         </thead>
         <tbody>
@@ -24,6 +25,14 @@
             <td>{{ app.type }}</td>
             <td>{{ app.host }}</td>
             <td>{{ app.created | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+            <td>
+                <a title="删除" data-ng-show="(authentication.user._id == app.user._id)" class="btn btn-primary btn-sm" data-ng-click="remove(app);" my-confirm-click="您确定要删除吗？">
+                    <i class="glyphicon glyphicon-trash"></i>
+                </a>
+                <a title="您没有权限删除该应用" data-ng-show="(authentication.user._id !== app.user._id)" class="btn btn-primary btn-sm" my-confirm-click="您没有权限删除该应用">
+                    <i class="glyphicon glyphicon-ban-circle"></i>
+                </a>
+            </td>
         </tr>
         </tbody>
     </table>
