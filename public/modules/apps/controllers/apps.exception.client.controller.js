@@ -316,7 +316,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                     }
                 })
                 .withOption('responsive', true)
-                .withOption('scrollY', 220);;
+                .withOption('scrollY', 220);
             //查看本次异常详情
             ModalService.showModal({
                 templateUrl: 'modules/apps/views/exception/view-exceptionKindModal.client.view.html',
