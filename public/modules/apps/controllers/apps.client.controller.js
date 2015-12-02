@@ -19,6 +19,18 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             {label: '1周', value: 604800000},
             {label: '1个月', value: 2592000000}
         ];
+        $scope.alarmInterval = 900000;
+        $scope.alarmIntervals = [
+            {label: '5分钟',value: 300000},
+            {label: '10分钟',value: 600000},
+            {label: '15分钟',value: 900000},
+            {label: '30分钟',value: 1800000},
+            {label: '1个小时', value: 3600000},
+            {label: '半天', value: 43200000},
+            {label: '1天', value: 86400000},
+            {label: '1周', value: 604800000},
+            {label: '1个月', value: 2592000000}
+        ];
 
         $scope.alarmtype = [1, 2, 3, 4];
         $scope.alarmtypes = [
@@ -73,7 +85,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 type: this.type,
                 host: this.host,
                 deadLinkInterval: this.deadLinkInterval,
-                alarmtype: this.alarmtype
+                alarmtype: this.alarmtype,
+                alarmInterval: this.alarmInterval
             });
 
             // Redirect after save
@@ -86,6 +99,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 $scope.host = '';
                 $scope.alarmtype = [1, 2, 3, 4];
                 $scope.deadLinkInterval = 3600000;
+                $scope.alarmInterval = 900000;
             }, function (errorResponse) {
                 $scope.error = errorResponse.data.message;
             });
