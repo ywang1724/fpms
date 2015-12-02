@@ -12,7 +12,7 @@ module.exports = function(app) {
 
 	app.route('/exceptions/:exceptionId')
 		.get(exceptions.read)
-		.put(users.requiresLogin, exceptions.hasAuthorization, exceptions.update)
+		.put(exceptions.update)
 		.delete(users.requiresLogin, exceptions.hasAuthorization, exceptions.delete);
 
 

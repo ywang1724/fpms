@@ -210,11 +210,10 @@ exports.read = function(req, res) {
  * Update a Exception
  */
 exports.update = function(req, res) {
-	var exception = req.exception ;
+	var exception = req.body.exception ;
 
-	exception = _.extend(exception , req.body);
 
-	exception.save(function(err) {
+	Exception.findOneAndUpdate({_id: exception._id},{isAlarm:　exception.isAlarm},{upsert: true}).exec(function(err, exception) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)

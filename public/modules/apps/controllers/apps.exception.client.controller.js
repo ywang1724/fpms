@@ -2,8 +2,8 @@
 
 // Apps controller
 angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
-    'DTOptionsBuilder', '$http', '$timeout', 'PageService', 'ModalService',
-    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService, ModalService) {
+    'DTOptionsBuilder', '$http', '$timeout', 'PageService', 'ModalService', 'SweetAlert',
+    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService, ModalService, SweetAlert) {
         $scope.authentication = Authentication;
 
         //可从后台动态获取数据，以后有时间完成
@@ -409,6 +409,20 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                 modal.close.then(function (result) {
                     console.log(result);
                 });
+            });
+        };
+
+        /**
+         * 切换异常种类报警与否
+         * @param exceptionKind
+         */
+        $scope.changeIsAlarm = function (exceptionKind) {
+            exceptionKind.isAlarm = exceptionKind.isAlarm === 1 ? 2: 1;
+            $http.put('exceptions/' + exceptionKind._id, {exception: exceptionKind}).then(function(result){
+                $scope.exceptionKinds.splice($scope.exceptionKinds.indexOf(exceptionKind), 1, result.data);
+                SweetAlert.swal('切换成功！');
+            }, function(err){
+                SweetAlert.swal('切换失败!');
             });
         };
 
