@@ -61,6 +61,18 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                     $scope.exceptions = result.data.exceptions;
                                     $scope.exceptionsAll = result.data.exceptionsAll;
                                     $scope.exceptionKinds = result.data.exceptionKinds;
+                                    //创建os数据临时存放对象和os数组
+                                    $scope.osDataObj = {};
+                                    $scope.osData = [];
+                                    for(var i=0; i<$scope.exceptions.length; i++){
+                                        if($scope.osDataObj[$scope.exceptions[i].occurTimeAndUi.ui.os] === undefined){
+                                            $scope.osDataObj[$scope.exceptions[i].occurTimeAndUi.ui.os] = 0;
+                                        }
+                                        $scope.osDataObj[$scope.exceptions[i].occurTimeAndUi.ui.os]++;
+                                    }
+                                    //将os数据对象转换为数组
+                                    $scope.osData = Object.keys($scope.osDataObj).map(function (key) {return [key,$scope.osDataObj[key]];});
+                                    $scope.exceptionOsBar.series[0].data = $scope.osData;
                                     $scope.showData = true;
                                 }else {
                                     $scope.showData = false;
@@ -129,7 +141,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                         };
 
 
-                        //异常浏览器分布情况统计
+                        //异常浏览器统计概况柱状图
                         $scope.exceptionBrowserBar = {
                             options: {
                                 chart: {
@@ -179,7 +191,66 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                 data: []
                             }],
                             title: {
-                                text: '异常浏览器分布概况'
+                                text: '异常浏览器统计概况'
+                            }
+                        };
+
+                        //异常发生平台统计概况柱状图
+                        $scope.exceptionOsBar = {
+                            options: {
+                                chart: {
+                                    type: 'column',
+                                    marginTop: 50,
+                                    width: $('.tabWidth').width()
+                                },
+                                legend: {
+                                    enabled: false
+                                },
+                                tooltip: {
+                                    formatter: function () {
+                                        return '<h6>' + this.key + '下</h6><br/>' +
+                                            '异常数目为：' + this.y;
+                                    },
+                                    style: {
+                                        fontSize: '14px'
+                                    }
+                                },
+                                plotOptions: {
+                                    column: {
+                                        dataLabels: {
+                                            enabled: true,
+                                            formatter: function () {
+                                                return this.y + '个异常';
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            yAxis: {
+                                title: {
+                                    text: '异常数量'
+                                }
+                            },
+                            xAxis: {
+                                type: 'category',
+                                title: {
+                                    text: '平台',
+                                    align: 'high'
+                                }
+                            },
+                            series: [{
+                                name: '异常量',
+                                tooltip: {
+                                    valueSuffix: ' 个'
+                                },
+                                color: '#8085E9',
+                                data: []
+                            }],
+                            title: {
+                                text: '异常发生平台统计概况'
                             }
                         };
 
