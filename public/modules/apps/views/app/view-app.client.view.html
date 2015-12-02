@@ -136,7 +136,7 @@
                         <th>页面路径</th>
                         <th>性能详情</th>
                         <th>异常详情</th>
-                        <th>删除页面</th>
+                        <th data-ng-show="(authentication.user._id == app.user._id)">删除页面</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -144,7 +144,7 @@
                         <td>{{ page.pathname }}</td>
                         <td><a ng-click="gotoPerformance(page)">性能详情</a></td>
                         <td><a ng-click="gotoException(page)">异常详情</a></td>
-                        <td><a ng-click="deletePage(page)">删除页面</a></td>
+                        <td data-ng-show="(authentication.user._id == app.user._id)"><a ng-click="deletePage(page)">删除页面</a></td>
                     </tr>
                 </tbody>
             </table>
