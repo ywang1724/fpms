@@ -83,73 +83,89 @@ exports.create = function(req, res) {
 								} else {
 
 									//死链接异常处理
-									//var test = ['https://nodei.co/npm/request.png', 'http://xxxxx.dsa.ds.d.sd', 'http://ddddddedu.cn/cmis/notice/listNotice.action?status=inner', 'http://nadr.hust.edu.cn/cmis/notice/toAddNotice.action', 'http://nadr.hust.edu.cn/cmis/news/listNews.action?status=inner', 'http://nadr.hust.edu.cn/cmis/news/toAddNews.action', 'http://nadr.hust.edu.cn/cmis/mailer/listMail.action', 'http://nadr.hust.edu.cn/cmis/mailer/toAddMail.action', 'http://nadr.hust.edu.cn/cmis/msgboard/listMessage.action?status=inner', 'http://nadr.hust.edu.cn/cmis/msgboard/toAddMessage.action?status=inner', 'http://nadr.hust.edu.cn/cmis/msgboard/listMessage.action?status=unRead', 'https://nadr.hust.edu.cn/repos/anon/', 'https://nadr.hust.edu.cn/bugzilla/', 'http://nadr.hust.edu.cn/community/', 'http://www.cnzz.com/stat/website.php?web_id=4360695'];
+									//1.如果上次检测时间是0，代表没有检测过，则进行检测
+									//2.如果上次检测时间非0，代表检测过，则进行判断，这次是否需要检测
+									//2.1 如果 现在时间-上次检测时间 >= 死链接检测间隔，则再次检测并更新app
+									//2.2 如果 现在时间-上次检测时间 < 死链接间隔，则放弃检测
+									var nowDate = new Date();
+									if ((app.linkLastCheckTime.getTime()) === 0 || ((nowDate.getTime() - app.linkLastCheckTime.getTime()) >= app.deadLinkInterval )){
 
-									var urlArray = bookie.stack;
-									//临时存放有效、无效链接
-									var validLinks = [],
-										deadLinks = [];
 
-									//将链接转换为promise
-									var optionsReq = urlArray.map(function (item){
-										return request({url: item, method: 'HEAD'}, function (error, response, body) {
-											if (!error && response.statusCode === 200) {
-												validLinks.push(item);
-											}else {
-												deadLinks.push(item);
-											}
+
+										App.findOneAndUpdate({_id: app._id}, {linkLastCheckTime: nowDate})
+											.exec(function (err) {
+												if (err) {
+													console.log(errorHandler.getErrorMessage(err));
+												}
+											});
+
+												//异常类型是4时，异常链接放在stack传到后台
+										var urlArray = bookie.stack;
+										//临时存放有效、无效链接
+										var validLinks = [],
+											deadLinks = [];
+
+										//将链接转换为promise
+										var optionsReq = urlArray.map(function (item){
+											return request({url: item, method: 'HEAD'}, function (error, response, body) {
+												if (!error && response.statusCode === 200) {
+													validLinks.push(item);
+												}else {
+													deadLinks.push(item);
+												}
+											});
 										});
-									});
 
-									//链接结果检测完之后，存储失效链接
-									Q.allSettled(optionsReq).then(function (){
+										//链接结果检测完之后，存储失效链接
+										Q.allSettled(optionsReq).then(function (){
 
-										for (var k = 0; k < deadLinks.length; k ++) {
+											for (var k = 0; k < deadLinks.length; k ++) {
 
-											(function (l){
-												//新建异常并保存
+												(function (l){
+													//新建异常并保存
 
 
-												//处理异常种类信息
-												//判断是否有该异常种类,没有的话新建一个，有的话更新
-												Exception.findOne({type: 4, page: bookie.page, errorurl: '', requrl: deadLinks[l], message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接'}).exec(function (err, exception){
-													if (err) {
-														console.log(errorHandler.getErrorMessage(err));
-													} else {
-														//长度为0即表示没有，添加一个即可,同时报警；否则检查是否要报警并更新
-														if (!exception) {
-															//报警，然后新建
-															new Exception({type: 4, page: bookie.page,
-																errorurl: '', requrl: deadLinks[l],
-																message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接',
-																lastAlarmTime: new Date(), isAlarm: 1,
-																createTime: bookie.occurTime, occurTimeAndUi: [{time: bookie.occurTime, ui: bookie.ui}]
-															}).save(function (err) {
-																	if (err) {
-																		console.log(errorHandler.getErrorMessage(err));
-																	}
-																	console.log(Date.now());
-																});
+													//处理异常种类信息
+													//判断是否有该异常种类,没有的话新建一个，有的话更新
+													Exception.findOne({type: 4, page: bookie.page, errorurl: '', requrl: deadLinks[l], message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接'}).exec(function (err, exception){
+														if (err) {
+															console.log(errorHandler.getErrorMessage(err));
 														} else {
-															//TODO更新种类,报警并更新部分异常种类字段
-															Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: new Date(), $push: {occurTimeAndUi: {time: bookie.occurTime, ui: bookie.ui}}}).exec(function (err){
-																if (err) {
-																	return res.status(400).send({
-																		message: errorHandler.getErrorMessage(err)
+															//长度为0即表示没有，添加一个即可,同时报警；否则检查是否要报警并更新
+															if (!exception) {
+																//报警，然后新建
+																new Exception({type: 4, page: bookie.page,
+																	errorurl: '', requrl: deadLinks[l],
+																	message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接',
+																	lastAlarmTime: new Date(), isAlarm: 1,
+																	createTime: bookie.occurTime, occurTimeAndUi: [{time: bookie.occurTime, ui: bookie.ui}]
+																}).save(function (err) {
+																		if (err) {
+																			console.log(errorHandler.getErrorMessage(err));
+																		}
+																		console.log(Date.now());
 																	});
-																}
-															});
-															console.log('alarm.....');
-															console.log('update exception');
+															} else {
+																//TODO更新种类,报警并更新部分异常种类字段
+																Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: new Date(), $push: {occurTimeAndUi: {time: bookie.occurTime, ui: bookie.ui}}}).exec(function (err){
+																	if (err) {
+																		return res.status(400).send({
+																			message: errorHandler.getErrorMessage(err)
+																		});
+																	}
+																});
+																console.log('alarm.....');
+																console.log('update exception');
+															}
 														}
-													}
-												});
+													});
 
-											})(k);
-										}
-									},function (err){
-										console.log(err);
-									});
+												})(k);
+											}
+										},function (err){
+											console.log(err);
+										});
+									}
 
 								}
 

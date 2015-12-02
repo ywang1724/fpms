@@ -37,7 +37,7 @@ var AppSchema = new Schema({
 		type: Number,
 		default: 3600000
 	},
-	lastchecktime: {
+	linkLastCheckTime: {
 		type: Date,
 		default: 0
 	},
