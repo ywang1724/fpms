@@ -44,6 +44,10 @@ var AppSchema = new Schema({
 	alarmtype: {
 		type: Array,
 		default: [1, 2, 3, 4]
+	},
+	alarmInterval: {
+		type: Number,
+		default:900000
 	}
 });
 
