@@ -38,7 +38,7 @@ var AppSchema = new Schema({
 		default: 3600000
 	},
 	lastchecktime: {
-		type: Number,
+		type: Date,
 		default: 0
 	},
 	alarmtype: {
