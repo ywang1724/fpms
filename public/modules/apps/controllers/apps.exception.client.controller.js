@@ -176,7 +176,11 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                                 enabled: false
                             },
                             xAxis: {
-                                categories: ['Chrome', 'FireFox', 'Internet Explorer', 'Safari', 'Opera', '其它']
+                                categories: ['Chrome', 'FireFox', 'Internet Explorer', 'Safari', 'Opera', '其它'],
+                                title: {
+                                    text: '浏览器厂商',
+                                    align: 'high'
+                                }
                             },
                             yAxis: {
                                 title: {
