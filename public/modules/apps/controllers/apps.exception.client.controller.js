@@ -356,7 +356,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
 
         /**
          * 异常种类详情查看
-         * TODO：弹出层查看异常种类信息
+         * TODO：弹出层手动报警
          */
         $scope.viewExceptionKindDetail = function (exceptionKind) {
             //异常种类详情查看
@@ -364,6 +364,9 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
             var exceptions = $scope.exceptionsAll.filter(function (elem){
                 return elem._id === exceptionKind._id;
             });
+
+            var app = $scope.app;//用以权限控制手动报警
+            var authentication = $scope.authentication;
 
             var dtOptions = DTOptionsBuilder
                 .newOptions()
@@ -398,12 +401,16 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                 inputs: {
                     title: '该异常种类发生情况',
                     exceptions: exceptions,
-                    dtOptions: dtOptions
+                    dtOptions: dtOptions,
+                    app: app,
+                    authentication: authentication
                 },
-                controller: function($scope, close, title, exceptions, dtOptions){
+                controller: function($scope, close, title, exceptions, dtOptions, app, authentication){
                     $scope.title = title;
                     $scope.exceptions = exceptions;
                     $scope.dtOptions = dtOptions;
+                    $scope.app = app;
+                    $scope.authentication = authentication;
                     $scope.close = function (result){
                         close(result, 200);
                     };
@@ -441,6 +448,13 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                 PageService.setIdentifier(2);
                 $location.path('apps/performance/' + $scope.app._id);
             }
+        };
+
+        /**
+         * 手动报警
+         */
+        $scope.manualAlarm = function (exception){
+            //TODO 手动设置报警
         };
 
         //返回

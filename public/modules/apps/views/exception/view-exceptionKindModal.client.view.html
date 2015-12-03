@@ -21,7 +21,7 @@
                                 <th>消息提示</th>
                                 <th>发生平台</th>
                                 <th>浏览器版本</th>
-                                <th>IP地址</th>
+                                <th data-ng-show="(authentication.user._id == app.user._id)">手动报警</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -39,7 +39,7 @@
                                 <td style="width:32% !important;">{{ exception.message }}</td>
                                 <td style="width:11% !important;">{{ exception.occurTimeAndUi.ui.os }}</td>
                                 <td style="width:12% !important;">{{ exception.occurTimeAndUi.ui.browser }}</td>
-                                <td style="width:15% !important;">{{ exception.occurTimeAndUi.ui.ip }}</td>
+                                <td data-ng-show="(authentication.user._id == app.user._id)" style="width:15% !important;"><button class="btn btn-primary btn-sm" ng-click="manualAlarm(exception)">报警</button></td>
                             </tr>
                             </tbody>
                         </table>

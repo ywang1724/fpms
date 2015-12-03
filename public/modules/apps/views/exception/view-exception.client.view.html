@@ -57,7 +57,7 @@
 								<th>类型</th>
 								<th>历史发生次数</th>
 								<th>消息提示</th>
-								<th data-ng-show="(authentication.user._id == app.user._id)">是否报警</th>
+								<th data-ng-show="(authentication.user._id == app.user._id)">报警状态</th>
 								<th>上次报警时间</th>
 								<th class="text-center">查看详情</th>
 							</tr>
@@ -76,8 +76,8 @@
 								<td style="width:13% !important;">{{ exceptionKind.occurTimeAndUi.length }}</td>
 								<td style="width:25% !important;">{{ exceptionKind.message }}</td>
 								<td data-ng-show="(authentication.user._id == app.user._id)" ng-switch="{{ exceptionKind.isAlarm }}" style="width:12% !important;">
-									<span ng-switch-when="1"><botton class="btn btn-primary btn-sm" ng-click="changeIsAlarm(exceptionKind)">是</botton></span>
-									<span ng-switch-when="2"><botton class="btn btn-primary btn-sm" ng-click="changeIsAlarm(exceptionKind)">否</botton></span>
+									<span ng-switch-when="1"><botton class="btn btn-primary btn-sm" ng-click="changeIsAlarm(exceptionKind)">已开启</botton></span>
+									<span ng-switch-when="2"><botton class="btn btn-primary btn-sm" ng-click="changeIsAlarm(exceptionKind)">已关闭</botton></span>
 								</td>
 								<td style="width:20% !important;">{{ exceptionKind.lastAlarmTime | date:'yyyy-MM-dd HH:mm:ss' }}</td>
 								<td style="width:15% !important;" class="text-center"><button class="btn btn-primary btn-sm glyphicon glyphicon-eye-open" ng-click="viewExceptionKindDetail(exceptionKind)"></button></td>
@@ -104,7 +104,7 @@
 							<th>消息提示</th>
 							<th>发生平台</th>
 							<th>浏览器版本</th>
-							<th>IP地址</th>
+							<th data-ng-show="(authentication.user._id == app.user._id)" class="text-center">手动报警</th>
 							<th class="text-center">查看详情</th>
 						</tr>
 						</thead>
@@ -123,7 +123,7 @@
 							<td style="width:28% !important;">{{ exception.message }}</td>
 							<td style="width:10% !important;">{{ exception.occurTimeAndUi.ui.os }}</td>
 							<td style="width:12% !important;">{{ exception.occurTimeAndUi.ui.browser }}</td>
-							<td style="width:10% !important;">{{ exception.occurTimeAndUi.ui.ip }}</td>
+							<td data-ng-show="(authentication.user._id == app.user._id)" style="width:10% !important;"><button class="btn btn-primary btn-sm" ng-click="manualAlarm(exception)">报警</button></td>
 							<td style="width:10% !important;" class="text-center"><button class="btn btn-primary btn-sm glyphicon glyphicon-eye-open" ng-click="viewExceptionDetail(exception)"></button></td>
 						</tr>
 						</tbody>
