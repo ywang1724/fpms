@@ -16,7 +16,7 @@ var mongoose = require('mongoose'),
 
 /**
  * Create a Exception
- * TODO:报警
+ * TODO:报警;考虑如何做加载异常报警和内存异常报警。
  */
 exports.create = function(req, res) {
 	if (req.session.appId) {
