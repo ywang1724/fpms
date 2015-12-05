@@ -86,7 +86,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 host: this.host,
                 deadLinkInterval: this.deadLinkInterval,
                 alarmtype: this.alarmtype,
-                alarmInterval: this.alarmInterval
+                alarmInterval: this.alarmInterval,
+                alarmEmail: this.alarmEmail
             });
 
             // Redirect after save
@@ -100,6 +101,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 $scope.alarmtype = [1, 2, 3, 4];
                 $scope.deadLinkInterval = 3600000;
                 $scope.alarmInterval = 900000;
+                $scope.alarmEmail = '';
             }, function (errorResponse) {
                 $scope.error = errorResponse.data.message;
             });

@@ -48,6 +48,12 @@ var AppSchema = new Schema({
 	alarmInterval: {
 		type: Number,
 		default:900000
+	},
+	alarmEmail: {
+		type: String,
+		trim: true,
+		default: '',
+		match: [/.+\@.+\..+/, '请填写一个有效的邮箱地址']
 	}
 });
 

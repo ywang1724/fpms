@@ -62,6 +62,13 @@
                             </select>
                         </div>
                     </div>
+                    <div class="form-group" ng-class="{ 'has-error': appForm.alarmEmail.$dirty && appForm.alarmEmail.$invalid }">
+                        <label for="alarmEmail" class="col-sm-2 control-label">报警邮箱</label>
+                        <div class="col-sm-10 controls">
+                            <input name="alarmEmail" type="text" data-ng-model="alarmEmail" id="alarmEmail" class="form-control"
+                                   placeholder="请填写您的应用报警邮箱" data-ng-change="removeErr()" required>
+                        </div>
+                    </div>
                     <div class="form-group text-center">
                         <input type="submit" value="提交" class="btn btn-primary">
                         <input type="button" value="取消" class="btn btn-default" ng-click="back()">
