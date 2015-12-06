@@ -86,5 +86,17 @@ module.exports = {
 			host: env.MAILER_HOST || 'MAILER_HOST',
 			ignoreTLS: true
 		}
+	},
+	q_mailer: {
+		from: env.Q_MAILER_FROM || 'Q_MAILER_FROM',
+		options: {
+			host: env.Q_MAILER_HOST || 'Q_MAILER_HOST', // 主机
+			secure: true, // 使用 SSL
+			port: env.Q_MAILER_PORT || 'Q_MAILER_PORT', // SMTP 端口
+			auth: {
+				user: env.Q_MAILER_USER || 'Q_MAILER_USER', // 账号
+				pass: env.Q_MAILER_PASSWORD || 'Q_MAILER_PASSWORD' // 密码
+			}
+		}
 	}
 };

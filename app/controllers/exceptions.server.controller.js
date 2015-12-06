@@ -7,6 +7,7 @@ var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
 	detect = require('./../tools/detect'),
 	statistics = require('./../tools/statistics'),
+	mail = require('./../tools/mail'),
 	Exception = mongoose.model('Exception'),
 	App = mongoose.model('App'),
 	Page = mongoose.model('Page'),
@@ -45,6 +46,7 @@ exports.create = function(req, res) {
 								if (bookie.type !== 4) {
 									//死链接外的异常
 
+
 									//判断是否有该异常种类,没有的话新建一个，有的话更新
 									Exception.findOne({page: bookie.page, type: bookie.type,
 										errorurl: bookie.errorurl, stack: bookie.stack,
@@ -55,6 +57,7 @@ exports.create = function(req, res) {
 											//长度为0即表示没有，添加一个即可,同时报警；否则检查是否要报警并更新
 											if (!exception) {
 												//报警，然后新建
+												mail.sendMail(app.alarmEmail, '异常报警',bookie.message);
 												new Exception({page: bookie.page, type: bookie.type,
 													errorurl: bookie.errorurl, stack: bookie.stack,
 													message: bookie.message, requrl: bookie.requrl,
