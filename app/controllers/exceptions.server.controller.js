@@ -124,6 +124,7 @@ exports.create = function(req, res) {
 									if ((app.linkLastCheckTime.getTime()) === 0 || ((nowDate.getTime() - app.linkLastCheckTime.getTime()) >= app.deadLinkInterval )){
 
 
+
 										//更新链接上次检测时间字段
 										App.findOneAndUpdate({_id: app._id}, {linkLastCheckTime: nowDate})
 											.exec(function (err) {
@@ -169,8 +170,19 @@ exports.create = function(req, res) {
 																//报警，然后新建
 																if(app.alarmtype.indexOf(bookie.type) !== -1){
 
-																	//mail.sendMail(app.alarmEmail, '异常报警',bookie, app, page);
-																	//报警的话添加上次报警时间为new Date()
+																	//临时存放exception对象，用于报警
+																	var bookieObj = {
+																		'type': 4,
+																		'page': bookie.page,
+																		'occurTime': bookie.occurTime,
+																		'errorurl': '',
+																		'requrl': deadLinks[l],
+																		'message': '页面存在死链接' + deadLinks[l],
+																		'stack': deadLinks[l] + '是死链接',
+																		'ui': bookie.ui
+																	};
+																	mail.sendMail(app.alarmEmail, '异常报警',bookieObj, app, page);
+																	//报警的话添加上次报警时间lastAlarmTime为new Date()
 																	new Exception({type: 4, page: bookie.page,
 																		errorurl: '', requrl: deadLinks[l],
 																		message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接',
