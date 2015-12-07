@@ -56,28 +56,57 @@ exports.create = function(req, res) {
 										} else {
 											//长度为0即表示没有，添加一个即可,同时报警；否则检查是否要报警并更新
 											if (!exception) {
-												//报警，然后新建
-												mail.sendMail(app.alarmEmail, '异常报警',bookie.message);
-												new Exception({page: bookie.page, type: bookie.type,
-													errorurl: bookie.errorurl, stack: bookie.stack,
-													message: bookie.message, requrl: bookie.requrl,
-													lastAlarmTime: new Date(), isAlarm: 1,
-													createTime: bookie.occurTime, occurTimeAndUi: [{time: bookie.occurTime, ui: bookie.ui}]
-												}).save(function (err) {
-														if (err) {
-															console.log(errorHandler.getErrorMessage(err));
-														}
-														console.log(Date.now());
-													});
-											} else {
-												//TODO更新种类,报警并更新部分异常种类字段
-												Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: new Date(), $push: {occurTimeAndUi: {time: bookie.occurTime, ui: bookie.ui}}}).exec(function (err){
-													if (err) {
-														return res.status(400).send({
-															message: errorHandler.getErrorMessage(err)
+												//查看应用是否含有该报警类型，报警并新建异常
+												if(app.alarmtype.indexOf(bookie.type) !== -1){
+													//报警的话添加上次报警时间为new Date()
+													mail.sendMail(app.alarmEmail, '异常报警',bookie, app, page);
+													new Exception({page: bookie.page, type: bookie.type,
+														errorurl: bookie.errorurl, stack: bookie.stack,
+														message: bookie.message, requrl: bookie.requrl,
+														lastAlarmTime: new Date(), isAlarm: 1,
+														createTime: bookie.occurTime, occurTimeAndUi: [{time: bookie.occurTime, ui: bookie.ui}]
+													}).save(function (err) {
+															if (err) {
+																console.log(errorHandler.getErrorMessage(err));
+															}
+															console.log(Date.now());
 														});
-													}
-												});
+												} else {
+													//不报警的话添加上次报警时间为0
+													new Exception({page: bookie.page, type: bookie.type,
+														errorurl: bookie.errorurl, stack: bookie.stack,
+														message: bookie.message, requrl: bookie.requrl,
+														lastAlarmTime: 0, isAlarm: 1,
+														createTime: bookie.occurTime, occurTimeAndUi: [{time: bookie.occurTime, ui: bookie.ui}]
+													}).save(function (err) {
+															if (err) {
+																console.log(errorHandler.getErrorMessage(err));
+															}
+															console.log(Date.now());
+														});
+												}
+											} else {
+												//报警并更新部分异常种类字段(报警条件：1、应用配置了该大类异常报警；2、改异常详细种类被设置为报警；3、异常的报警间隔大于应用配置的时间间隔)
+												if((app.alarmtype.indexOf(bookie.type) !== -1) && (exception.isAlarm === 1) && ((new Date()).getTime() - exception.lastAlarmTime.getTime() >= app.alarmInterval )){
+													mail.sendMail(app.alarmEmail, '异常报警',bookie, app, page);
+													//报警的话更新上次报警时间和对应的平台信息和时间信息
+													Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: new Date(), $push: {occurTimeAndUi: {time: bookie.occurTime, ui: bookie.ui}}}).exec(function (err){
+														if (err) {
+															return res.status(400).send({
+																message: errorHandler.getErrorMessage(err)
+															});
+														}
+													});
+												} else {
+													//不报警的话仅更新添加发生时间和对应的平台信息
+													Exception.findOneAndUpdate({_id: exception._id}, {$push: {occurTimeAndUi: {time: bookie.occurTime, ui: bookie.ui}}}).exec(function (err){
+														if (err) {
+															return res.status(400).send({
+																message: errorHandler.getErrorMessage(err)
+															});
+														}
+													});
+												}
 												console.log('alarm.....');
 												console.log('update exception');
 											}
@@ -90,11 +119,12 @@ exports.create = function(req, res) {
 									//2.如果上次检测时间非0，代表检测过，则进行判断，这次是否需要检测
 									//2.1 如果 现在时间-上次检测时间 >= 死链接检测间隔，则再次检测并更新app
 									//2.2 如果 现在时间-上次检测时间 < 死链接间隔，则放弃检测
+									//TODO: 死链接报警问题待解决
 									var nowDate = new Date();
 									if ((app.linkLastCheckTime.getTime()) === 0 || ((nowDate.getTime() - app.linkLastCheckTime.getTime()) >= app.deadLinkInterval )){
 
 
-
+										//更新链接上次检测时间字段
 										App.findOneAndUpdate({_id: app._id}, {linkLastCheckTime: nowDate})
 											.exec(function (err) {
 												if (err) {
@@ -102,7 +132,7 @@ exports.create = function(req, res) {
 												}
 											});
 
-												//异常类型是4时，异常链接放在stack传到后台
+										//异常类型是4时，异常链接放在stack传到后台
 										var urlArray = bookie.stack;
 										//临时存放有效、无效链接
 										var validLinks = [],
@@ -137,26 +167,56 @@ exports.create = function(req, res) {
 															//长度为0即表示没有，添加一个即可,同时报警；否则检查是否要报警并更新
 															if (!exception) {
 																//报警，然后新建
-																new Exception({type: 4, page: bookie.page,
-																	errorurl: '', requrl: deadLinks[l],
-																	message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接',
-																	lastAlarmTime: new Date(), isAlarm: 1,
-																	createTime: bookie.occurTime, occurTimeAndUi: [{time: bookie.occurTime, ui: bookie.ui}]
-																}).save(function (err) {
-																		if (err) {
-																			console.log(errorHandler.getErrorMessage(err));
-																		}
-																		console.log(Date.now());
-																	});
+																if(app.alarmtype.indexOf(bookie.type) !== -1){
+
+																	//mail.sendMail(app.alarmEmail, '异常报警',bookie, app, page);
+																	//报警的话添加上次报警时间为new Date()
+																	new Exception({type: 4, page: bookie.page,
+																		errorurl: '', requrl: deadLinks[l],
+																		message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接',
+																		lastAlarmTime: new Date(), isAlarm: 1,
+																		createTime: bookie.occurTime, occurTimeAndUi: [{time: bookie.occurTime, ui: bookie.ui}]
+																	}).save(function (err) {
+																			if (err) {
+																				console.log(errorHandler.getErrorMessage(err));
+																			}
+																			console.log(Date.now());
+																		});
+
+																} else {
+																	//报警的话添加上次报警时间为0
+																	new Exception({type: 4, page: bookie.page,
+																		errorurl: '', requrl: deadLinks[l],
+																		message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接',
+																		lastAlarmTime: 0, isAlarm: 1,
+																		createTime: bookie.occurTime, occurTimeAndUi: [{time: bookie.occurTime, ui: bookie.ui}]
+																	}).save(function (err) {
+																			if (err) {
+																				console.log(errorHandler.getErrorMessage(err));
+																			}
+																			console.log(Date.now());
+																		});
+																}
 															} else {
 																//TODO更新种类,报警并更新部分异常种类字段
-																Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: new Date(), $push: {occurTimeAndUi: {time: bookie.occurTime, ui: bookie.ui}}}).exec(function (err){
-																	if (err) {
-																		return res.status(400).send({
-																			message: errorHandler.getErrorMessage(err)
-																		});
-																	}
-																});
+																//报警并更新部分异常种类字段(报警条件：1、应用配置了该大类异常报警；2、改异常详细种类被设置为报警；3、异常的报警间隔大于应用配置的时间间隔)
+																if((app.alarmtype.indexOf(bookie.type) !== -1) && (exception.isAlarm === 1) && ((new Date()).getTime() - exception.lastAlarmTime.getTime() >= app.alarmInterval )){
+																	Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: new Date(), $push: {occurTimeAndUi: {time: bookie.occurTime, ui: bookie.ui}}}).exec(function (err){
+																		if (err) {
+																			return res.status(400).send({
+																				message: errorHandler.getErrorMessage(err)
+																			});
+																		}
+																	});
+																} else {
+																	Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: 0, $push: {occurTimeAndUi: {time: bookie.occurTime, ui: bookie.ui}}}).exec(function (err){
+																		if (err) {
+																			return res.status(400).send({
+																				message: errorHandler.getErrorMessage(err)
+																			});
+																		}
+																	});
+																}
 																console.log('alarm.....');
 																console.log('update exception');
 															}
