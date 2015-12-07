@@ -119,9 +119,8 @@ exports.create = function(req, res) {
 									//2.如果上次检测时间非0，代表检测过，则进行判断，这次是否需要检测
 									//2.1 如果 现在时间-上次检测时间 >= 死链接检测间隔，则再次检测并更新app
 									//2.2 如果 现在时间-上次检测时间 < 死链接间隔，则放弃检测
-									//TODO: 死链接报警问题待解决
 									var nowDate = new Date();
-									if ((app.linkLastCheckTime.getTime()) === 0 || ((nowDate.getTime() - app.linkLastCheckTime.getTime()) >= app.deadLinkInterval )){
+									if ((app.linkLastCheckTime.getTime()) === 0 || 	((nowDate.getTime() - app.linkLastCheckTime.getTime()) >= app.deadLinkInterval )){
 
 
 
@@ -171,7 +170,7 @@ exports.create = function(req, res) {
 																if(app.alarmtype.indexOf(bookie.type) !== -1){
 
 																	//临时存放exception对象，用于报警
-																	var bookieObj = {
+																	var bookieObj1 = {
 																		'type': 4,
 																		'page': bookie.page,
 																		'occurTime': bookie.occurTime,
@@ -181,7 +180,7 @@ exports.create = function(req, res) {
 																		'stack': deadLinks[l] + '是死链接',
 																		'ui': bookie.ui
 																	};
-																	mail.sendMail(app.alarmEmail, '异常报警',bookieObj, app, page);
+																	mail.sendMail(app.alarmEmail, '异常报警',bookieObj1, app, page);
 																	//报警的话添加上次报警时间lastAlarmTime为new Date()
 																	new Exception({type: 4, page: bookie.page,
 																		errorurl: '', requrl: deadLinks[l],
@@ -196,7 +195,7 @@ exports.create = function(req, res) {
 																		});
 
 																} else {
-																	//报警的话添加上次报警时间为0
+																	//不报警的话添加上次报警时间为0
 																	new Exception({type: 4, page: bookie.page,
 																		errorurl: '', requrl: deadLinks[l],
 																		message: '页面存在死链接' + deadLinks[l], stack: deadLinks[l] + '是死链接',
@@ -213,6 +212,20 @@ exports.create = function(req, res) {
 																//TODO更新种类,报警并更新部分异常种类字段
 																//报警并更新部分异常种类字段(报警条件：1、应用配置了该大类异常报警；2、改异常详细种类被设置为报警；3、异常的报警间隔大于应用配置的时间间隔)
 																if((app.alarmtype.indexOf(bookie.type) !== -1) && (exception.isAlarm === 1) && ((new Date()).getTime() - exception.lastAlarmTime.getTime() >= app.alarmInterval )){
+
+																	//临时存放exception对象，用于报警
+																	var bookieObj2 = {
+																		'type': 4,
+																		'page': bookie.page,
+																		'occurTime': bookie.occurTime,
+																		'errorurl': '',
+																		'requrl': deadLinks[l],
+																		'message': '页面存在死链接' + deadLinks[l],
+																		'stack': deadLinks[l] + '是死链接',
+																		'ui': bookie.ui
+																	};
+																	mail.sendMail(app.alarmEmail, '异常报警',bookieObj2, app, page);
+
 																	Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: new Date(), $push: {occurTimeAndUi: {time: bookie.occurTime, ui: bookie.ui}}}).exec(function (err){
 																		if (err) {
 																			return res.status(400).send({
@@ -221,7 +234,7 @@ exports.create = function(req, res) {
 																		}
 																	});
 																} else {
-																	Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: 0, $push: {occurTimeAndUi: {time: bookie.occurTime, ui: bookie.ui}}}).exec(function (err){
+																	Exception.findOneAndUpdate({_id: exception._id}, {$push: {occurTimeAndUi: {time: bookie.occurTime, ui: bookie.ui}}}).exec(function (err){
 																		if (err) {
 																			return res.status(400).send({
 																				message: errorHandler.getErrorMessage(err)
