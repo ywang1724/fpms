@@ -367,6 +367,7 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
 
             var app = $scope.app;//用以权限控制手动报警
             var authentication = $scope.authentication;
+            var manualAlarm = $scope.manualAlarm;
 
             var dtOptions = DTOptionsBuilder
                 .newOptions()
@@ -403,14 +404,16 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                     exceptions: exceptions,
                     dtOptions: dtOptions,
                     app: app,
-                    authentication: authentication
+                    authentication: authentication,
+                    manualAlarm: manualAlarm
                 },
-                controller: function($scope, close, title, exceptions, dtOptions, app, authentication){
+                controller: function($scope, close, title, exceptions, dtOptions, app, authentication, manualAlarm){
                     $scope.title = title;
                     $scope.exceptions = exceptions;
                     $scope.dtOptions = dtOptions;
                     $scope.app = app;
                     $scope.authentication = authentication;
+                    $scope.manualAlarm = manualAlarm;
                     $scope.close = function (result){
                         close(result, 200);
                     };
