@@ -188,12 +188,12 @@ var sendMail = exports.sendMail = function (toAddress, subject, exception, app, 
 	var mailOptions = {
 		from: config.q_mailer.from, // 发件地址
 		to: toAddress, // 收件列表
-		subject: subject, // 标题
+		subject: excepType[exception.type] + '报警', // 标题
 		html: mailMessage // html 内容
 	};
 
 	var mailObj = {
-		'theme': subject,
+		'theme': excepType[exception.type] + '报警',
 		'content': mailMessage,
 		'receiver': toAddress
 	};
