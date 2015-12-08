@@ -14,7 +14,7 @@ var validateEmail = function(email) {
 
 /**
  * Mail Schema
- * status:1-已发送、2-发送失败、3-未发送
+ * status:1-已发送、2-发送失败
  */
 var MailSchema = new Schema({
 	theme: {
@@ -31,7 +31,7 @@ var MailSchema = new Schema({
 	},
 	status: {
 		type: Number,
-		default: 3
+		default: 1
 	},
 	sendTime: {
 		type: Date,
