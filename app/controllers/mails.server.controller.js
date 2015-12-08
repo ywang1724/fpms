@@ -9,6 +9,7 @@ var mongoose = require('mongoose'),
 	Exception = mongoose.model('Exception'),
 	App = mongoose.model('App'),
 	Page = mongoose.model('Page'),
+	User = mongoose.model('User'),
 	_ = require('lodash'),
 	nodemailer = require('nodemailer'),
 	config = require('../../config/config'),
@@ -36,7 +37,9 @@ var createMail = function(mailObj, user) {
  * TODO: 考虑手动报警时，设置异常上次报警时间
  */
 exports.manualAlarm = function (req, res){
+	var user = new User(req.body.appObj.user);
 	var app = new App(req.body.appObj);
+	app.user = user;
 	var exception = req.body.exception;
 	exception.ui = exception.occurTimeAndUi.ui;
 	var toAddress = app.alarmEmail;
@@ -123,7 +126,7 @@ exports.list = function(req, res) {
 			}
 		});
 	} else {
-		Mail.find({user: req.user.id}).sort('-created').populate('user', 'displayName').exec(function(err, mails) {
+		Mail.find({user: req.user._id}).sort('-created').populate('user', 'displayName').exec(function(err, mails) {
 			if (err) {
 				return res.status(400).send({
 					message: errorHandler.getErrorMessage(err)
