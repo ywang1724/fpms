@@ -73,16 +73,29 @@ exports.delete = function(req, res) {
 /**
  * List of Mails
  */
-exports.list = function(req, res) { 
-	Mail.find().sort('-created').populate('user', 'displayName').exec(function(err, mails) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(mails);
-		}
-	});
+exports.list = function(req, res) {
+
+	if (req.user.roles[0] === 'admin') {
+		Mail.find().sort('-created').populate('user', 'displayName').exec(function(err, mails) {
+			if (err) {
+				return res.status(400).send({
+					message: errorHandler.getErrorMessage(err)
+				});
+			} else {
+				res.jsonp(mails);
+			}
+		});
+	} else {
+		Mail.find({user: req.user.id}).sort('-created').populate('user', 'displayName').exec(function(err, mails) {
+			if (err) {
+				return res.status(400).send({
+					message: errorHandler.getErrorMessage(err)
+				});
+			} else {
+				res.jsonp(mails);
+			}
+		});
+	}
 };
 
 /**
