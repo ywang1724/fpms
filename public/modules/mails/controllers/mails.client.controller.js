@@ -1,8 +1,8 @@
 'use strict';
 
 // Mails controller
-angular.module('mails').controller('MailsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Mails', 'DTOptionsBuilder',
-	function($scope, $stateParams, $location, Authentication, Mails, DTOptionsBuilder) {
+angular.module('mails').controller('MailsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Mails', 'DTOptionsBuilder', 'ModalService',
+	function($scope, $stateParams, $location, Authentication, Mails, DTOptionsBuilder, ModalService) {
 		$scope.authentication = Authentication;
 
 
@@ -45,6 +45,33 @@ angular.module('mails').controller('MailsController', ['$scope', '$stateParams',
 			$scope.mail = Mails.get({ 
 				mailId: $stateParams.mailId
 			});
+		};
+
+
+		//查看邮件详情
+		$scope.viewMail = function (mail){
+
+			//查看本次异常详情
+			ModalService.showModal({
+				templateUrl: 'modules/mails/views/view-mail.client.view.html',
+				inputs: {
+					title: '邮件详情',
+					mail: mail
+				},
+				controller: function($scope, close, title, mail){
+					$scope.title = title;
+					$scope.mail = mail;
+					$scope.close = function (result){
+						close(result, 200);
+					};
+				}
+			}).then(function (modal) {
+				modal.element.show();
+				modal.close.then(function (result) {
+					console.log(result);
+				});
+			});
+
 		};
 
 		$scope.dtOptions = DTOptionsBuilder
