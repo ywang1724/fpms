@@ -6,6 +6,9 @@
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
 	Mail = mongoose.model('Mail'),
+	Exception = mongoose.model('Exception'),
+	App = mongoose.model('App'),
+	Page = mongoose.model('Page'),
 	_ = require('lodash'),
 	nodemailer = require('nodemailer'),
 	config = require('../../config/config'),
@@ -25,6 +28,40 @@ var createMail = function(mailObj, user) {
 			console.log('mail created!');
 		}
 	});
+};
+
+
+/**
+ * 手动报警
+ * TODO: 考虑手动报警时，设置异常上次报警时间
+ */
+exports.manualAlarm = function (req, res){
+	var app = req.body.appObj;
+	var exception = req.body.exception;
+	exception.ui = exception.occurTimeAndUi.ui;
+	var toAddress = app.alarmEmail;
+	var subject = '异常报警';
+	var pageObj;
+	Page.findOne({_id: exception.page}).exec(function (err, page){
+		if (err) {
+			console.log(errorHandler.getErrorMessage(err));
+		} else {
+			pageObj = page;
+			sendMail (toAddress, subject, exception, app, pageObj);
+			//更新报警时间
+			Exception.findOneAndUpdate({_id: exception._id}, {lastAlarmTime: new Date() }).exec(function (err){
+				if (err) {
+					return res.status(400).send({
+						message: errorHandler.getErrorMessage(err)
+					});
+				}
+			});
+
+		}
+	});
+
+	res.json({success: true});
+
 };
 
 /**
@@ -129,7 +166,7 @@ exports.hasAuthorization = function(req, res, next) {
  * @param app
  * @param page
  */
-exports.sendMail = function (toAddress, subject, exception, app, page){
+var sendMail = exports.sendMail = function (toAddress, subject, exception, app, page){
 	var transport = nodemailer.createTransport(config.q_mailer.options);
 	var excepType = {1: 'JavaScript异常', 2: 'Ajax请求异常', 3: '静态资源丢失异常', 4:　'死链接异常', 5: '页面加载异常', 6: 'DOM结构异常', 7: '内存异常'};
 

@@ -455,6 +455,12 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
          */
         $scope.manualAlarm = function (exception){
             //TODO 手动设置报警
+            debugger;
+            $http.put('mails/alarm/' + exception._id, {exception: exception, appObj: $scope.app}).then(function(result){
+                SweetAlert.swal('报警成功！');
+            }, function(err){
+                SweetAlert.swal('报警失败!');
+            });
         };
 
         //返回
