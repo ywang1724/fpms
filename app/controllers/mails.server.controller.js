@@ -34,7 +34,6 @@ var createMail = function(mailObj, user) {
 
 /**
  * 手动报警
- * TODO: 考虑手动报警时，设置异常上次报警时间
  */
 exports.manualAlarm = function (req, res){
 	var user = new User(req.body.appObj.user);

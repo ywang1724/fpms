@@ -209,7 +209,6 @@ exports.create = function(req, res) {
 																		});
 																}
 															} else {
-																//TODO更新种类,报警并更新部分异常种类字段
 																//报警并更新部分异常种类字段(报警条件：1、应用配置了该大类异常报警；2、改异常详细种类被设置为报警；3、异常的报警间隔大于应用配置的时间间隔)
 																if((app.alarmtype.indexOf(bookie.type) !== -1) && (exception.isAlarm === 1) && ((new Date()).getTime() - exception.lastAlarmTime.getTime() >= app.alarmInterval )){
 
