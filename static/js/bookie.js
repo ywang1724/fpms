@@ -139,6 +139,8 @@ function reportException (type, message, errorurl, requrl, stack){
 
     var elem =  document.getElementById("feException");
     var serverHost =elem.src.split('/bookie.js/')[0];
+
+    //TODO：可设计为单例模式，优化，不用每次都创建对象
     //通过Image对象请求发送数据
     var img = new Image(1, 1);
     img.src = serverHost + '/_fe.gif?' + encodeURIComponent(JSON.stringify(bookie));
