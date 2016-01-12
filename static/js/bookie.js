@@ -1,6 +1,6 @@
 /**
  * Bookie.js v0.0.1
- * Copyright (c) 2015 xujiangwei liujia
+ * Copyright (c) 2015 xujiangwei
  */
 
 
