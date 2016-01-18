@@ -96,7 +96,7 @@ var DOMReplicateIDDect = function (){
 })();
 
 /**
- * Link收集并上传
+ * Link收集并上传，异常类型为4
  */
 (function (){
     var linkNodes = Array.prototype.slice.call(document.querySelectorAll("a"));
