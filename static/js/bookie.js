@@ -151,13 +151,32 @@ function reportException (type, message, errorurl, requrl, stack){
  * 插入性能监控脚本
  *
  */
-(function addPerformanceJS(document){
+
+
+
+var addPerformanceJS = (function (document){
     var script   = document.createElement("script");
     script.type  = "text/javascript";
     script.async = 'true';
     var elem =  document.getElementById("feException");
     script.src   = elem.src.replace('bookie', 'rookie');
-    setTimeout(function(){
+
+    return function (){
         document.body.appendChild(script);
-    }, 2000);
+    };
 })(document);
+
+
+//兼容不同版本浏览器
+var addFunctionOnWindowLoad = function(callback){
+    if(window.addEventListener){
+        window.addEventListener('load',callback,false);
+        console.log(callback);
+    }else{
+        window.attachEvent('onload',callback);
+    }
+};
+
+addFunctionOnWindowLoad(addPerformanceJS);
+
+
