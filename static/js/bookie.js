@@ -148,7 +148,7 @@
 
     /**
      * 内存使用过多报警，初步设置在.85的阈值。
-     * 检测内存使用情况，如果
+     * 每个2秒检测内存使用情况，如果超过85%的使用量，则报警，同时取消定时检测。
      */
     var jsMemoryUsage = function () {
         var usedJSHeapSize = jsMemoryObj.usedJSHeapSize;
