@@ -5,7 +5,8 @@ var ApplicationConfiguration = (function() {
 	// 初始化模块配置
 	var applicationModuleName = 'fpms';
 	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',
-		'ui.router', 'ui.bootstrap', 'ui.utils', 'datatables', 'datatables.bootstrap', 'mgcrea.ngStrap', 'ngLocale', 'highcharts-ng', 'ngClipboard'];
+		'ui.router', 'ui.bootstrap', 'ui.utils', 'datatables', 'datatables.bootstrap', 'datatables.scroller',
+		'mgcrea.ngStrap', 'ngLocale', 'highcharts-ng', 'ngClipboard', 'angularModalService', 'oitozero.ngSweetAlert'];
 
 	// 添加一个新的垂直模块
 	var registerModule = function(moduleName, dependencies) {
@@ -51,6 +52,10 @@ ApplicationConfiguration.registerModule('apps');
 
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('core');
+'use strict';
+
+// Use applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('mails');
 'use strict';
 
 // Use Applicaion configuration module to register a new module
@@ -111,13 +116,21 @@ angular.module('apps').config(['$stateProvider',
 			url: '/apps/create',
 			templateUrl: 'modules/apps/views/app/create-app.client.view.html'
 		}).
-		state('viewApp', {
-			url: '/apps/:appId',
-			templateUrl: 'modules/apps/views/app/view-performance.client.view.html'
-		}).
 		state('editApp', {
 			url: '/apps/:appId/edit',
 			templateUrl: 'modules/apps/views/app/edit-app.client.view.html'
+		}).
+		state('viewApp', {
+			url: '/apps/:appId',
+			templateUrl: 'modules/apps/views/app/view-app.client.view.html'
+		}).
+		state('viewAppPerformance', {
+			url: '/apps/performance/:appId',
+			templateUrl: 'modules/apps/views/performance/view-performance.client.view.html'
+		}).
+		state('viewAppException', {
+			url: '/apps/exception/:appId',
+			templateUrl: 'modules/apps/views/exception/view-exception.client.view.html'
 		});
 	}
 ]);
@@ -126,17 +139,69 @@ angular.module('apps').config(['$stateProvider',
 
 // Apps controller
 angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
-    'DTOptionsBuilder', '$http', '$timeout',
-    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout) {
+    'DTOptionsBuilder', '$http', '$timeout', 'PageService', 'SweetAlert',
+    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert) {
         $scope.authentication = Authentication;
 
         //可从后台动态获取数据，以后有时间完成
         $scope.type = 'java';
         $scope.types = ['java', 'node.js', 'android', 'ios'];
 
+        $scope.deadLinkInterval = 3600000;
+        $scope.deadLinkIntervals = [
+            {label: '30分钟',value: 1800000},
+            {label: '1个小时', value: 3600000},
+            {label: '半天', value: 43200000},
+            {label: '1天', value: 86400000},
+            {label: '1周', value: 604800000},
+            {label: '1个月', value: 2592000000}
+        ];
+        $scope.alarmInterval = 900000;
+        $scope.alarmIntervals = [
+            {label: '5分钟',value: 300000},
+            {label: '10分钟',value: 600000},
+            {label: '15分钟',value: 900000},
+            {label: '30分钟',value: 1800000},
+            {label: '1个小时', value: 3600000},
+            {label: '半天', value: 43200000},
+            {label: '1天', value: 86400000},
+            {label: '1周', value: 604800000},
+            {label: '1个月', value: 2592000000}
+        ];
+
+        $scope.alarmtype = [1, 2, 3, 4];
+        $scope.alarmtypes = [
+            {label: 'JavaScript异常', value: 1, checked: true},
+            {label: 'Ajax请求异常', value: 2, checked: true},
+            {label: '静态资源请求异常', value: 3, checked: true},
+            {label: '死链接异常', value: 4, checked: true},
+            {label: '页面加载异常', value: 5, checked: false},
+            {label: 'DOM结构异常', value: 6, checked: false},
+            {label: '内存异常', value: 7, checked: false}
+        ];
+
+        $scope.toggleSelection = function (obj, i) {
+            var objValue = parseInt(obj.target.value);
+            if(obj.target.checked){
+                if(i === 1){
+                    $scope.typekind.push(objValue);
+                }else {
+                    $scope.app.alarmtype.push(objValue);
+                }
+            }else{
+                if(i === 1){
+                    $scope.alarmtype.splice($scope.alarmtype.indexOf(objValue), 1);
+                }else {
+                    $scope.app.alarmtype.splice($scope.app.alarmtype.indexOf(objValue), 1);
+                }
+            }
+        };
+
         if (Authentication.user) {
             $scope.showName = Authentication.user.roles[0] === 'admin' ? true : false;
         }
+
+        /*
         $scope.script = '<script type="text/javascript">var fp = document.createElement("script");' +
                         'fp.type = "text/javascript";' +
                         'fp.async = true;' +
@@ -144,6 +209,10 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                             $stateParams.appId + '";' +
                         'var s = document.getElementsByTagName("script")[0];' +
                         's.parentNode.insertBefore(fp, s);</script>';
+        */
+
+        $scope.script = '<script type="text/javascript" ' + 'id="feException" ' + 'src="http://' + $location.host() + ':' +
+                        $location.port() + '/bookie.js/' + $stateParams.appId + '"' + '></script>';
 
         // Create new App
         $scope.create = function () {
@@ -151,7 +220,11 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             var app = new Apps({
                 name: this.name,
                 type: this.type,
-                host: this.host
+                host: this.host,
+                deadLinkInterval: this.deadLinkInterval,
+                alarmtype: this.alarmtype,
+                alarmInterval: this.alarmInterval,
+                alarmEmail: this.alarmEmail
             });
 
             // Redirect after save
@@ -162,6 +235,10 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 $scope.name = '';
                 $scope.type = 'java';
                 $scope.host = '';
+                $scope.alarmtype = [1, 2, 3, 4];
+                $scope.deadLinkInterval = 3600000;
+                $scope.alarmInterval = 900000;
+                $scope.alarmEmail = '';
             }, function (errorResponse) {
                 $scope.error = errorResponse.data.message;
             });
@@ -169,19 +246,37 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
 
         // Remove existing App
         $scope.remove = function (app) {
-            if (app) {
-                app.$remove();
-
-                for (var i in $scope.apps) {
-                    if ($scope.apps [i] === app) {
-                        $scope.apps.splice(i, 1);
+            SweetAlert.swal({
+                    title: '确定删除该应用?',
+                    text: '应用删除后不可恢复哟!',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#DD6B55',
+                    confirmButtonText: '确定，删掉它!',
+                    cancelButtonText: '不删，考虑一下!',
+                    closeOnConfirm: false,
+                    closeOnCancel: false },
+                function(isConfirm){
+                    if (isConfirm) {
+                        //删除应用代码
+                        if (app) {
+                            app.$remove();
+                            for (var i in $scope.apps) {
+                                if ($scope.apps [i] === app) {
+                                    $scope.apps.splice(i, 1);
+                                }
+                            }
+                            SweetAlert.swal('删除成功!', '该页面已被成功删除.', 'success');
+                        } else {
+                            SweetAlert.swal('删除成功!', '该页面已被成功删除.', 'success');
+                            $scope.app.$remove(function () {
+                                $location.path('apps');
+                            });
+                        }
+                    } else {
+                        SweetAlert.swal('删除取消!', '该应用仍然存在 :)', 'error');
                     }
-                }
-            } else {
-                $scope.app.$remove(function () {
-                    $location.path('apps');
                 });
-            }
         };
 
         // Update existing App
@@ -201,7 +296,660 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         };
 
         // Find existing App
-        $scope.findOne = function () {
+        $scope.intApp = function () {
+            $scope.app = Apps.get({
+                appId: $stateParams.appId
+            });
+
+
+            $http.get('pages/' + $stateParams.appId).
+                success(function (data) {
+                    $scope.pages = data;
+                });
+
+            //修改APP配置初始化报警类型
+            $scope.alarmtypes = [
+                {label: 'JavaScript异常', value: 1, checked: false},
+                {label: 'Ajax请求异常', value: 2, checked: false},
+                {label: '静态资源请求异常', value: 3, checked: false},
+                {label: '死链接异常', value: 4, checked: false},
+                {label: '页面加载异常', value: 5, checked: false},
+                {label: 'DOM结构异常', value: 6, checked: false},
+                {label: '内存异常', value: 7, checked: false}
+            ];
+
+            //angularjs默认按需加载，因此将代码放入then中
+            $scope.app.$promise.then(function(data){
+                for(var i=0; i < $scope.app.alarmtype.length; i++){
+                    var j = $scope.app.alarmtype[i];
+                    if(j){
+                        $scope.alarmtypes[j-1].checked = true;
+                    }
+                }
+            });
+
+        };
+
+        //跳转至性能详情
+        $scope.gotoPerformance = function(page){
+            PageService.setCurrentPage({'_id': page._id, 'pathname': page.pathname});
+            PageService.setIdentifier(2);
+            $location.path('apps/performance/' + $scope.app._id);
+        };
+
+        //跳转至异常详情
+        $scope.gotoException = function(page){
+            PageService.setCurrentPage({'_id': page._id, 'pathname': page.pathname});
+            PageService.setIdentifier(2);
+            $location.path('apps/exception/' + $scope.app._id);
+        };
+
+        //删除页面
+        $scope.deletePage = function(page){
+            SweetAlert.swal({
+                    title: '确定删除该页面?',
+                    text: '页面删除后不可恢复哟!',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#DD6B55',confirmButtonText: '确定，删掉它!',
+                    cancelButtonText: '不删，考虑一下!',
+                    closeOnConfirm: false,
+                    closeOnCancel: false },
+                function(isConfirm){
+                    if (isConfirm) {
+                        SweetAlert.swal('删除成功!', '该页面已被成功删除.', 'success');
+                        $scope.pages = $scope.pages.filter(function(elem){
+                            return elem._id !== page._id;
+                        });
+                        $http.delete('pages/' + $scope.app._id, {
+                            params: {pageId: page._id}
+                        });
+                    } else {
+                        SweetAlert.swal('删除取消!', '该页面仍然存在 :)', 'error');
+                    }
+                });
+        };
+
+        $scope.canUpdate = function () {
+            return $scope.appForm.$valid;
+        };
+
+        $scope.removeErr = function () {
+            $scope.error = false;
+        };
+
+        $scope.back = function () {
+            window.history.back();
+        };
+
+
+        $scope.clip = function () {
+            $scope.isClip = true;
+            $timeout(function () {
+                $scope.isClip = false;
+            }, 3000);
+        };
+
+        //datatble配置
+        $scope.dtPageOptions = DTOptionsBuilder
+            .newOptions()
+            .withLanguage({
+                'sLengthMenu': '每页显示 _MENU_ 条数据',
+                'sInfo': '从 _START_ 到 _END_ /共 _TOTAL_ 条数据',
+                'sInfoEmpty': '没有数据',
+                'sInfoFiltered': '(从 _MAX_ 条数据中检索)',
+                'sZeroRecords': '没有检索到数据',
+                'sSearch': '检索:',
+                'oPaginate': {
+                    'sFirst': '首页',
+                    'sPrevious': '上一页',
+                    'sNext': '下一页',
+                    'sLast': '末页'
+                }
+            })
+            // Add Bootstrap compatibility
+            .withBootstrap()
+            .withBootstrapOptions({
+                pagination: {
+                    classes: {
+                        ul: 'pagination pagination-sm'
+                    }
+                }
+            })
+            .withOption('responsive', true);
+
+        //
+        //$scope.pt = function () {
+        //    $scope.showProgress = true;
+        //    $http.get('/phantomjs/test').success(function (result) {
+        //        $scope.ptResult = result;
+        //        $scope.showProgress = false;
+        //    });
+        //};
+    }
+]);
+
+'use strict';
+
+// Apps controller
+angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
+    'DTOptionsBuilder', '$http', '$timeout', 'PageService', 'ModalService', 'SweetAlert',
+    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService, ModalService, SweetAlert) {
+        $scope.authentication = Authentication;
+
+        //可从后台动态获取数据，以后有时间完成
+        $scope.type = 'java';
+        $scope.types = ['java', 'node.js', 'android', 'ios'];
+
+        if (Authentication.user) {
+            $scope.showName = Authentication.user.roles[0] === 'admin' ? true : false;
+        }
+
+
+        $scope.viewException = function () {
+            $scope.showData = true;
+            $scope.app = Apps.get({
+                appId: $stateParams.appId
+            });
+
+            $http.get('pages/' + $stateParams.appId).
+                success(function (data) {
+                    $scope.pagesNum = data.length || 0;
+
+                    if (data.length) {
+                        $scope.showChart = true;
+                        //页面选择
+                        var ids = [];
+                        for (var i = 0; i < data.length; i++) {
+                            ids.push(data[i]._id);
+                        }
+
+                        $scope.pages = [{'_id':ids, 'pathname':'全部'}].concat(data);
+                        if(PageService.getIdentifier() === 2){
+                            //表示从应用详情跳转过来
+                            $scope.selectPage = $scope.pages.filter(function(elem){
+                                return elem._id === PageService.getCurrentPage()._id;
+                            })[0];
+                        }else{
+                            $scope.selectPage = $scope.pages[0];
+                        }
+
+                        $scope.staticDay = new Date();
+
+                        var getExceptions = function () {
+                            $http.get('exceptions', {
+                                params: {
+                                    pageId: $scope.selectPage._id,
+                                    staticDay: new Date($scope.staticDay)
+                                }
+                            }).success(function(result){
+                                PageService.setIdentifier(1);
+                                if(result.data.exceptions.length >= 1){
+                                    $scope.exceptionPie.series[0].data = result.data.pieData;
+                                    $scope.exceptionBrowserBar.series[0].data = result.data.browserData;
+                                    $scope.exceptionTrendLine.series[0].data = result.data.trendData[0];
+                                    $scope.exceptionTrendLine.series[1].data = result.data.trendData[1];
+                                    $scope.exceptions = result.data.exceptions;
+                                    $scope.exceptionsAll = result.data.exceptionsAll;
+                                    $scope.exceptionKinds = result.data.exceptionKinds;
+                                    //创建os数据临时存放对象和os数组
+                                    $scope.osDataObj = {};
+                                    $scope.osData = [];
+                                    for(var i=0; i<$scope.exceptions.length; i++){
+                                        if($scope.osDataObj[$scope.exceptions[i].occurTimeAndUi.ui.os] === undefined){
+                                            $scope.osDataObj[$scope.exceptions[i].occurTimeAndUi.ui.os] = 0;
+                                        }
+                                        $scope.osDataObj[$scope.exceptions[i].occurTimeAndUi.ui.os]++;
+                                    }
+                                    //将os数据对象转换为数组
+                                    $scope.osData = Object.keys($scope.osDataObj).map(function (key) {return [key,$scope.osDataObj[key]];});
+                                    $scope.exceptionOsBar.series[0].data = $scope.osData;
+                                    $scope.showData = true;
+                                }else {
+                                    $scope.showData = false;
+                                }
+                            });
+                        };
+
+                        //异常趋势
+                        $scope.exceptionTrendLine = {
+                            options: {
+                                chart: {
+                                    type: 'area',
+                                    marginTop: 50,
+                                    width: $('.tabWidth').width()
+                                },
+                                legend: {
+                                    enabled: true
+                                },
+                                tooltip: {
+                                    formatter: function () {
+                                        return '<h6>' + this.key + '下</h6><br/>' +
+                                            '异常数目为：' + this.y;
+                                    },
+                                    style: {
+                                        fontSize: '14px'
+                                    }
+                                },
+                                plotOptions: {
+                                    area: {
+                                        dataLabels: {
+                                            enabled: false
+                                        }
+                                    }
+                                }
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            xAxis: {
+                                categories: ['0:00', '1:00', '2:00', '3:00', '4:00', '5:00',
+                                             '6:00', '7:00', '8:00', '9:00', '10:00', '11:00',
+                                             '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
+                                             '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
+                            },
+                            yAxis: {
+                                title: {
+                                    text: '异常数量'
+                                }
+                            },
+                            series: [{
+                                name: '当前异常发生趋势',
+                                tooltip: {
+                                    valueSuffix: ' 个'
+                                },
+                                data: []
+                            },{
+                                name: '历史异常情况平均值',
+                                tooltip: {
+                                    valueSuffix: ' 个'
+                                },
+                                data: []
+                            }],
+                            title: {
+                                text: '异常发生趋势'
+                            }
+                        };
+
+
+                        //异常浏览器统计概况柱状图
+                        $scope.exceptionBrowserBar = {
+                            options: {
+                                chart: {
+                                    type: 'column',
+                                    marginTop: 50,
+                                    width: $('.tabWidth').width()
+                                },
+                                legend: {
+                                    enabled: false
+                                },
+                                tooltip: {
+                                    formatter: function () {
+                                        return '<h6>' + this.key + '下</h6><br/>' +
+                                            '异常数目为：' + this.y;
+                                    },
+                                    style: {
+                                        fontSize: '14px'
+                                    }
+                                },
+                                plotOptions: {
+                                    column: {
+                                        dataLabels: {
+                                            enabled: true,
+                                            formatter: function () {
+                                                return this.y + '个异常';
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            xAxis: {
+                                categories: ['Chrome', 'FireFox', 'Internet Explorer', 'Safari', 'Opera', '其它'],
+                                title: {
+                                    text: '浏览器厂商',
+                                    align: 'high'
+                                }
+                            },
+                            yAxis: {
+                                title: {
+                                    text: '异常数量'
+                                }
+                            },
+                            series: [{
+                                name: '异常量',
+                                tooltip: {
+                                    valueSuffix: ' 个'
+                                },
+                                data: []
+                            }],
+                            title: {
+                                text: '异常浏览器统计概况'
+                            }
+                        };
+
+                        //异常发生平台统计概况柱状图
+                        $scope.exceptionOsBar = {
+                            options: {
+                                chart: {
+                                    type: 'column',
+                                    marginTop: 50,
+                                    width: $('.tabWidth').width()
+                                },
+                                legend: {
+                                    enabled: false
+                                },
+                                tooltip: {
+                                    formatter: function () {
+                                        return '<h6>' + this.key + '下</h6><br/>' +
+                                            '异常数目为：' + this.y;
+                                    },
+                                    style: {
+                                        fontSize: '14px'
+                                    }
+                                },
+                                plotOptions: {
+                                    column: {
+                                        dataLabels: {
+                                            enabled: true,
+                                            formatter: function () {
+                                                return this.y + '个异常';
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            yAxis: {
+                                title: {
+                                    text: '异常数量'
+                                }
+                            },
+                            xAxis: {
+                                type: 'category',
+                                title: {
+                                    text: '平台',
+                                    align: 'high'
+                                }
+                            },
+                            series: [{
+                                name: '异常量',
+                                tooltip: {
+                                    valueSuffix: ' 个'
+                                },
+                                color: '#8085E9',
+                                data: []
+                            }],
+                            title: {
+                                text: '异常发生平台统计概况'
+                            }
+                        };
+
+
+                        //统计分布异常饼状图
+                        $scope.exceptionPie = {
+                            options: {
+                                chart: {
+                                    plotBackgroundColor: null,
+                                    plotBorderWidth: null,
+                                    plotShadow: false,
+                                    marginTop: 50,
+                                    width: $('.tabWidth').width()
+                                },
+                                tooltip: {
+                                    pointFormat: '数量为:{point.y},{series.name}: <b>{point.percentage:.1f}%</b>',
+                                    style: {
+                                        fontSize: '14px'
+                                    }
+                                },
+                                plotOptions: {
+                                    pie: {
+                                        allowPointSelect: true,
+                                        cursor: 'pointer',
+                                        dataLabels: {
+                                            enabled: true,
+                                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                            style: {
+                                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            title: {
+                                text: '异常分布图'
+                            },
+                            series: [{
+                                type: 'pie',
+                                name: '占总异常比率',
+                                data: []
+                            }]
+                        };
+
+                        //刷新页面图表
+                        $scope.refrashChart = getExceptions;
+                        getExceptions();
+                    } else {
+                        $scope.showChart = false;
+                    }
+                });
+
+
+
+
+
+
+        };
+
+
+        /**
+         * 异常详细信息查看
+         * TODO：弹出层查看异常详情信息
+         */
+        $scope.viewExceptionDetail = function (exception) {
+            console.log(exception);
+            var page = $scope.pages.filter(function (elem){
+                return elem._id === exception.page;
+            })[0];
+            //查看本次异常详情
+            ModalService.showModal({
+                templateUrl: 'modules/apps/views/exception/view-exceptionModal.client.view.html',
+                inputs: {
+                    title: '异常详情',
+                    exception: exception,
+                    page: page
+                },
+                controller: function($scope, close, title, exception, page){
+                    $scope.title = title;
+                    $scope.exception = exception;
+                    $scope.page = page;
+                    $scope.close = function (result){
+                        close(result, 200);
+                    };
+                }
+            }).then(function (modal) {
+                modal.element.show();
+                modal.close.then(function (result) {
+                    console.log(result);
+                });
+            });
+
+
+        };
+
+        /**
+         * 异常种类详情查看
+         * TODO：弹出层手动报警
+         */
+        $scope.viewExceptionKindDetail = function (exceptionKind) {
+            //异常种类详情查看
+            console.log(exceptionKind);
+            var exceptions = $scope.exceptionsAll.filter(function (elem){
+                return elem._id === exceptionKind._id;
+            });
+
+            var app = $scope.app;//用以权限控制手动报警
+            var authentication = $scope.authentication;
+            var manualAlarm = $scope.manualAlarm;
+
+            var dtOptions = DTOptionsBuilder
+                .newOptions()
+                .withLanguage({
+                    'sLengthMenu': '每页显示 _MENU_ 条数据',
+                    'sInfo': '从 _START_ 到 _END_ /共 _TOTAL_ 条数据',
+                    'sInfoEmpty': '没有数据',
+                    'sInfoFiltered': '(从 _MAX_ 条数据中检索)',
+                    'sZeroRecords': '没有检索到数据',
+                    'sSearch': '检索:',
+                    'oPaginate': {
+                        'sFirst': '首页',
+                        'sPrevious': '上一页',
+                        'sNext': '下一页',
+                        'sLast': '末页'
+                    }
+                })
+                // Add Bootstrap compatibility
+                .withBootstrap()
+                .withBootstrapOptions({
+                    pagination: {
+                        classes: {
+                            ul: 'pagination pagination-sm'
+                        }
+                    }
+                })
+                .withOption('responsive', true)
+                .withOption('scrollY', 220);
+            //查看本次异常详情
+            ModalService.showModal({
+                templateUrl: 'modules/apps/views/exception/view-exceptionKindModal.client.view.html',
+                inputs: {
+                    title: '该异常种类发生情况',
+                    exceptions: exceptions,
+                    dtOptions: dtOptions,
+                    app: app,
+                    authentication: authentication,
+                    manualAlarm: manualAlarm
+                },
+                controller: function($scope, close, title, exceptions, dtOptions, app, authentication, manualAlarm){
+                    $scope.title = title;
+                    $scope.exceptions = exceptions;
+                    $scope.dtOptions = dtOptions;
+                    $scope.app = app;
+                    $scope.authentication = authentication;
+                    $scope.manualAlarm = manualAlarm;
+                    $scope.close = function (result){
+                        close(result, 200);
+                    };
+                }
+            }).then(function (modal) {
+                modal.element.show();
+                modal.close.then(function (result) {
+                    console.log(result);
+                });
+            });
+        };
+
+        /**
+         * 切换异常种类报警与否
+         * @param exceptionKind
+         */
+        $scope.changeIsAlarm = function (exceptionKind) {
+            exceptionKind.isAlarm = exceptionKind.isAlarm === 1 ? 2: 1;
+            $http.put('exceptions/' + exceptionKind._id, {exception: exceptionKind}).then(function(result){
+                $scope.exceptionKinds.splice($scope.exceptionKinds.indexOf(exceptionKind), 1, result.data);
+                SweetAlert.swal('切换成功！');
+            }, function(err){
+                SweetAlert.swal('切换失败!');
+            });
+        };
+
+        /**
+         * 切换至性能监控页面
+         */
+        $scope.gotoPerformance = function (){
+            if($scope.selectPage.pathname === '全部'){
+                $location.path('apps/performance/' + $scope.app._id);
+            } else {
+                PageService.setCurrentPage({'_id': $scope.selectPage._id, 'pathname': $scope.selectPage.pathname});
+                PageService.setIdentifier(2);
+                $location.path('apps/performance/' + $scope.app._id);
+            }
+        };
+
+        /**
+         * 手动报警
+         */
+        $scope.manualAlarm = function (exception){
+            //TODO 手动设置报警
+            $http.put('mails/alarm/' + exception._id, {exception: exception, appObj: $scope.app}).then(function(result){
+                SweetAlert.swal('报警成功！');
+            }, function(err){
+                SweetAlert.swal('报警失败!');
+            });
+        };
+
+        //返回
+        $scope.back = function () {
+            window.history.back();
+        };
+
+        //datatble配置
+        $scope.dtOptions = DTOptionsBuilder
+            .newOptions()
+            .withLanguage({
+                'sLengthMenu': '每页显示 _MENU_ 条数据',
+                'sInfo': '从 _START_ 到 _END_ /共 _TOTAL_ 条数据',
+                'sInfoEmpty': '没有数据',
+                'sInfoFiltered': '(从 _MAX_ 条数据中检索)',
+                'sZeroRecords': '没有检索到数据',
+                'sSearch': '检索:',
+                'oPaginate': {
+                    'sFirst': '首页',
+                    'sPrevious': '上一页',
+                    'sNext': '下一页',
+                    'sLast': '末页'
+                }
+            })
+            // Add Bootstrap compatibility
+            .withBootstrap()
+            .withBootstrapOptions({
+                pagination: {
+                    classes: {
+                        ul: 'pagination pagination-sm'
+                    }
+                }
+            })
+            .withOption('responsive', true);
+
+    }
+]);
+
+'use strict';
+
+// Apps controller
+angular.module('apps').controller('AppsPerformanceController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
+    'DTOptionsBuilder', '$http', '$timeout', 'PageService',
+    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService) {
+        $scope.authentication = Authentication;
+
+        //可从后台动态获取数据，以后有时间完成
+        $scope.type = 'java';
+        $scope.types = ['java', 'node.js', 'android', 'ios'];
+
+        if (Authentication.user) {
+            $scope.showName = Authentication.user.roles[0] === 'admin' ? true : false;
+        }
+
+        // Find existing App
+        $scope.viewPerformance = function () {
             $scope.showData = true;
             $scope.app = Apps.get({
                 appId: $stateParams.appId
@@ -230,7 +978,14 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                             ids.push(data[i]._id);
                         }
                         $scope.pages = [{'_id':ids, 'pathname':'全部'}].concat(data);
-                        $scope.selectPage = $scope.pages[0];
+                        if(PageService.getIdentifier() === 2){
+                            //表示从应用详情跳转过来
+                            $scope.selectPage = $scope.pages.filter(function(elem){
+                                return elem._id === PageService.getCurrentPage()._id;
+                            })[0];
+                        }else{
+                            $scope.selectPage = $scope.pages[0];
+                        }
                         //统计间隔
                         $scope.intervals = [
                             {'name': '日', 'id': 'day'}, {'name': '月', 'id': 'month'}, {'name': '年', 'id': 'year'}
@@ -303,6 +1058,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                                     statistic: $scope.selectStatistic.id
                                 }
                             }).success(function (result) {
+                                PageService.setIdentifier(1);
                                 if (result.statisticData.sum > 0) {
                                     $scope.chartConfig.series[0].data = result.numData;
                                     $scope.chartConfig.series[1].data = result.pageLoadData;
@@ -769,9 +1525,6 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             })
             .withOption('responsive', true);
 
-        $scope.canUpdate = function () {
-            return $scope.appForm.$valid;
-        };
 
         $scope.removeErr = function () {
             $scope.error = false;
@@ -787,6 +1540,19 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 $scope.resources = result.allResourcesCalc;
                 $scope.timingErrs = result.errs;
             });
+        };
+
+        /**
+         * 切换至异常监控页面
+         */
+        $scope.gotoException = function (){
+            if($scope.selectPage.pathname === '全部'){
+                $location.path('apps/exception/' + $scope.app._id);
+            } else {
+                PageService.setCurrentPage({'_id': $scope.selectPage._id, 'pathname': $scope.selectPage.pathname});
+                PageService.setIdentifier(2);
+                $location.path('apps/exception/' + $scope.app._id);
+            }
         };
 
         $scope.httpNumTooltip = {
@@ -858,21 +1624,6 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         $scope.onLoadTooltip = {
             'title': '指从文档的load事件被触发到文档的load事件完成的时间。'
         };
-
-        $scope.clip = function () {
-            $scope.isClip = true;
-            $timeout(function () {
-                $scope.isClip = false;
-            }, 3000);
-        };
-        //
-        //$scope.pt = function () {
-        //    $scope.showProgress = true;
-        //    $http.get('/phantomjs/test').success(function (result) {
-        //        $scope.ptResult = result;
-        //        $scope.showProgress = false;
-        //    });
-        //};
     }
 ]);
 
@@ -910,6 +1661,39 @@ angular.module('apps').factory('Apps', ['$resource',
 		});
 	}
 ]);
+
+//用于APP页面往具体页面跳转用
+angular.module('apps').factory('PageService', [function() {
+
+	var currentPage = null;
+	var identifier = 1;//2表示从应用详情跳到页面异常（或性能）详情，1表示从应用列表跳转过去
+
+
+	var setCurrentPage = function(page){
+		currentPage = page;
+	};
+	var getCurrentPage = function(){
+		return currentPage;
+	};
+
+
+	var setIdentifier = function(i){
+		identifier = i;
+	};
+	var getIdentifier = function(){
+		return identifier;
+	};
+
+
+	return {
+		setCurrentPage: setCurrentPage,
+		getCurrentPage: getCurrentPage,
+		setIdentifier: setIdentifier,
+		getIdentifier: getIdentifier
+	};
+
+}]);
+
 'use strict';
 
 // Setting up route
@@ -1117,6 +1901,153 @@ angular.module('core').service('Menus', [
 
 		//Adding the topbar menu
 		this.addMenu('topbar');
+	}
+]);
+'use strict';
+
+// Configuring the Articles module
+angular.module('mails').run(['Menus',
+	function(Menus) {
+		// Set top bar menu items
+		Menus.addMenuItem('topbar', '我的邮件', 'mails', 'dropdown', '/mails(/create)?');
+		Menus.addSubMenuItem('topbar', 'mails', '邮件列表', 'mails');
+	}
+]);
+
+'use strict';
+
+//Setting up route
+angular.module('mails').config(['$stateProvider',
+	function($stateProvider) {
+		// Mails state routing
+		$stateProvider.
+		state('listMails', {
+			url: '/mails',
+			templateUrl: 'modules/mails/views/list-mails.client.view.html'
+		}).
+		state('viewMail', {
+			url: '/mails/:mailId',
+			templateUrl: 'modules/mails/views/view-mail.client.view.html'
+		});
+	}
+]);
+
+'use strict';
+
+// Mails controller
+angular.module('mails').controller('MailsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Mails', 'DTOptionsBuilder', 'ModalService',
+	function($scope, $stateParams, $location, Authentication, Mails, DTOptionsBuilder, ModalService) {
+		$scope.authentication = Authentication;
+
+
+
+		// Remove existing Mail
+		$scope.remove = function(mail) {
+			if ( mail ) { 
+				mail.$remove();
+
+				for (var i in $scope.mails) {
+					if ($scope.mails [i] === mail) {
+						$scope.mails.splice(i, 1);
+					}
+				}
+			} else {
+				$scope.mail.$remove(function() {
+					$location.path('mails');
+				});
+			}
+		};
+
+		// Update existing Mail
+		$scope.update = function() {
+			var mail = $scope.mail;
+
+			mail.$update(function() {
+				$location.path('mails/' + mail._id);
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+			});
+		};
+
+		// Find a list of Mails
+		$scope.find = function() {
+			$scope.mails = Mails.query();
+		};
+
+		// Find existing Mail
+		$scope.findOne = function() {
+			$scope.mail = Mails.get({ 
+				mailId: $stateParams.mailId
+			});
+		};
+
+
+		//查看邮件详情
+		$scope.viewMail = function (mail){
+
+			//查看本次异常详情
+			ModalService.showModal({
+				templateUrl: 'modules/mails/views/view-mail.client.view.html',
+				inputs: {
+					title: '邮件详情',
+					mail: mail
+				},
+				controller: function($scope, close, title, mail){
+					$scope.title = title;
+					$scope.mail = mail;
+					$scope.close = function (result){
+						close(result, 200);
+					};
+				}
+			}).then(function (modal) {
+				modal.element.show();
+				modal.close.then(function (result) {
+					console.log(result);
+				});
+			});
+
+		};
+
+		$scope.dtOptions = DTOptionsBuilder
+			.newOptions()
+			.withLanguage({
+				'sLengthMenu': '每页显示 _MENU_ 条数据',
+				'sInfo': '从 _START_ 到 _END_ /共 _TOTAL_ 条数据',
+				'sInfoEmpty': '没有数据',
+				'sInfoFiltered': '(从 _MAX_ 条数据中检索)',
+				'sZeroRecords': '没有检索到数据',
+				'sSearch': '检索:',
+				'oPaginate': {
+					'sFirst': '首页',
+					'sPrevious': '上一页',
+					'sNext': '下一页',
+					'sLast': '末页'
+				}
+			})
+			// Add Bootstrap compatibility
+			.withBootstrap()
+			.withBootstrapOptions({
+				pagination: {
+					classes: {
+						ul: 'pagination pagination-sm'
+					}
+				}
+			})
+			.withOption('responsive', true);
+	}
+]);
+
+'use strict';
+
+//Mails service used to communicate Mails REST endpoints
+angular.module('mails').factory('Mails', ['$resource',
+	function($resource) {
+		return $resource('mails/:mailId', { mailId: '@_id'
+		}, {
+			update: {
+				method: 'PUT'
+			}
+		});
 	}
 ]);
 'use strict';

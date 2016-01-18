@@ -37,7 +37,6 @@
         var elem =  document.getElementById("feException");
         var serverHost =elem.src.split('/bookie.js/')[0];
 
-        //TODO：可设计为单例模式，优化，不用每次都创建对象
         //通过Image对象请求发送数据
         var img = new Image(1, 1);
         img.src = serverHost + '/_fe.gif?' + encodeURIComponent(JSON.stringify(bookie));
@@ -145,6 +144,29 @@
             platform : window.navigator.platform
         };
     };
+
+
+    /**
+     * 内存使用过多报警，初步设置在.85的阈值。
+     * 检测内存使用情况，如果
+     */
+    var jsMemoryUsage = function () {
+        var usedJSHeapSize = jsMemoryObj.usedJSHeapSize;
+        var totalJSHeapSize = jsMemoryObj.totalJSHeapSize;
+        var jsHeapSizeLimit = jsMemoryObj.jsHeapSizeLimit;
+        if(usedJSHeapSize/totalJSHeapSize >= .85){
+            console.log('内存使用过多');
+            clearInterval(jsMemoryUsageTimer);
+            reportException(7, '内存使用过多，超过85%，请优化', '', '', '内存使用过多，超过85%，请优化');
+        }
+    };
+    var jsMemoryObj = window.performance.memory;
+    var jsMemoryUsageTimer;
+    if(jsMemoryObj){
+        jsMemoryUsageTimer = setInterval(jsMemoryUsage, 2000);
+    }else{
+        console.log('不支持内存检测');
+    }
 
 
 
