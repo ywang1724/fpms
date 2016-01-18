@@ -72,7 +72,8 @@ module.exports = function(grunt) {
 				},
 				files: {
 					'public/dist/application.min.js': 'public/dist/application.js',
-					'static/dist/rookie.js': 'static/js/rookie.js'
+					'static/dist/rookie.js': 'static/js/rookie.js',
+					'static/dist/bookie.js': 'static/js/bookie.js'
 				}
 			}
 		},
