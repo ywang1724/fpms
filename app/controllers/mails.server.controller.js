@@ -42,7 +42,7 @@ var createMail = function(mailObj, user) {
  * @param page
  */
 var sendMail = function (toAddress, subject, exception, app, page){
-	var transport = nodemailer.createTransport(config.q_mailer.options);
+	var transport = nodemailer.createTransport(config.mailer.options);
 	var excepType = {1: 'JavaScript异常', 2: 'Ajax请求异常', 3: '静态资源丢失异常', 4:　'死链接异常', 5: '页面加载异常', 6: 'DOM结构异常', 7: '内存异常'};
 
 	var mailMessage = '您好，您的应用 ' + app.name + ' 下的' + page.pathname + ' 发生异常，异常详情如下：<br>' +
@@ -58,7 +58,7 @@ var sendMail = function (toAddress, subject, exception, app, page){
 
 
 	var mailOptions = {
-		from: config.q_mailer.from, // 发件地址
+		from: config.mailer.from, // 发件地址
 		to: toAddress, // 收件列表
 		subject: excepType[exception.type] + '报警', // 标题
 		html: mailMessage // html 内容
