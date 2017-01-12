@@ -1,0 +1,14 @@
+{
+    "apps": [{
+        "name": "FPMS",
+        "instances": 1,
+        "exec_mode": "cluster",
+        "log_date_format": "YYYY-MM-DD HH:mm:ss SSS",
+        "script": "server.js",
+        "env": {
+            "NODE_ENV": "production",
+            "PORT": "3000",
+            "DB_1_PORT_27017_TCP_ADDR": "127.0.0.1:27017"
+        }
+    }]
+}
