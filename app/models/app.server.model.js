@@ -37,6 +37,10 @@ var AppSchema = new Schema({
 		type: Number,
 		default: 3600000
 	},
+	uiInterval: {
+        type: Number,
+        default: 3600000
+	},
 	linkLastCheckTime: {
 		type: Date,
 		default: 0

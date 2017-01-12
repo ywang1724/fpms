@@ -65,6 +65,14 @@
                             </select>
                         </div>
                     </div>
+                    <div class="form-group" ng-class="{ 'has-error': appForm.uiInterval.$dirty && appForm.uiInterval.$invalid }">
+                        <label for="uiInterval" class="col-sm-2 control-label">主动监控时间间隔</label>
+                        <div class="col-sm-10 controls">
+                            <select id="uiInterval" name="uiInterval" data-ng-model="app.uiInterval" ng-options="uiInterval.value as uiInterval.label for uiInterval in uiIntervals"
+                                    class="form-control" required>
+                            </select>
+                        </div>
+                    </div>
                     <div class="form-group" ng-class="{ 'has-error': appForm.alarmEmail.$dirty && appForm.alarmEmail.$invalid }">
                         <label for="alarmEmail" class="col-sm-2 control-label">报警邮箱</label>
                         <div class="col-sm-10 controls">

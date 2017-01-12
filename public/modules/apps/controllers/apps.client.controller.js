@@ -42,7 +42,15 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             {label: 'DOM结构异常', value: 6, checked: false},
             {label: '内存异常', value: 7, checked: false}
         ];
-
+        $scope.uiInterval = 3600000;
+        $scope.uiIntervals = [
+            {label: '30分钟',value: 1800000},
+            {label: '1个小时', value: 3600000},
+            {label: '半天', value: 43200000},
+            {label: '1天', value: 86400000},
+            {label: '1周', value: 604800000},
+            {label: '1个月', value: 2592000000}
+        ];
         $scope.toggleSelection = function (obj, i) {
             var objValue = parseInt(obj.target.value);
             if(obj.target.checked){
@@ -85,6 +93,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 type: this.type,
                 host: this.host,
                 deadLinkInterval: this.deadLinkInterval,
+                uiInterval: this.uiInterval,
                 alarmtype: this.alarmtype,
                 alarmInterval: this.alarmInterval,
                 alarmEmail: this.alarmEmail
@@ -99,6 +108,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 $scope.type = 'java';
                 $scope.host = '';
                 $scope.alarmtype = [1, 2, 3, 4];
+                $scope.deadLinkInterval = 3600000;
                 $scope.deadLinkInterval = 3600000;
                 $scope.alarmInterval = 900000;
                 $scope.alarmEmail = '';
@@ -289,5 +299,6 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         //        $scope.showProgress = false;
         //    });
         //};
+
     }
 ]);

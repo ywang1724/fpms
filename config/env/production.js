@@ -5,6 +5,9 @@ var env = require('./../../env.json');
 module.exports = {
 	db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://' + env.DB_USERNAME + ':' + env.DB_PASSWORD +
         '@' + (process.env.DB_1_PORT_27017_TCP_ADDR || 'localhost') + '/fpms',
+    adminAccount_init: env.adminAccount_init,
+    rabbitURI: env.rabbitURI,
+    dbName: "fpms",
 	assets: {
 		lib: {
 			css: [

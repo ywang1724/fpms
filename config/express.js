@@ -23,10 +23,11 @@ var fs = require('fs'),
 	consolidate = require('consolidate'),
 	path = require('path');
 
-module.exports = function(db) {
+module.exports = function(db, gridfs) {
 	// Initialize express app
 	var app = express();
 
+	app.set("gridfs", gridfs);
 	// Globbing model files
 	config.getGlobbedFiles('./app/models/**/*.js').forEach(function(modelPath) {
 		require(path.resolve(modelPath));
@@ -116,7 +117,7 @@ module.exports = function(db) {
 
 	// Globbing routing files
 	config.getGlobbedFiles('./app/routes/**/*.js').forEach(function(routePath) {
-		require(path.resolve(routePath))(app);
+		require(path.resolve(routePath))(app, db);
 	});
 
 	// 错误响应
@@ -159,6 +160,7 @@ module.exports = function(db) {
 		return httpsServer;
 	}
 
+	// require("../app/service/monitoringResultProcess")(app);
 	// Return Express server instance
 	return app;
 };
