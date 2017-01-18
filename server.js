@@ -49,24 +49,25 @@ conn.on('open', function () {
     require('./config/passport')();
 
 // 启动应用并开启监听端口
-    if (cluster.isMaster) {
-        console.log('宿主启动...');
-
-        for (var i = 0; i < numCPUs; i++) {
-            cluster.fork();
-        }
-        cluster.on('listening', function (worker, address) {
-            console.log('核心' + i + ' pid:' + worker.process.pid);
-        });
-        cluster.on('exit', function (worker, code, signal) {
-            console.log('核心' + i + ' pid:' + worker.process.pid + ' 重启');
-            setTimeout(function () {
-                cluster.fork();
-            }, 2000);
-        });
-    } else {
-        app.listen(config.port);
-    }
+//     if (cluster.isMaster) {
+//         console.log('宿主启动...');
+//
+//         for (var i = 0; i < numCPUs; i++) {
+//             cluster.fork();
+//         }
+//         cluster.on('listening', function (worker, address) {
+//             console.log('核心' + i + ' pid:' + worker.process.pid);
+//         });
+//         cluster.on('exit', function (worker, code, signal) {
+//             console.log('核心' + i + ' pid:' + worker.process.pid + ' 重启');
+//             setTimeout(function () {
+//                 cluster.fork();
+//             }, 2000);
+//         });
+//     } else {
+//         app.listen(config.port);
+//     }
+    app.listen(config.port);
     // 打印应用启动日志
     console.log('FPMS started on port ' + config.port + ' and process.env.NODE_ENV = ' + process.env.NODE_ENV);
 });

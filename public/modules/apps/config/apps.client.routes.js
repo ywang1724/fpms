@@ -28,6 +28,14 @@ angular.module('apps').config(['$stateProvider',
 		state('viewAppException', {
 			url: '/apps/exception/:appId',
 			templateUrl: 'modules/apps/views/exception/view-exception.client.view.html'
-		});
+		}).
+        state('addUITask', {
+            url: '/apps/:appId/ui/create',
+            templateUrl: 'modules/apps/views/ui/add-task.client.view.html'
+        }).
+        state('viewUITask', {
+            url: '/apps/:appId/ui/:taskId',
+            templateUrl: 'modules/apps/views/ui/view-task.client.view.html'
+        });
 	}
 ]);

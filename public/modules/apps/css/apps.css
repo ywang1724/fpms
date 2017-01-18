@@ -44,3 +44,10 @@ a[ng-click] {
     /* For IE 8*/
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
 }
+.view-container {
+    padding:5px 0;
+}
+.view-container .key {
+    font-weight:bold;
+}
+

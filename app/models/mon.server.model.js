@@ -10,7 +10,10 @@ var mongoose = require('mongoose'),
  * Monitor Schema
  */
 var MonSchema = new Schema({
-    taskId: Schema.ObjectId,
+    task:{
+        type: Schema.ObjectId,
+        ref: "Task"
+    },
     timestamp: Number,
     hasException: {
         type: Boolean,

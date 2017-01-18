@@ -1,0 +1,31 @@
+<section data-ng-controller="UIController" ng-init="">
+    <div class="page-header text-center">
+        <h1>添加新的页面监控任务</h1>
+    </div>
+    <div class="row panel panel-info">
+        <div class="panel-heading">
+            请配置您的监控任务：
+        </div>
+        <div class="panel-body">
+            <form name="taskForm" class="form-horizontal" data-ng-submit="create()" novalidate>
+                <fieldset>
+                    <div class="form-group" ng-class="{ 'has-error': taskForm.name.$dirty && taskForm.name.$invalid }">
+                        <label for="url" class="col-sm-2 control-label">需要监测的页面URL</label>
+                        <div class="col-sm-10 controls">
+                            <input name="url" type="text" data-ng-model="url" id="url" class="form-control"
+                                   placeholder="请填写需要监测的页面URL" data-ng-change="removeErr()" required>
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <input type="submit" value="提交" class="btn btn-primary">
+                        <input type="button" value="取消" class="btn btn-default" ng-click="back()">
+                    </div>
+                    <div data-ng-show="error" class="text-danger">
+                        <strong data-ng-bind="error"></strong>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+
+    </div>
+</section>

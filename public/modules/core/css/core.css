@@ -27,3 +27,6 @@ html {
 div.dataTables_paginate ul.pagination {
     margin: 2px;
 }
+.btn-bar {
+	margin-bottom:10px;
+}

@@ -161,7 +161,10 @@
     </div>
 
     <tabset>
-        <tab heading="性能和异常监控">
+        <tab>
+            <tab-heading>
+                <i class="fa fa-area-chart"></i> 被动监控（性能和异常）
+            </tab-heading>
             <div class="panel-body">
                 <table datatable="ng" dt-options="dtPageOptions" class="table table-striped table-bordered table-hover myTable"
                        data-ng-if="pages.length">
@@ -187,30 +190,32 @@
                 </div>
             </div>
         </tab>
-        <tab heading="主动页面检测">
+        <tab >
+            <tab-heading>
+                <i class="fa fa-cloud"></i> 主动监控（页面）
+            </tab-heading>
             <div class="panel-body">
-                <table datatable="ng" dt-options="dtPageOptions" class="table table-striped table-bordered table-hover myTable"
-                       data-ng-if="pages.length">
+                <div class="pull-right btn-bar">
+                    <button class="btn btn-sm btn-success" data-ng-click="gotoAddTask()" title="添加主动监控任务">添加任务</button>
+                </div>
+                <table datatable="" dt-options="dtPageOptions"  class="table table-striped table-bordered table-hover">
                     <thead>
-                    <tr>
-                        <th>页面路径</th>
-                        <th>性能详情</th>
-                        <th>异常详情</th>
-                        <th data-ng-show="(authentication.user._id == app.user._id)">删除页面</th>
+                    <tr >
+                        <th>任务URL</th>
+                        <th>任务详情</th>
+                        <th>上次任务运行时间</th>
+                        <th>创建时间</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr data-ng-repeat="page in pages">
-                        <td>{{ page.pathname }}</td>
-                        <td><a ng-click="gotoPerformance(page)">性能详情</a></td>
-                        <td><a ng-click="gotoException(page)">异常详情</a></td>
-                        <td data-ng-show="(authentication.user._id == app.user._id)"><a ng-click="deletePage(page)">删除页面</a></td>
+                    <tr data-ng-repeat="task in tasks">
+                        <td>{{task.url}}</td>
+                        <td><a ng-click="gotoTaskDetail(task)">任务详情</a></td>
+                        <td>{{task.lastRunTime | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                        <td>{{task.createTime | date:'yyyy-MM-dd HH:mm:ss' }}</td>
                     </tr>
                     </tbody>
                 </table>
-                <div class="alert alert-warning text-center" data-ng-if="!pages.length">
-                    没有任何页面，将以上脚本复制到您需要监控的页面即可添加页面。
-                </div>
             </div>
         </tab>
     </tabset>

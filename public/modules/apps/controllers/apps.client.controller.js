@@ -1,9 +1,9 @@
 'use strict';
 
 // Apps controller
-angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
+angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps', 'Tasks',
     'DTOptionsBuilder', '$http', '$timeout', 'PageService', 'SweetAlert',
-    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert) {
+    function ($scope, $stateParams, $location, Authentication, Apps, Tasks, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert) {
         $scope.authentication = Authentication;
 
         //可从后台动态获取数据，以后有时间完成
@@ -180,6 +180,10 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                     $scope.pages = data;
                 });
 
+            $scope.tasks = Tasks.query({
+                appId: $stateParams.appId
+            });
+
             //修改APP配置初始化报警类型
             $scope.alarmtypes = [
                 {label: 'JavaScript异常', value: 1, checked: false},
@@ -215,6 +219,15 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             PageService.setCurrentPage({'_id': page._id, 'pathname': page.pathname});
             PageService.setIdentifier(2);
             $location.path('apps/exception/' + $scope.app._id);
+        };
+
+        // 跳转至UI任务添加页面
+        $scope.gotoAddTask= function(){
+            $location.path('apps/' + $stateParams.appId + "/ui/create");
+        };
+        // 跳转至UI任务添加页面
+        $scope.gotoTaskDetail= function(task){
+            $location.path('apps/' + $stateParams.appId + "/ui/" + task._id);
         };
 
         //删除页面
@@ -289,7 +302,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                     }
                 }
             })
-            .withOption('responsive', true);
+            // .withOption('responsive', true);
 
         //
         //$scope.pt = function () {
