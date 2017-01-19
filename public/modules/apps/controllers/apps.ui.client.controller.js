@@ -1,10 +1,22 @@
 'use strict';
 
 // Apps controller
-angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$location', 'Authentication', 'Tasks',
+angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$window','$location', 'Authentication', 'Tasks','Mons',
     'DTOptionsBuilder', '$http', '$timeout', 'PageService', 'SweetAlert',
-    function ($scope, $stateParams, $location, Authentication, Tasks, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert) {
+    function ($scope, $stateParams, $window, $location, Authentication, Tasks, Mons, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert) {
         $scope.authentication = Authentication;
+        $scope.uiType = {
+            'add': '添加DOM节点',
+            'remove':'删除DOM节点',
+            'style':'样式变化',
+            'text':'文本变化'
+        };
+        $scope.fileName = {
+            'diffPic':'页面对比图片.jpeg',
+            'screenShot':'页面截图.jpeg',
+            'info':'页面信息.json',
+            'tree':'DOM树信息.json'
+        };
         $scope.create = function () {
             // 创建新的任务
             var task = new Tasks({
@@ -25,8 +37,16 @@ angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$l
             $scope.task = Tasks.get({
                 taskId: $stateParams.taskId
             })
+            $scope.mons = Mons.query({
+                taskId: $stateParams.taskId
+            });
         }
 
+        $scope.initMon = function(){
+            $scope.mon = Mons.get({
+                monId: $stateParams.monId
+            })
+        }
         $scope.back = function () {
             window.history.back();
         };
@@ -48,6 +68,12 @@ angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$l
         }
         $scope.modifyDiffRule = function() {
 
+        }
+        $scope.gotoMonDetail = function(mon){
+            $location.path('apps/' + $stateParams.appId + "/ui/" + $stateParams.taskId + "/mon/" + mon._id);
+        }
+        $scope.downloadFile = function(id) {
+            $window.open("/mon/getFile?fileId=" + id, '_blank');
         }
         //datatble配置
         $scope.dtPageOptions = DTOptionsBuilder

@@ -24,6 +24,15 @@ angular.module('apps').factory('Tasks', ['$resource',
         });
     }
 ]);
+
+//Apps service used to communicate task REST endpoints
+angular.module('apps').factory('Mons', ['$resource',
+    function($resource) {
+        return $resource('mon/:monId/', {
+            monId: '@_id',
+        });
+    }
+]);
 //用于APP页面往具体页面跳转用
 angular.module('apps').factory('PageService', [function() {
 

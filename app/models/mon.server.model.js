@@ -10,7 +10,7 @@ var mongoose = require('mongoose'),
  * Monitor Schema
  */
 var MonSchema = new Schema({
-    task:{
+    taskId:{
         type: Schema.ObjectId,
         ref: "Task"
     },
