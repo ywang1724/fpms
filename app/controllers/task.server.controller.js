@@ -7,12 +7,13 @@ var mongoose = require('mongoose'),
     errorHandler = require('./errors.server.controller'),
     App = mongoose.model('App'),
     Task = mongoose.model('Task'),
+    Mon = mongoose.model("Mon"),
     _ = require('lodash');
+
 
 /**
  * Create a App
  */
-
 var gridfs;
 var create = function (req, res) {
     var task = new Task(req.body);
@@ -59,9 +60,12 @@ var update = function (req, res) {
  */
 var remove = function (req, res) {
     var task = req.task;
-    Mon.find({task: task._id})
-        .then(function (mons) {
-            // 删除任务下面的监控结果
+    Mon.find({task: task._id}, function(err, mons) {
+        if(err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
             mons.forEach(function (mon) {
                 mon.data && mon.data.forEach(function (file) {
                     // 删除监控图片和临时数据
@@ -73,21 +77,17 @@ var remove = function (req, res) {
                 })
             });
 
-            task.remove()
-                .then(function () {
-                    res.jsonp(task);
-                })
-                .catch(function (err) {
+            task.remove(function(err){
+                if(err) {
                     return res.status(400).send({
                         message: errorHandler.getErrorMessage(err)
                     });
-                })
-        })
-        .catch(function (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        })
+                } else {
+                    res.jsonp(task);
+                }
+            })
+        }
+    })
 
 };
 

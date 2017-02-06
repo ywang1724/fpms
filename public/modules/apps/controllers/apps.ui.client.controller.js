@@ -29,6 +29,29 @@ angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$w
                 $scope.error = errorResponse.data.message;
             });
         }
+        $scope.remove = function() {
+            SweetAlert.swal({
+                    title: '确定删除该应用?',
+                    text: '应用删除后不可恢复哟!',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#DD6B55',
+                    confirmButtonText: '确定，删掉它!',
+                    cancelButtonText: '不删，考虑一下!',
+                    closeOnConfirm: false,
+                    closeOnCancel: false },
+                function(isConfirm){
+                    if (isConfirm) {
+                        //删除应用代码
+                        SweetAlert.swal('删除成功!', '该页面已被成功删除.', 'success');
+                        $scope.task.$remove(function () {
+                            $location.path('apps/' + $stateParams.appId);
+                        });
+                    } else {
+                        SweetAlert.swal('删除取消!', '该应用仍然存在 :)', 'error');
+                    }
+                });
+        }
         $scope.removeErr = function () {
             $scope.error = false;
         };

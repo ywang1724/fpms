@@ -16,7 +16,7 @@ var init = require('./config/init')(),
  */
 
 // 启动数据库连接
-mongoose.Promise = global.Promise;
+
 var db = mongoose.connect(config.db, function (err) {
     if (err) {
         console.error(chalk.red('Could not connect to MongoDB!'));

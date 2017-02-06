@@ -40,11 +40,15 @@ var getFileById = function(req, res) {
     var fileId = req.query.fileId || "";
     gridfs.findOne({_id: fileId}, function (err, file) {
         if(err) res.json(err);
-        var is = gridfs.createReadStream({
-            _id: fileId
-        });
-        res.type(mime.lookup(file.filename));
-        is.pipe(res);
+        if(!file) {
+            res.send("file not found!");
+        } else {
+            var is = gridfs.createReadStream({
+                _id: fileId
+            });
+            res.type(mime.lookup(file.filename));
+            is.pipe(res);
+        }
     })
 }
 /**
