@@ -186,6 +186,8 @@
         };
     })(document);
 
+
+
     //兼容不同版本浏览器，并插入性能脚本
     var addFunctionOnWindowLoad = function(callback){
         if(window.addEventListener){

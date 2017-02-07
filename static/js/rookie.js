@@ -5,6 +5,21 @@
 
 
 /**
+ * 添加UI监控自定义规则录入脚本
+ */
+var addUIMonitorJs = (function(document){
+    var script   = document.createElement("script");
+    script.type  = "text/javascript";
+    script.async = 'true';
+    var elem =  document.getElementById("feException");
+    script.src   = elem.src.replace('bookie', 'uookie');
+
+    return function (){
+        document.body.appendChild(script);
+    };
+})(document);
+
+/**
  * 性能采集脚本
  */
 (function() {
@@ -50,7 +65,7 @@
         var img = new Image(1, 1);
         img.src = serverHost + '/_fp.gif?' + encodeURIComponent(JSON.stringify(rookie));
     }, 0);
-
+    addUIMonitorJs();
 })();
 
 /**
@@ -116,3 +131,4 @@ var DOMReplicateIDDect = function (){
     })(linkArray, linkArray2);
     reportException(4, '', '', '', linkArray2);
 })();
+

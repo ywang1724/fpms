@@ -13,6 +13,8 @@ module.exports = function(app) {
 		.put(users.requiresLogin, task.hasAuthorization, task.update)
 		.delete(users.requiresLogin, task.hasAuthorization, task.delete);
 
+    app.route('/uookie.js/:appId').get(task.uookie);
+    app.route('/uookie.css/:appId').get(task.uookieCSS);
 	// 绑定App中间件
 	app.param('taskId', task.taskByID);
 
