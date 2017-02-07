@@ -40,6 +40,8 @@
 
     //获取当前的网址
     var url = window.location.href;
+    //获取pathname
+    var pathname = window.location.pathname;
     // 获取上页地址
     var oldlink = document.referrer;
     // 获取当前访问页的标题
@@ -48,6 +50,7 @@
     var screen = window.screen.width + "*" + window.screen.height;
     // 异步请求发送
     str= 'url=' + encodeURIComponent(url) +
+      '&pathname=' + encodeURIComponent(pathname) +
       '&referer=' + encodeURIComponent(oldlink) +
       '&title=' + encodeURIComponent(titleName) +
       '&userAgent=' + navigator.userAgent.toLowerCase() +
@@ -55,7 +58,7 @@
       '&gu_id=' + GetCookie('GUID') +
       '&wwc=' + GetCookie('WWHCount') +
       '&timestamp=' + GetCookie('WWhenH') +
-      '&following=' + appId;
+      '&appId=' + appId;
 
     img.src = serverHost + '/_ub.gif?' + str;
   };

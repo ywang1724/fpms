@@ -10,9 +10,9 @@ module.exports = function(app) {
   var behaviors = require('../../app/controllers/behaviors.server.controller');
   var apps = require('../../app/controllers/apps.server.controller');
 
-  // Timings Routes
-  // app.route('/behaviors')
-  //   .get(users.requiresLogin, behaviors.statisticList);
+  // behavior Routes
+  app.route('/behaviors')
+    .get(users.requiresLogin, behaviors.statisticList);
   //
   // app.route('/behaviors/:behaviorId')
   //    .get(users.requiresLogin, behaviors.read);

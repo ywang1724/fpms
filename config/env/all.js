@@ -58,7 +58,8 @@ module.exports = {
                 'public/lib/zeroclipboard/dist/ZeroClipboard.js',
 				'public/lib/angular-modal-service/dst/angular-modal-service.js',
 				'public/lib/sweetalert/dist/sweetalert.min.js',
-				'public/lib/angular-sweetalert/SweetAlert.js'
+				'public/lib/angular-sweetalert/SweetAlert.js',
+				'public/lib/moment/min/moment.min.js'
 			]
 		},
 		css: [

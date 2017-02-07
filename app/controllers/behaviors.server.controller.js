@@ -9,6 +9,7 @@ var mongoose = require('mongoose');
 var errorHandler = require('./errors.server.controller');
 var Behavior = mongoose.model('Behavior');
 var App = mongoose.model('App');
+var Page = mongoose.model('Page');
 var rqt = require('request');
 
 /**
@@ -22,40 +23,54 @@ exports.create = function (req, res) {
       } else {
         var behaviorData = req.query;
         if (~parseInt(behaviorData.url.indexOf(app.host))) {
-          var behavior = new Behavior(behaviorData);
-          var regex = /^\:\:ffff\:/;
+          var page = {};
+          //查找Web应用对应页面，如果存在则返回，如果不存在则新建
+          Page.findOneAndUpdate({app:app, pathname: behaviorData.pathname}, page, {upsert: true})
+            .exec(function (err, obj) {
+              if(err) {
+                console.log(errorHandler.getErrorMessage(err));
+              } else {
+                page = obj;
 
-          var keyword = getKeyword(behaviorData.referer);
-          var system = getSysInfo(behaviorData.userAgent);
-          var browser = getBrowserType(behaviorData.userAgent);
-          var ip='', address = {};
+                var behavior = new Behavior(behaviorData);
+                var regex = /^\:\:ffff\:/;
 
-          if (req.headers['x-real-ip']) {
-            ip = req.headers['x-real-ip'];
-          } else {
-            if(regex.test(req.connection.remoteAddress.trim())) {
-              ip = req.connection.remoteAddress.split('::ffff:')[1];
-            } else {
-              ip = req.connection.remoteAddress;
-            }
-          }
+                var keyword = getKeyword(behaviorData.referer);
+                var system = getSysInfo(behaviorData.userAgent);
+                var browser = getBrowserType(behaviorData.userAgent);
+                var following = page._id.toString();
+                var ip='', address = {};
 
-          var checkIpURL = 'http://ip.taobao.com/service/getIpInfo.php?ip=' + ip;
-          rqt(checkIpURL, function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-              body = JSON.parse(body);
-              address = body.data;
-            }
-            behavior.saveData({
-              keyword: keyword,
-              system: system,
-              browser: browser,
-              ip: ip,
-              address: address
-            });
-          });
+                if (req.headers['x-real-ip']) {
+                  ip = req.headers['x-real-ip'];
+                } else {
+                  if(regex.test(req.connection.remoteAddress.trim())) {
+                    ip = req.connection.remoteAddress.split('::ffff:')[1];
+                  } else {
+                    ip = req.connection.remoteAddress;
+                  }
+                }
 
-          res.sendStatus(200);
+                var checkIpURL = 'http://ip.taobao.com/service/getIpInfo.php?ip=' + ip;
+                rqt(checkIpURL, function (error, response, body) {
+                  if (!error && response.statusCode == 200) {
+                    body = JSON.parse(body);
+                    address = body.data;
+                  }
+                  behavior.saveData({
+                    keyword: keyword,
+                    system: system,
+                    browser: browser,
+                    ip: ip,
+                    address: address,
+                    following: following
+                  });
+                });
+
+                res.sendStatus(200);
+              }
+            })
+
         }
       }
     })
@@ -83,6 +98,45 @@ exports.create = function (req, res) {
       console.log(new Date() + 'Sent:', fileName);
     }
   });
+}
+
+/**
+ * List of Behavior
+ * @param req
+ * @param res
+ */
+exports.statisticList = function (req, res) {
+  /**
+   * 参数：
+   * pageId 页面id
+   *
+   */
+  var pages = (typeof req.query.pageId === 'string') ? [req.query.pageId] : req.query.pageId;
+  var browsers = (req.query.browser === 'all') ? [new RegExp('.*', 'i'), null] : [req.query.browser];
+
+  if(req.param('dateNumber')) {
+    console.log('dateNumber')
+  } else {
+    Behavior.find({
+      following: {$in: pages},
+      browser: {$in: browsers},
+      timestamp: {$gte: +(new Date(req.param('fromDate'))), $lt: +(new Date(req.param('untilDate')))}
+    }).sort('timestamp').exec(function (err, behaviors) {
+      if (err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        })
+      } else {
+        var result = {
+          statisticData: {sum: behaviors.length},
+          numData:[[1485907200000, 22], [1485993600000, 141], [1486080000000, 23],[1486166400000,87],[1486252800000,56],[1486339200000,34]]
+        };
+        res.jsonp(result);
+      }
+    })
+
+  }
+
 }
 
 /**

@@ -28,6 +28,10 @@ angular.module('apps').config(['$stateProvider',
 		state('viewAppException', {
 			url: '/apps/exception/:appId',
 			templateUrl: 'modules/apps/views/exception/view-exception.client.view.html'
+		}).
+		state('viewAppBehavior', {
+			url: '/apps/behavior/:appId',
+			templateUrl: 'modules/apps/views/behavior/view-behavior.client.view.html'
 		});
 	}
 ]);

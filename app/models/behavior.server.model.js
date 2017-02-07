@@ -74,6 +74,7 @@ BehaviorSchema.methods = {
     this.browser = data.browser;
     this.ip = data.ip;
     this.address = data.address;
+    this.following = data.following;
     return this.save();
   },
   getIPCount: function () {
