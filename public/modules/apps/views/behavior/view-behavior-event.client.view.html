@@ -1,1 +1,27 @@
-event
+<div data-ng-controller="AppsBehaviorEventController" ng-init="viewEvent()">
+  <div class="tabWidth">
+    <tabset data-ng-if="showChart && showData">
+      <tab>
+        <tab-heading>
+          <i class=""></i>热点图
+        </tab-heading>
+        <highchart></highchart>
+      </tab>
+      <tab>
+        <tab-heading>
+          <i class=""></i>漏斗分析
+        </tab-heading>
+        <highchart></highchart>
+      </tab>
+    </tabset>
+  </div>
+  <small>
+    <em class="text-muted">
+      由
+      <span data-ng-bind="app.user.displayName"></span>
+      创建于
+      <span data-ng-bind="app.created | date:'yyyy-MM-dd HH:mm:ss'"></span>
+    </em>
+  </small>
+</div>
+

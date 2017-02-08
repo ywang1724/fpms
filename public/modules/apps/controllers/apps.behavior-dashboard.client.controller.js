@@ -2,6 +2,10 @@
  * @file
  * @author tommyzqfeng
  * @date 2017/2/7
+ *
+ * TODO
+ * 1. 月、年的统计
+ * 2. 列表显示
  */
 'use strict';
 
@@ -125,8 +129,7 @@ angular.module('apps').controller('AppsBehaviorDashboardController', ['$scope', 
           $scope.chartConfig = {
             options:{
               chart: {
-                type: 'area',
-                width: $('.tabWidth').width()
+                type: 'area'
               },
               tooltip: {
                 xDateFormat: '%Y-%m-%d',
