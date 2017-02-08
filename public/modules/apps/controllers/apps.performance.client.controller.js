@@ -620,6 +620,18 @@ angular.module('apps').controller('AppsPerformanceController', ['$scope', '$stat
                 $location.path('apps/exception/' + $scope.app._id);
             }
         };
+        /**
+         * 切换至用户行为监控页面
+         */
+        $scope.gotoBehavior = function (){
+            if($scope.selectPage.pathname === '全部'){
+                $location.path('apps/behavior/' + $scope.app._id);
+            } else {
+                PageService.setCurrentPage({'_id': $scope.selectPage._id, 'pathname': $scope.selectPage.pathname});
+                PageService.setIdentifier(2);
+                $location.path('apps/behavior/' + $scope.app._id);
+            }
+        };
 
         $scope.httpNumTooltip = {
             'title': '包括HTML页面请求，CSS文件、JavaScript文件、图片等资源下载及其它网络请求。'

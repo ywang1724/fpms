@@ -1,85 +1,87 @@
-<div class="panel panel-success">
-  <div class="panel-heading">查询参数配置</div>
-  <div class="panel-body">
-    <div class="text-center text-danger">
-      目前{{app.name}}的<span class="large">{{pagesNum}}</span>个页面正在进行监控。
-    </div>
-    <div data-ng-show="showChart">
-      <div class="form-group">
-        <label class="control-label">页面：</label>
-        <button class="btn btn-default" name="selectPage" data-ng-model="selectPage"
-                placeholder="暂无监控页面" ng-options="page.pathname for page in pages" bs-select>
-        </button>
-        <label class="control-label">浏览器分类：</label>
-        <button class="btn btn-default" name="selectBrowser" data-ng-model="selectBrowser"
-                ng-options="item.name for item in browsers" bs-select>
-        </button>
+<div data-ng-controller="AppsBehaviorDashboardController" ng-init="viewBehavior()">
+  <div class="panel panel-success">
+    <div class="panel-heading">查询参数配置</div>
+    <div class="panel-body">
+      <div class="text-center text-danger">
+        目前{{app.name}}的<span class="large">{{pagesNum}}</span>个页面正在进行监控。
       </div>
-      <div class="form-group">
-        <label class="control-label">统计间隔：</label>
-        <button class="btn btn-default" name="selectInterval" data-ng-model="selectInterval"
-                ng-options="item.name for item in intervals" bs-select>
-        </button>
-        <label class="control-label">统计区间：</label>
-        <input class="btn btn-default" ng-model="fromDate" data-max-date="{{untilDate}}"
-               placeholder="开始日期" bs-datepicker type="text" data-date-format="yyyy-MM-dd"
-               data-ng-show="selectInterval.id === 'day'">
-        <input class="btn btn-default" ng-model="fromDate" placeholder="开始月份" bs-datepicker type="text"
-               data-min-view="1" data-date-format="yyyy-MM" data-ng-show="selectInterval.id === 'month'"
-               data-max-date="{{untilDate}}">
-        <input class="btn btn-default" ng-model="fromDate" data-max-date="{{untilDate}}"
-               placeholder="开始年份" bs-datepicker type="text" data-min-view="2" data-date-format="yyyy"
-               data-ng-show="selectInterval.id === 'year'">
-        至
-        <input class="btn btn-default" ng-model="untilDate" data-min-date="{{fromDate}}"
-               data-max-date="{{nowDate}}" placeholder="截止日期" bs-datepicker type="text"
-               data-date-format="yyyy-MM-dd" data-ng-show="selectInterval.id === 'day'">
-        <input class="btn btn-default" ng-model="untilDate" placeholder="截止月份" bs-datepicker type="text"
-               data-date-format="yyyy-MM" data-ng-show="selectInterval.id === 'month'" data-min-date="{{fromDate}}"
-               data-min-view="1" data-max-date="{{nowDate}}">
-        <input class="btn btn-default" ng-model="untilDate" data-min-date="{{fromDate}}"
-               data-max-date="{{nowDate}}" placeholder="截止年份" bs-datepicker type="text" data-min-view="2"
-               data-date-format="yyyy" data-ng-show="selectInterval.id === 'year'">
-      </div>
-      <div class="form-group">
-        <button type="button" class="btn btn-success" ng-click="refrashChart()">
-          <span class="fa fa-refresh"></span> 刷新
-        </button>
-        <button type="button" class="btn btn-success" ng-click="gotoPerformance()">
-          <span class="fa fa-refresh"></span> 切换至性能监控
-        </button>
-        <button type="button" class="btn btn-success" ng-click="gotoException()">
-          <span class="fa fa-refresh"></span> 切换至异常监控
-        </button>
+      <div data-ng-show="showChart">
+        <div class="form-group">
+          <label class="control-label">页面：</label>
+          <button class="btn btn-default" name="selectPage" data-ng-model="selectPage"
+                  placeholder="暂无监控页面" ng-options="page.pathname for page in pages" bs-select>
+          </button>
+          <label class="control-label">浏览器分类：</label>
+          <button class="btn btn-default" name="selectBrowser" data-ng-model="selectBrowser"
+                  ng-options="item.name for item in browsers" bs-select>
+          </button>
+        </div>
+        <div class="form-group">
+          <label class="control-label">统计间隔：</label>
+          <button class="btn btn-default" name="selectInterval" data-ng-model="selectInterval"
+                  ng-options="item.name for item in intervals" bs-select>
+          </button>
+          <label class="control-label">统计区间：</label>
+          <input class="btn btn-default" ng-model="fromDate" data-max-date="{{untilDate}}"
+                 placeholder="开始日期" bs-datepicker type="text" data-date-format="yyyy-MM-dd"
+                 data-ng-show="selectInterval.id === 'day'">
+          <input class="btn btn-default" ng-model="fromDate" placeholder="开始月份" bs-datepicker type="text"
+                 data-min-view="1" data-date-format="yyyy-MM" data-ng-show="selectInterval.id === 'month'"
+                 data-max-date="{{untilDate}}">
+          <input class="btn btn-default" ng-model="fromDate" data-max-date="{{untilDate}}"
+                 placeholder="开始年份" bs-datepicker type="text" data-min-view="2" data-date-format="yyyy"
+                 data-ng-show="selectInterval.id === 'year'">
+          至
+          <input class="btn btn-default" ng-model="untilDate" data-min-date="{{fromDate}}"
+                 data-max-date="{{nowDate}}" placeholder="截止日期" bs-datepicker type="text"
+                 data-date-format="yyyy-MM-dd" data-ng-show="selectInterval.id === 'day'">
+          <input class="btn btn-default" ng-model="untilDate" placeholder="截止月份" bs-datepicker type="text"
+                 data-date-format="yyyy-MM" data-ng-show="selectInterval.id === 'month'" data-min-date="{{fromDate}}"
+                 data-min-view="1" data-max-date="{{nowDate}}">
+          <input class="btn btn-default" ng-model="untilDate" data-min-date="{{fromDate}}"
+                 data-max-date="{{nowDate}}" placeholder="截止年份" bs-datepicker type="text" data-min-view="2"
+                 data-date-format="yyyy" data-ng-show="selectInterval.id === 'year'">
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-success" ng-click="refrashChart()">
+            <span class="fa fa-refresh"></span> 刷新
+          </button>
+          <button type="button" class="btn btn-success" ng-click="gotoPerformance()">
+            <span class="fa fa-refresh"></span> 切换至性能监控
+          </button>
+          <button type="button" class="btn btn-success" ng-click="gotoException()">
+            <span class="fa fa-refresh"></span> 切换至异常监控
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<div class="tabWidth" data-ng-if="showChart && showData">
-  <highchart config="chartConfig"></highchart>
-  <tabset data-ng-if="details.length">
-    <tab>
-      <tab-heading>
-        <i class="fa fa-table"></i> 真实请求概览
-      </tab-heading>
-      <table datatable="ng" dt-option="dtOptions" class="table table-striped table-bordered table-hover myTable">
-        <thead>
-          <tr>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr data-ng-repeat="detail in details">
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-    </tab>
-    <tab>
-      <tab-heading>
-        <i class="fa fa-area-chart"></i> 真实请求趋势
-      </tab-heading>
-      <highchart config=""></highchart>
-    </tab>
-  </tabset>
+  <div class="tabWidth" data-ng-if="showChart && showData">
+    <highchart config="chartConfig"></highchart>
+    <tabset data-ng-if="details.length">
+      <tab>
+        <tab-heading>
+          <i class="fa fa-table"></i> 真实请求概览
+        </tab-heading>
+        <table datatable="ng" dt-option="dtOptions" class="table table-striped table-bordered table-hover myTable">
+          <thead>
+            <tr>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-ng-repeat="detail in details">
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </tab>
+      <tab>
+        <tab-heading>
+          <i class="fa fa-area-chart"></i> 真实请求趋势
+        </tab-heading>
+        <highchart config=""></highchart>
+      </tab>
+    </tabset>
+  </div>
 </div>

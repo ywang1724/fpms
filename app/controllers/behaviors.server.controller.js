@@ -111,16 +111,17 @@ exports.statisticList = function (req, res) {
    * pageId 页面id
    *
    */
-  var pages = (typeof req.query.pageId === 'string') ? [req.query.pageId] : req.query.pageId;
-  var browsers = (req.query.browser === 'all') ? [new RegExp('.*', 'i'), null] : [req.query.browser];
-
+  var reqData = req.query;
+  var pages = (typeof reqData.pageId === 'string') ? [reqData.pageId] : reqData.pageId;
+  var browsers = (reqData.browser === 'all') ? [new RegExp('.*', 'i'), null] : [reqData.browser];
+  var dataCounts = parseInt((reqData.untilDate - reqData.fromDate)/(3600*24*1000));
   if(req.param('dateNumber')) {
     console.log('dateNumber')
   } else {
     Behavior.find({
       following: {$in: pages},
       browser: {$in: browsers},
-      timestamp: {$gte: +(new Date(req.param('fromDate'))), $lt: +(new Date(req.param('untilDate')))}
+      timestamp: {$gte: reqData.fromDate, $lt: reqData.untilDate}
     }).sort('timestamp').exec(function (err, behaviors) {
       if (err) {
         return res.status(400).send({
@@ -129,8 +130,18 @@ exports.statisticList = function (req, res) {
       } else {
         var result = {
           statisticData: {sum: behaviors.length},
-          numData:[[1485907200000, 22], [1485993600000, 141], [1486080000000, 23],[1486166400000,87],[1486252800000,56],[1486339200000,34]]
+          numData:[]
         };
+        for (var i = 0; i<dataCounts; i++) {
+          var temp=0;
+          for(var j=0; j<behaviors.length; j++) {
+            if(behaviors[j].timestamp>(parseInt(reqData.fromDate)+i*3600*24*1000) && behaviors[j].timestamp<parseInt(reqData.fromDate)+(i+1)*3600*24*1000) {
+              temp++;
+            }
+          }
+          result.numData.push([parseInt(reqData.fromDate)+i*3600*24*1000, temp]);
+          temp = 0;
+        }
         res.jsonp(result);
       }
     })
