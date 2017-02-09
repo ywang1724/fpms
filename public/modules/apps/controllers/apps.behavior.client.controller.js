@@ -7,15 +7,178 @@
 
 //Apps controller
 angular.module('apps').controller('AppsBehaviorController', ['$scope', '$stateParams', '$location',
-  'Authentication', 'Apps',
-  function ($scope, $stateParams, $location, Authentication, Apps) {
+  'Authentication', 'Apps', 'DTOptionsBuilder', '$http', '$timeout', 'PageService',
+  function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService) {
     $scope.authentication = Authentication;
 
     $scope.initBehavior = function () {
+      $scope.showData = true;
       $scope.app = Apps.get({
         appId: $stateParams.appId
       });
-    };
+      Highcharts.setOptions({
+        lang: {
+          contextButtonTitle: '导出',
+          printChart: '打印图表',
+          downloadJPEG: '下载JPEG',
+          downloadPDF: '下载PDF',
+          downloadPNG: '下载PNG',
+          downloadSVG: '下载SVG'
+        },
+        global: {
+          useUTC: false
+        }
+      });
+      $http.get('pages/' + $stateParams.appId).
+      success(function (data) {
+        $scope.pagesNum = data.length || 0;
+        if (data.length) {
+          $scope.showChart = true;
+          $scope.parentObj = {}; //与child scope进行数据绑定的过渡对象
+
+          //页面选择
+          var ids = [];
+          for (var i = 0; i < data.length; i++) {
+            ids.push(data[i]._id);
+          }
+          $scope.pages = [{'_id':ids, 'pathname': '全部'}].concat(data);
+          if(PageService.getIdentifier() === 2){
+            //表示从应用详情跳转过来
+            $scope.selectPage = $scope.pages.filter(function(elem){
+              return elem._id === PageService.getCurrentPage()._id;
+            })[0];
+          }else{
+            $scope.selectPage = $scope.pages[0];
+          }
+
+          //统计间隔
+          $scope.intervals = [
+            {'name': '日', 'id': 'day'}, {'name': '月', 'id': 'month'}, {'name': '年', 'id': 'year'}
+          ];
+          $scope.selectInterval = $scope.intervals[0];
+
+          //浏览器分类
+          $scope.browsers = [
+            {'name': '全部', 'id': 'all'},
+            {'name': 'Internet Explorer', 'id': 'Internet Explorer'}, {'name': 'Chrome', 'id': 'Chrome'},
+            {'name': 'Android Webkit Browser', 'id': 'Android Webkit Browser'},
+            {'name': 'Firefox', 'id': 'Firefox'}, {'name': 'Safari', 'id': 'Safari'}
+          ];
+          $scope.selectBrowser = $scope.browsers[0];
+
+          //日期范围初始化
+          var now = new Date();
+          $scope.nowDate = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+          $scope.fromDate = $scope.nowDate - 1296000000; //往前15天
+          $scope.untilDate = $scope.nowDate;
+
+          $scope.parentObj.selectPage = $scope.selectPage;
+          $scope.parentObj.selectBrowser = $scope.selectBrowser;
+          $scope.parentObj.selectInterval = $scope.selectInterval;
+          $scope.parentObj.fromDate = $scope.fromDate;
+          $scope.parentObj.untilDate = $scope.untilDate;
+
+
+          var getBehaviors = function() {
+            var trueFromDate, trueUntilDate;
+            switch ($scope.parentObj.selectInterval.id) {
+              case 'day':
+                trueFromDate = $scope.parentObj.fromDate;
+                trueUntilDate = $scope.parentObj.untilDate + 86400000;
+                $scope.chartConfig.xAxis.tickInterval = 86400000; //1天
+                $scope.chartConfig.xAxis.labels.formatter = function () {
+                  return moment(this.value).format('MM-DD')
+                };
+                $scope.chartConfig.options.tooltip.xDateFormat = '%Y-%m-%d';
+                break;
+              case 'month':
+                trueFromDate = Date.UTC((new Date($scope.parentObj.fromDate)).getFullYear(), (new Date($scope.parentObj.fromDate)).getMonth());
+                trueUntilDate = Date.UTC((new Date($scope.parentObj.untilDate)).getFullYear(), (new Date($scope.parentObj.untilDate)).getMonth() + 1);
+                $scope.chartConfig.xAxis.tickInterval = 2419200000; //28天
+                $scope.chartConfig.xAxis.labels.formatter = function () {
+                  return moment(this.value).format('YYYY-MM')
+                };
+                $scope.chartConfig.options.tooltip.xDateFormat = '%Y.%m';
+                break;
+              case 'year':
+                trueFromDate = Date.UTC((new Date($scope.parentObj.parentObj.fromDate)).getFullYear(), 0);
+                trueUntilDate = Date.UTC((new Date($scope.parentObj.untilDate)).getFullYear() + 1, 0);
+                $scope.chartConfig.xAxis.tickInterval = 31104000000; //360天
+                $scope.chartConfig.xAxis.labels.formatter = function () {
+                  return moment(this.value).format('YYYY')
+                };
+                $scope.chartConfig.options.tooltip.xDateFormat = '%Y';
+                break;
+            }
+
+            $http.get('behaviors', {
+              params: {
+                pageId: $scope.parentObj.selectPage._id,
+                fromDate: +(new Date(trueFromDate)),
+                untilDate: +(new Date(trueUntilDate)),
+                interval: $scope.parentObj.selectInterval.id,
+                browser: $scope.parentObj.selectBrowser.id
+              }
+            }).success(function (result) {
+              PageService.setIdentifier(1);
+              if (result.statisticData.sum > 0) {
+                $scope.chartConfig.series[0].data = result.numData;
+                $scope.statisticData = result.statisticData;
+                $scope.showData = true;
+              } else {
+                $scope.showData = false;
+              }
+            })
+          };
+
+          $scope.chartConfig = {
+            options:{
+              chart: {
+                type: 'area'
+              },
+              tooltip: {
+                xDateFormat: '%Y-%m-%d',
+                shared: true,
+                style: {
+                  fontSize: '14px'
+                }
+              }
+            },
+            credits: {
+              enabled: false
+            },
+            xAxis: {
+              type: 'datetime',
+              tickInterval: 2419200000,
+              labels: {
+                formatter: function () {
+                  return moment(this.value).format('MM-DD')
+                }
+              },
+              tickPositioner: function(min, max) {
+                return this.series[0].xData.slice();
+              }
+            },
+            yAxis: [{
+              title: {
+                text: '访问量'
+              }
+            }],
+            series: [{
+              name: '页面访问量',
+              data: []
+            }],
+            title: {
+              text: '页面访问趋势'
+            }
+          }
+
+          $scope.refrashChart = getBehaviors;
+          getBehaviors();
+        }
+      })
+    }
+
 
     $scope.back = function () {
       window.history.back();
