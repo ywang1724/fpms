@@ -13,11 +13,63 @@ angular.module('apps').controller('AppsBehaviorDashboardController', ['$scope', 
     $scope.authentication = Authentication;
 
     /**
+     * highcharts配置
+     */
+    $scope.chartConfig = {
+      options:{
+        chart: {
+          type: 'area'
+        },
+        tooltip: {
+          xDateFormat: '%Y-%m-%d',
+          shared: true,
+          style: {
+            fontSize: '14px'
+          }
+        }
+      },
+      credits: {
+        enabled: false
+      },
+      xAxis: {
+        type: 'datetime',
+        tickInterval: 2419200000,
+        labels: {
+          formatter: function () {
+            return moment(this.value).format('MM-DD')
+          }
+        },
+        tickPositioner: function(min, max) {
+          return this.series[0].xData.slice();
+        }
+      },
+      yAxis: [{
+        title: {
+          text: '访问量'
+        }
+      }],
+      series: [{
+        name: '页面访问量',
+        data: []
+      }],
+      title: {
+        text: '页面访问趋势'
+      }
+    };
+
+    /**
+     * 接收图表数据
+     */
+    $scope.$on('chartConfigEvent', function (e, args) {
+      $scope.chartConfig.series[0].data = args.numData;
+    });
+
+    /**
      * 当改变查询参数时，将值更新到parent scope中
      */
     $scope.changeArgs = function() {
       $scope.parentObj.selectPage = $scope.selectPage;
-      $scope.parentObj.selectBrowser = $scope.selectBrowser;
+      // $scope.parentObj.selectBrowser = $scope.selectBrowser;
       $scope.parentObj.selectInterval = $scope.selectInterval;
       $scope.parentObj.fromDate = $scope.fromDate;
       $scope.parentObj.untilDate = $scope.untilDate;

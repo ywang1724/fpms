@@ -58,13 +58,13 @@ angular.module('apps').controller('AppsBehaviorController', ['$scope', '$statePa
           $scope.selectInterval = $scope.intervals[0];
 
           //浏览器分类
-          $scope.browsers = [
-            {'name': '全部', 'id': 'all'},
-            {'name': 'Internet Explorer', 'id': 'Internet Explorer'}, {'name': 'Chrome', 'id': 'Chrome'},
-            {'name': 'Android Webkit Browser', 'id': 'Android Webkit Browser'},
-            {'name': 'Firefox', 'id': 'Firefox'}, {'name': 'Safari', 'id': 'Safari'}
-          ];
-          $scope.selectBrowser = $scope.browsers[0];
+          // $scope.browsers = [
+          //   {'name': '全部', 'id': 'all'},
+          //   {'name': 'Internet Explorer', 'id': 'Internet Explorer'}, {'name': 'Chrome', 'id': 'Chrome'},
+          //   {'name': 'Android Webkit Browser', 'id': 'Android Webkit Browser'},
+          //   {'name': 'Firefox', 'id': 'Firefox'}, {'name': 'Safari', 'id': 'Safari'}
+          // ];
+          // $scope.selectBrowser = $scope.browsers[0];
 
           //日期范围初始化
           var now = new Date();
@@ -73,7 +73,7 @@ angular.module('apps').controller('AppsBehaviorController', ['$scope', '$statePa
           $scope.untilDate = $scope.nowDate;
 
           $scope.parentObj.selectPage = $scope.selectPage;
-          $scope.parentObj.selectBrowser = $scope.selectBrowser;
+          // $scope.parentObj.selectBrowser = $scope.selectBrowser;
           $scope.parentObj.selectInterval = $scope.selectInterval;
           $scope.parentObj.fromDate = $scope.fromDate;
           $scope.parentObj.untilDate = $scope.untilDate;
@@ -85,29 +85,29 @@ angular.module('apps').controller('AppsBehaviorController', ['$scope', '$statePa
               case 'day':
                 trueFromDate = $scope.parentObj.fromDate;
                 trueUntilDate = $scope.parentObj.untilDate + 86400000;
-                $scope.chartConfig.xAxis.tickInterval = 86400000; //1天
-                $scope.chartConfig.xAxis.labels.formatter = function () {
-                  return moment(this.value).format('MM-DD')
-                };
-                $scope.chartConfig.options.tooltip.xDateFormat = '%Y-%m-%d';
+                // $scope.chartConfig.xAxis.tickInterval = 86400000; //1天
+                // $scope.chartConfig.xAxis.labels.formatter = function () {
+                //   return moment(this.value).format('MM-DD')
+                // };
+                // $scope.chartConfig.options.tooltip.xDateFormat = '%Y-%m-%d';
                 break;
               case 'month':
                 trueFromDate = Date.UTC((new Date($scope.parentObj.fromDate)).getFullYear(), (new Date($scope.parentObj.fromDate)).getMonth());
                 trueUntilDate = Date.UTC((new Date($scope.parentObj.untilDate)).getFullYear(), (new Date($scope.parentObj.untilDate)).getMonth() + 1);
-                $scope.chartConfig.xAxis.tickInterval = 2419200000; //28天
-                $scope.chartConfig.xAxis.labels.formatter = function () {
-                  return moment(this.value).format('YYYY-MM')
-                };
-                $scope.chartConfig.options.tooltip.xDateFormat = '%Y.%m';
+                // $scope.chartConfig.xAxis.tickInterval = 2419200000; //28天
+                // $scope.chartConfig.xAxis.labels.formatter = function () {
+                //   return moment(this.value).format('YYYY-MM')
+                // };
+                // $scope.chartConfig.options.tooltip.xDateFormat = '%Y.%m';
                 break;
               case 'year':
                 trueFromDate = Date.UTC((new Date($scope.parentObj.parentObj.fromDate)).getFullYear(), 0);
                 trueUntilDate = Date.UTC((new Date($scope.parentObj.untilDate)).getFullYear() + 1, 0);
-                $scope.chartConfig.xAxis.tickInterval = 31104000000; //360天
-                $scope.chartConfig.xAxis.labels.formatter = function () {
-                  return moment(this.value).format('YYYY')
-                };
-                $scope.chartConfig.options.tooltip.xDateFormat = '%Y';
+                // $scope.chartConfig.xAxis.tickInterval = 31104000000; //360天
+                // $scope.chartConfig.xAxis.labels.formatter = function () {
+                //   return moment(this.value).format('YYYY')
+                // };
+                // $scope.chartConfig.options.tooltip.xDateFormat = '%Y';
                 break;
             }
 
@@ -116,13 +116,18 @@ angular.module('apps').controller('AppsBehaviorController', ['$scope', '$statePa
                 pageId: $scope.parentObj.selectPage._id,
                 fromDate: +(new Date(trueFromDate)),
                 untilDate: +(new Date(trueUntilDate)),
-                interval: $scope.parentObj.selectInterval.id,
-                browser: $scope.parentObj.selectBrowser.id
+                interval: $scope.parentObj.selectInterval.id
+                // browser: $scope.parentObj.selectBrowser.id
               }
             }).success(function (result) {
               PageService.setIdentifier(1);
               if (result.statisticData.sum > 0) {
-                $scope.chartConfig.series[0].data = result.numData;
+                $scope.$broadcast('chartConfigEvent',{
+                  numData:result.numData,
+                  origin: result.origin,
+                  browser: result.browser
+                });
+                $scope.listData = result.listData;
                 $scope.statisticData = result.statisticData;
                 $scope.showData = true;
               } else {
@@ -130,48 +135,6 @@ angular.module('apps').controller('AppsBehaviorController', ['$scope', '$statePa
               }
             })
           };
-
-          $scope.chartConfig = {
-            options:{
-              chart: {
-                type: 'area'
-              },
-              tooltip: {
-                xDateFormat: '%Y-%m-%d',
-                shared: true,
-                style: {
-                  fontSize: '14px'
-                }
-              }
-            },
-            credits: {
-              enabled: false
-            },
-            xAxis: {
-              type: 'datetime',
-              tickInterval: 2419200000,
-              labels: {
-                formatter: function () {
-                  return moment(this.value).format('MM-DD')
-                }
-              },
-              tickPositioner: function(min, max) {
-                return this.series[0].xData.slice();
-              }
-            },
-            yAxis: [{
-              title: {
-                text: '访问量'
-              }
-            }],
-            series: [{
-              name: '页面访问量',
-              data: []
-            }],
-            title: {
-              text: '页面访问趋势'
-            }
-          }
 
           $scope.refrashChart = getBehaviors;
           getBehaviors();

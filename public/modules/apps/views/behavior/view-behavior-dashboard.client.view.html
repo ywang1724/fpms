@@ -11,12 +11,17 @@
           <button ng-change="changeArgs()" class="btn btn-default" name="selectPage" data-ng-model="selectPage"
                   placeholder="暂无监控页面" ng-options="page.pathname for page in pages" bs-select>
           </button>
-          <label class="control-label">浏览器分类：</label>
-          <button ng-change="changeArgs()" class="btn btn-default" name="selectBrowser" data-ng-model="selectBrowser"
-                  ng-options="item.name for item in browsers" bs-select>
-          </button>
+          <!--<label class="control-label">浏览器分类：</label>-->
+          <!--<button ng-change="changeArgs()" class="btn btn-default" name="selectBrowser" data-ng-model="selectBrowser"-->
+                  <!--ng-options="item.name for item in browsers" bs-select>-->
+          <!--</button>-->
         </div>
+
         <div class="form-group">
+          <label class="control-label">页面：</label>
+          <button ng-change="changeArgs()" class="btn btn-default" name="selectPage" data-ng-model="selectPage"
+                  placeholder="暂无监控页面" ng-options="page.pathname for page in pages" bs-select>
+          </button>
           <label class="control-label">统计间隔：</label>
           <button ng-change="changeArgs()" class="btn btn-default" name="selectInterval" data-ng-model="selectInterval"
                   ng-options="item.name for item in intervals" bs-select>

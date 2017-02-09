@@ -10,6 +10,7 @@ var errorHandler = require('./errors.server.controller');
 var Behavior = mongoose.model('Behavior');
 var App = mongoose.model('App');
 var Page = mongoose.model('Page');
+var Q = require('q');
 var rqt = require('request');
 
 /**
@@ -113,14 +114,23 @@ exports.statisticList = function (req, res) {
    */
   var reqData = req.query;
   var pages = (typeof reqData.pageId === 'string') ? [reqData.pageId] : reqData.pageId;
-  var browsers = (reqData.browser === 'all') ? [new RegExp('.*', 'i'), null] : [reqData.browser];
+  // var browsers = (reqData.browser === 'all') ? [new RegExp('.*', 'i'), null] : [reqData.browser];
   var dataCounts = parseInt((reqData.untilDate - reqData.fromDate)/(3600*24*1000));
   if(req.param('dateNumber')) {
     console.log('dateNumber')
   } else {
-    Behavior.find({
+    var result = {};
+    result.numData= [];
+    result.browser = [];
+    result.origin = [];
+    result.listData = [];
+
+    /**
+     * 访问量
+     * @type {any}
+     */
+    var promise1 = Behavior.find({
       following: {$in: pages},
-      browser: {$in: browsers},
       timestamp: {$gte: reqData.fromDate, $lt: reqData.untilDate}
     }).sort('timestamp').exec(function (err, behaviors) {
       if (err) {
@@ -128,10 +138,8 @@ exports.statisticList = function (req, res) {
           message: errorHandler.getErrorMessage(err)
         })
       } else {
-        var result = {
-          statisticData: {sum: behaviors.length},
-          numData:[]
-        };
+        result.statisticData= {sum: behaviors.length};
+
         for (var i = 0; i<dataCounts; i++) {
           var temp=0;
           for(var j=0; j<behaviors.length; j++) {
@@ -142,10 +150,120 @@ exports.statisticList = function (req, res) {
           result.numData.push([parseInt(reqData.fromDate)+i*3600*24*1000, temp]);
           temp = 0;
         }
-        res.jsonp(result);
       }
-    })
+    });
 
+    /**
+     * 搜索引擎
+     * @type {any}
+     */
+    var promise2 = Behavior.find({
+      following: {$in: pages},
+      timestamp: {$gte: reqData.fromDate, $lt: reqData.untilDate}
+    }).exec(function (err, behaviors) {
+      if(err) {
+        console.log(errorHandler.getErrorMessage(err));
+      } else {
+        var num1=0, num2=0,num3=0,num4=0,num5=0;
+        var googlePattern = /www\.google\./;
+        var baiduPattern = /www\.baidu\./;
+        var qihuPattern = /www\.so\./;
+        var sogouPattern = /www\.sogou\./;
+        var smaPattern = /sma\.so/;
+        for(var i=0;i<behaviors.length; i++) {
+          var referStr = behaviors[i].referer;
+          if(referStr) {
+            if(~referStr.search(googlePattern)){
+              num1++;
+            } else if (~referStr.search(baiduPattern)){
+              num2++;
+            } else if (~referStr.search(qihuPattern)) {
+              num3++;
+            } else if (~referStr.search(sogouPattern)) {
+              num4++;
+            } else if (~referStr.search(smaPattern)) {
+              num5++;
+            }
+          }
+        }
+        result.browser.push(['谷歌', num1]);
+        result.browser.push(['百度', num2]);
+        result.browser.push(['360搜索', num3]);
+        result.browser.push(['搜狗搜索', num4]);
+        result.browser.push(['神马搜索', num5]);
+      }
+    });
+
+    /**
+     * 访问来源
+     */
+    var promise3 = Behavior.find({
+      following: {$in: pages},
+      timestamp: {$gte: reqData.fromDate, $lt: reqData.untilDate}
+    }).exec(function (err,behaviors) {
+          if(err) {
+            console.log(errorHandler.getErrorMessage(err));
+          } else {
+            var num1=0,num2=0,num3=0,num4=0; //num1:直接输入网址或书签;num2:站内来源;num3:搜索引擎;num4:其他外部链接
+            var pattern1 = /^(?:(\w+):\/\/)?(?:(\w+):?(\w+)?@)?([^:\/\?#]+)(?::(\d+))?(\/[^\?#]+)?(?:\?([^#]+))?(?:#(\w+))?/;
+            var pattern2 = /(www\.google\.)|(www\.baidu\.)|(www\.so\.)|(www\.sogou\.)|(sma\.so)/;
+
+            for (var i=0; i<behaviors.length; i++) {
+              if(!behaviors[i].referer) {
+                num1++;
+              } else if(~behaviors[i].referer.indexOf(pattern1.exec(behaviors[i].url)[4])) {
+                num2++;
+              } else if(~behaviors[i].referer.search(pattern2)) {
+                num3++;
+              } else{
+                num4++;
+              }
+            }
+            result.origin.push(['直接输入网址或书签', num1]);
+            result.origin.push(['站内来源', num2]);
+            result.origin.push(['搜索引擎', num3]);
+            result.origin.push(['其他外部链接', num4]);
+          }
+        });
+
+    /**
+     * 关键字
+     */
+    var promise4 = Behavior.find({
+      following: {$in: pages},
+      timestamp: {$gte: reqData.fromDate, $lt: reqData.untilDate},
+      keyword: /\S/i
+    }).exec(function (err, behaviors) {
+      var keywords = '';
+      if(err) {
+        console.log(errorHandler.getErrorMessage(err));
+      } else {
+        for(var i=0; i<behaviors.length; i++) {
+          keywords+=behaviors[i]+'';
+        }
+      }
+    });
+
+    /**
+     * 受访页面
+     */
+    var promise5 = Behavior.find({
+      following: {$in: pages},
+      timestamp: {$gte: reqData.fromDate, $lt: reqData.untilDate}
+    }).exec(function (err, behaviors) {
+      if(err) {
+        console.log(errorHandler.getErrorMessage(err));
+      } else {
+        for(var i=0; i<behaviors.length; i++) {
+          result.listData.push(behaviors[i]);
+        }
+      }
+
+    });
+    
+    Q.all([promise1, promise2, promise3,promise4,promise5]).then(function () {
+      res.json(result);
+    })
   }
 
 }
