@@ -45,8 +45,12 @@ conn.on('open', function () {
             });
         }
     });
-// 启动passport配置
+
+    // 启动passport配置
     require('./config/passport')();
+
+    // 启动UI监控服务
+    require('./app/service/uiMonitoring')();
 
 // 启动应用并开启监听端口
 //     if (cluster.isMaster) {
@@ -67,9 +71,12 @@ conn.on('open', function () {
 //     } else {
 //         app.listen(config.port);
 //     }
+
     app.listen(config.port);
+
     // 打印应用启动日志
     console.log('FPMS started on port ' + config.port + ' and process.env.NODE_ENV = ' + process.env.NODE_ENV);
+    
 });
 conn.on("error", function (err) {
     console.error(err);
