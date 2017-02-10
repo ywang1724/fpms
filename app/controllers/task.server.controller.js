@@ -187,6 +187,61 @@ var uookieCSS = function (req, res) {
         }
     });
 };
+
+var addRule = function(req, res) {
+     if (req.session.appId) {
+          App.findById(req.session.appId).exec(function (err, app) {
+            if (err) {
+                console.log(errorHandler.getErrorMessage(err));
+            } else {
+                var uookie = JSON.parse(decodeURIComponent(req.url.substring(req.url.indexOf('?') + 1)));
+                Task.findOne({app: req.session.appId, url: uookie.pageUrl}, function(err, task) {
+                    if(uookie.type == "diff") {
+                        task.diffRules.push(uookie.rule)
+                        task.diffRules = _.unique(task.diffRules);
+                        task.save(function(err){
+                            if (err) {
+                                console.log(errorHandler.getErrorMessage(err));
+                            } 
+                        });
+                    } else if(uookie.type == "dom") {
+                        task.domRules = _.unique(task.domRules.concat(uookie.rule), 'selector');
+                        console.log(task.domRules);
+                        task.save(function(err){
+                            if (err) {
+                                console.log(errorHandler.getErrorMessage(err));
+                            } 
+                        });
+                    }
+                    
+                })
+            }
+          });
+     }
+     var options = {
+            root: 'static/img/',
+            dotfiles: 'allow',
+            headers: {
+                'Content-Type': 'image/gif',
+                'Pragma': 'no-cache',
+                'Cache-Control': 'private, no-cache, no-cache=Set-Cookie, proxy-revalidate'
+            }
+        },
+        fileName = '_ui.gif';
+
+    res.sendFile(fileName, options, function (err) {
+        if (err) {
+            if (err.code === 'ECONNABORT' && res.statusCode === 304) {
+                console.log(new Date() + '304 cache hit for ' + fileName);
+                return;
+            }
+            console.log(err);
+            res.status(err.status).end();
+        } else {
+            console.log(new Date() + 'Sent:', fileName);
+        }
+    });
+}
 /** 传入gridfs **/
 module.exports = function (gsf) {
     gridfs = gsf;
@@ -199,6 +254,7 @@ module.exports = function (gsf) {
         taskByID: taskByID,
         hasAuthorization: hasAuthorization,
         uookie: uookie,
-        uookieCSS: uookieCSS
+        uookieCSS: uookieCSS,
+        addRule: addRule
     }
 }

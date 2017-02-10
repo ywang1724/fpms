@@ -21,7 +21,8 @@ var Task = new Schema({
     diffRules: [String],
     domRules: [{
         selector: String,
-        expect: String
+        expect: String,
+        _id: false
     }],
     base: {
         type: Date,
@@ -38,6 +39,10 @@ var Task = new Schema({
     lastRunTime:{
         type: Date,
         default: null
+    },
+    isRunning: {
+        type: Boolean,
+        default: false
     }
 });
 

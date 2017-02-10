@@ -1,21 +1,21 @@
 'use strict';
 
 // Apps controller
-angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$window','$location', 'Authentication', 'Tasks','Mons',
+angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$window', '$location', 'Authentication', 'Tasks', 'Mons',
     'DTOptionsBuilder', '$http', '$timeout', 'PageService', 'SweetAlert',
     function ($scope, $stateParams, $window, $location, Authentication, Tasks, Mons, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert) {
         $scope.authentication = Authentication;
         $scope.uiType = {
             'add': '添加DOM节点',
-            'remove':'删除DOM节点',
-            'style':'样式变化',
-            'text':'文本变化'
+            'remove': '删除DOM节点',
+            'style': '样式变化',
+            'text': '文本变化'
         };
         $scope.fileName = {
-            'diffPic':'页面对比图片.jpeg',
-            'screenShot':'页面截图.jpeg',
-            'info':'页面信息.json',
-            'tree':'DOM树信息.json'
+            'diffPic': '页面对比图片.jpeg',
+            'screenShot': '页面截图.jpeg',
+            'info': '页面信息.json',
+            'tree': 'DOM树信息.json'
         };
         $scope.create = function () {
             // 创建新的任务
@@ -29,18 +29,19 @@ angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$w
                 $scope.error = errorResponse.data.message;
             });
         }
-        $scope.remove = function() {
+        $scope.remove = function () {
             SweetAlert.swal({
-                    title: '确定删除该应用?',
-                    text: '应用删除后不可恢复哟!',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#DD6B55',
-                    confirmButtonText: '确定，删掉它!',
-                    cancelButtonText: '不删，考虑一下!',
-                    closeOnConfirm: false,
-                    closeOnCancel: false },
-                function(isConfirm){
+                title: '确定删除该应用?',
+                text: '应用删除后不可恢复哟!',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#DD6B55',
+                confirmButtonText: '确定，删掉它!',
+                cancelButtonText: '不删，考虑一下!',
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
                     if (isConfirm) {
                         //删除应用代码
                         SweetAlert.swal('删除成功!', '该页面已被成功删除.', 'success');
@@ -63,39 +64,58 @@ angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$w
             $scope.mons = Mons.query({
                 taskId: $stateParams.taskId
             });
-        }
+        };
 
-        $scope.initMon = function(){
+        $scope.initMon = function () {
             $scope.mon = Mons.get({
                 monId: $stateParams.monId
             })
-        }
+        };
+
         $scope.back = function () {
             window.history.back();
         };
 
-        $scope.addDomRule = function() {
+        $scope.addRule = function () {
+            $window.open($scope.task.url, '_blank');
+        };
 
-        }
-        $scope.removeDomRule = function() {
+        $scope.removeRule = function ($event, index, type) {
+            if (type == 'dom') {
+                $scope.task.domRules.splice(index, 1);
+            } else if (type == 'diff') {
+                $scope.task.diffRules.splice(index, 1);
+            }
 
-        }
-        $scope.modifyDomRule = function() {
+            $scope.task.$update(function () {
+                SweetAlert.swal('删除成功!', '该规则已被成功删除.', 'success');
+            }, function (errorResponse) {
+                SweetAlert.swal('删除失败!', '服务器开了小差 :)', 'error');
+            });
 
-        }
-        $scope.addDiffRule = function() {
+        };
 
-        }
-        $scope.removeDiffRule = function() {
+        $scope.switchTaskStatus = function (status) {
+            switch (status) {
+                case 'off':
+                    $scope.task.isRunning = false;
+                    break;
+                case 'on':
+                    $scope.task.isRunning = true;
+                    break;
+            }
+            $scope.task.$update(function () {
+            }, function (errorResponse) {
+                SweetAlert.swal('更新!', '服务器开了小差 :)', 'error');
+            });
+        };
 
-        }
-        $scope.modifyDiffRule = function() {
 
-        }
-        $scope.gotoMonDetail = function(mon){
+        $scope.gotoMonDetail = function (mon) {
             $location.path('apps/' + $stateParams.appId + "/ui/" + $stateParams.taskId + "/mon/" + mon._id);
-        }
-        $scope.downloadFile = function(id) {
+        };
+
+        $scope.downloadFile = function (id) {
             $window.open("/mon/getFile?fileId=" + id, '_blank');
         }
         //datatble配置

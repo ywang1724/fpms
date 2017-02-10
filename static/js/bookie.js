@@ -48,11 +48,11 @@
      * 捕获JavaScript异常，异常类型1
      *
      */
-    window.onerror = function (msg, url, line, column) {
-        var stack = '错误文件: ' + url + '; ' + '错误位置: ' + '第' + line + '行，第' + column + '列.';
-        reportException(1, msg, url, '', stack);
-        return true;
-    };
+    // window.onerror = function (msg, url, line, column) {
+    //     var stack = '错误文件: ' + url + '; ' + '错误位置: ' + '第' + line + '行，第' + column + '列.';
+    //     reportException(1, msg, url, '', stack);
+    //     return true;
+    // };
 
 
     /**
