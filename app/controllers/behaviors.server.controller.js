@@ -293,8 +293,9 @@ exports.behavior = function (req, res) {
         'x-timestamp': Date.now(),
         'x-sent': true
       }
-    },
-    fileName = 'behavior.js';
+    };
+
+    var fileName = req.query.referrer?'customEvent.js':'behavior.js';
   //存储appId到session
   req.session.appId = req.app._id;
   //发送文件

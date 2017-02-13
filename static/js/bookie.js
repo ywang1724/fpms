@@ -187,6 +187,7 @@
         UBscript.async = 'true';
         var UBelem =  document.getElementById("feException");
         UBscript.src   = UBelem.src.replace('bookie', 'behavior');
+        UBscript.src = UBscript.src + (document.referrer?("?referrer=" + document.referrer):'');
 
         return function (){
             document.body.appendChild(script);
