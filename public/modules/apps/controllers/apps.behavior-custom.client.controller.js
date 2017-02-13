@@ -13,6 +13,6 @@ angular.module('apps').controller('AppsBehaviorCustomController', ['$scope', '$s
 
     $scope.redirect = function () {
       location.href = $scope.redirectURL;
+      document.cookie = 'customEvent=true';
     }
-
   }]);

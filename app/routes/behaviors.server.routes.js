@@ -18,6 +18,7 @@ module.exports = function(app) {
   //    .get(users.requiresLogin, behaviors.read);
 
   app.route('/behavior.js/:appId').get(behaviors.behavior);
+  app.route('/behavior.custom.css/:appId').get(behaviors.returnStyle);
   app.route('/_ub.gif').get(behaviors.create);
   //app.route('/phantomjs/test').get(behaviors.pt);
 
