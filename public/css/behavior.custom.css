@@ -1,3 +1,7 @@
+/******************Global***********************/
+.color-grey {
+  color: grey;
+}
 /******************菜单栏***********************/
 #ubas-menu {
   padding:0 10%;
@@ -49,11 +53,12 @@
   font-size:14px !important;
   width: 300px !important;
   font-family: 微软雅黑 !important;
-  box-shadow: 0 0 15px #888888;
+  /*box-shadow: 0 0 15px #888888;*/
   background: #EDE9E9;
-  border-radius: 5px;
+  border-radius: 4px;
   border: 1px solid #ccc;
   z-index: 9999;
+  color:#000 !important;
 }
 
 .ubas-tooltip-header {
@@ -76,8 +81,6 @@
   right:5px;
 }
 
-
-
 .ubas-tooltip-body {
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
@@ -85,7 +88,6 @@
 }
 .ubas-tooltip-body .body-top {
   padding:10px 0 20px;
-  text-align: center;
   border-bottom: 1px solid #ccc;
 }
 .ubas-tooltip-body .body-center {

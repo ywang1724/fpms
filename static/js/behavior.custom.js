@@ -133,7 +133,7 @@
    * @returns {string}
    */
   function nodeText(e) {
-    return e.innerHTML.replace(/<.+?>/gim,'').replace(/[^\S]+/g,' ');
+    return (e.innerText.length>25)?e.innerText.substr(0,25)+'...':e.innerText;
   }
 
   /**
@@ -184,7 +184,7 @@
 
     var tooltip = document.getElementById('ubas-tooltip');
     var modal = document.getElementById('ubas-modal');
-    tooltip.style.display = 'inline-block';
+    tooltip.style.display = 'inline';
     modal.style.display = 'block';
     modal.style.width = document.body.offsetWidth + 'px';
     modal.style.height = document.body.offsetHeight + 'px';
@@ -206,10 +206,12 @@
       tooltip.style.top = (yPoint-ttHeight-20) + 'px';
     }
 
-    console.log( cssPath(element) );
-    console.log( nodeText(element));
+    document.getElementById('ubas-content-cssPath').innerHTML= cssPath(element);
+    document.getElementById('ubas-content-text').innerHTML = nodeText(element);
+    console.log(cssPath(element));
+    console.log(nodeText(element));
 
-    removeElmentEvent(e);
+    // removeElmentEvent(e);
     return false;
   }
 
@@ -323,7 +325,8 @@
       '</div>' +
       '<div class="ubas-tooltip-body">' +
       '<div class="body-top">' +
-      '<span>点击数：100</span>' +
+      '路径：<span id="ubas-content-cssPath" class="color-grey"></span><br>' +
+      '文本：<span id="ubas-content-text" class="color-grey"></span>' +
       '</div>' +
       '<div class="body-center">' +
       '<div class="body-center-input">' +
@@ -332,8 +335,6 @@
       '</div>' +
       '<div class="body-center-checkbox">' +
       '<input id="ubas-tooltip-limitPage" type="checkbox">限制当前页面' +
-      '<br>' +
-      '<input id="ubas-tooltip-sameElement" type="checkbox">包含相同的元素' +
       '</div>' +
       '</div>' +
       '<div class="body-bottom"></div>' +
@@ -352,12 +353,18 @@
    */
   function submitListenerInfo() {
     var listenerName = document.getElementById('ubas-tooltip-listenerName').value;
-    var limitPage = document.getElementById('ubas-tooltip-limitPage').checked;
-    var sameElement = document.getElementById('ubas-tooltip-sameElement').checked;
-    var str = 'listenerName=' + listenerName + '&limitPage='+limitPage + '&sameElement=' + sameElement;
-    var img = new Image(1,1);
-    img.src = 'http://127.0.0.1' + '/_fe.gif?'+ str;
-    removeOnClink();
+    var limitPage = document.getElementById('ubas-tooltip-limitPage');
+    var url = limitPage.checked?window.location.href:'';
+    var cssPath = document.getElementById('ubas-content-cssPath').innerHTML;
+    var contentText = document.getElementById('ubas-content-text').innerHTML;
+    var str = '&listenerName=' + listenerName + '&url='+ url + '&cssPath=' + cssPath+'&contentText='+contentText;
+
+    var elem =  document.getElementById("feException");
+    var serverHost =elem.src.split('/bookie.js/')[0];
+
+    //通过Image对象请求发送数据
+    var img = new Image(1, 1);
+    img.src = serverHost + '/_ub.gif?type=2' + str;
   }
 
   function exitCustom() {

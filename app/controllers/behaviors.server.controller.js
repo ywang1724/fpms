@@ -22,57 +22,12 @@ exports.create = function (req, res) {
       if(err) {
         console.log(errorHandler.getErrorMessage(err));
       } else {
-        var behaviorData = req.query;
-        if (~parseInt(behaviorData.url.indexOf(app.host))) {
-          var page = {};
-          //查找Web应用对应页面，如果存在则返回，如果不存在则新建
-          Page.findOneAndUpdate({app:app, pathname: behaviorData.pathname}, page, {upsert: true})
-            .exec(function (err, obj) {
-              if(err) {
-                console.log(errorHandler.getErrorMessage(err));
-              } else {
-                page = obj;
-
-                var behavior = new Behavior(behaviorData);
-                var regex = /^\:\:ffff\:/;
-
-                var keyword = getKeyword(behaviorData.referer);
-                var system = getSysInfo(behaviorData.userAgent);
-                var browser = getBrowserType(behaviorData.userAgent);
-                var following = page._id.toString();
-                var ip='', address = {};
-
-                if (req.headers['x-real-ip']) {
-                  ip = req.headers['x-real-ip'];
-                } else {
-                  if(regex.test(req.connection.remoteAddress.trim())) {
-                    ip = req.connection.remoteAddress.split('::ffff:')[1];
-                  } else {
-                    ip = req.connection.remoteAddress;
-                  }
-                }
-
-                var checkIpURL = 'http://ip.taobao.com/service/getIpInfo.php?ip=' + ip;
-                rqt(checkIpURL, function (error, response, body) {
-                  if (!error && response.statusCode == 200) {
-                    body = JSON.parse(body);
-                    address = body.data;
-                  }
-                  behavior.saveData({
-                    keyword: keyword,
-                    system: system,
-                    browser: browser,
-                    ip: ip,
-                    address: address,
-                    following: following
-                  });
-                });
-
-                res.sendStatus(200);
-              }
-            })
-
+        switch (req.query.type) {
+          case '0':addBehavior(req, res, app);break;
+          case '1':addEventData(req, res, app);break;
+          case '2':addCustomEvent(req, res, app);break;
         }
+
       }
     })
   }
@@ -355,6 +310,83 @@ exports.returnStyle = function (req, res) {
     }
   });
 };
+
+/**
+ * 添加一条用户访问数据
+ * @param req
+ * @param app
+ */
+function addBehavior(req, res, app) {
+  var behaviorData = req.query;
+  if (~parseInt(behaviorData.url.indexOf(app.host))) {
+    var page = {};
+    //查找Web应用对应页面，如果存在则返回，如果不存在则新建
+    Page.findOneAndUpdate({app:app, pathname: behaviorData.pathname}, page, {upsert: true})
+      .exec(function (err, obj) {
+        if(err) {
+          console.log(errorHandler.getErrorMessage(err));
+        } else {
+          page = obj;
+
+          var behavior = new Behavior(behaviorData);
+          var regex = /^\:\:ffff\:/;
+
+          var keyword = getKeyword(behaviorData.referer);
+          var system = getSysInfo(behaviorData.userAgent);
+          var browser = getBrowserType(behaviorData.userAgent);
+          var following = page._id.toString();
+          var ip='', address = {};
+
+          if (req.headers['x-real-ip']) {
+            ip = req.headers['x-real-ip'];
+          } else {
+            if(regex.test(req.connection.remoteAddress.trim())) {
+              ip = req.connection.remoteAddress.split('::ffff:')[1];
+            } else {
+              ip = req.connection.remoteAddress;
+            }
+          }
+
+          var checkIpURL = 'http://ip.taobao.com/service/getIpInfo.php?ip=' + ip;
+          rqt(checkIpURL, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+              body = JSON.parse(body);
+              address = body.data;
+            }
+            behavior.saveData({
+              keyword: keyword,
+              system: system,
+              browser: browser,
+              ip: ip,
+              address: address,
+              following: following
+            });
+          });
+
+          res.sendStatus(200);
+        }
+      })
+
+  }
+}
+
+/**
+ * 添加一条用户点击数据
+ * @param req
+ * @param app
+ */
+function addEventData(req, res, app) {
+  console.log('1')
+}
+
+/**
+ * 添加一条用户自定义点击数据
+ * @param req
+ * @param app
+ */
+function addCustomEvent(req, res, app) {
+  console.log('2');
+}
 
 /**
  * 获取来自搜索引擎的关键词

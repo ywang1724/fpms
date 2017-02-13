@@ -49,7 +49,7 @@
     // 屏幕分辨率
     var screen = window.screen.width + "*" + window.screen.height;
     // 异步请求发送
-    str= 'url=' + encodeURIComponent(url) +
+    str= '&url=' + encodeURIComponent(url) +
       '&pathname=' + encodeURIComponent(pathname) +
       '&referer=' + encodeURIComponent(oldlink) +
       '&title=' + encodeURIComponent(titleName) +
@@ -60,7 +60,7 @@
       '&timestamp=' + GetCookie('WWhenH') +
       '&appId=' + appId;
 
-    img.src = serverHost + '/_ub.gif?' + str;
+    img.src = serverHost + '/_ub.gif?type=0' + str;
   };
 
   /**
