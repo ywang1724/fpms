@@ -90,7 +90,7 @@ require("./dialog");
             cssId = (el.id) ? ('#' + el.id) : false;
 
             // Get node's CSS classes, replacing spaces with '.':
-            cssClass = (el.className) ? ('.' + el.className.replace(/\s+/g, ".")) : '';
+            cssClass = (el.className) ? ('.' + el.className.trim().replace(/\s+/g, ".")) : '';
 
             // Build a unique identifier for this parent node:
             if (cssId) {
@@ -155,8 +155,8 @@ require("./dialog");
             '<div class="fpms-nav">' +
             '<div class="fpms-logo"> <img src="' + LogoUrl + '" alt=""></div>' +
             '<div class="fpms-mode-switch">' +
-            '<a href="#" class="fpms-mode fpms-mode-active" data-mode="diff">页面Diff规则</a>' +
-            '<a href="#" class="fpms-mode" data-mode="dom">DOM检测规则</a>' +
+            '<a href="javascript:void" class="fpms-mode fpms-mode-active" data-mode="diff">页面Diff规则</a>' +
+            '<a href="javascript:void" class="fpms-mode" data-mode="dom">DOM检测规则</a>' +
             '</div>' +
             '</div>';
 
@@ -251,7 +251,7 @@ require("./dialog");
             var moreOptionsList = '';
 
             for(var i =0 ; i < e.target.attributes.length; i ++) { // 添加DOM元素额外的CSS选择项
-                if(e.target.attributes[i].name !== 'id' && e.target.attributes[i].name !== 'class') {
+                if(e.target.attributes[i].name !== 'id' && e.target.attributes[i].name !== 'class' &&  e.target.attributes[i].value) {
                     moreOptionsList += 
                      '<div class="option">' +
                         '<span class="more-option-label">' + e.target.attributes[i].name + '</span>'+
@@ -290,7 +290,7 @@ require("./dialog");
             var htmlAttrs = '', cssAttrs = '', computedCSS;
 
             for(var i =0 ; i < e.target.attributes.length; i ++) { // 添加DOM元素额外的CSS选择项
-                if(e.target.attributes[i].name !== 'id' && e.target.attributes[i].name !== 'class') {
+                if(e.target.attributes[i].name !== 'id' && e.target.attributes[i].name !== 'class' && e.target.attributes[i].value) {
                     htmlAttrs += 
                     '<div class="option">' +
                             '<input type="checkbox" name="moreOption" value="' + e.target.attributes[i].value + '" key="' + e.target.attributes[i].name + '">' +
@@ -433,7 +433,7 @@ require("./dialog");
     })
 
     $(document).on("click", ".add-diff-rule", function () {
-        var pageUrl = window.location.origin + window.location.pathname;
+        var pageUrl = window.location.href;
         window.__addRule__(pageUrl, window.__cssSelectRule__, 'diff', function(err){
             if(err){ // 上报出错
                 alert("添加失败，目标服务器无响应。");
@@ -446,7 +446,7 @@ require("./dialog");
     })
     
     $(document).on("click", ".add-dom-rule", function () {
-       var pageUrl = window.location.origin + window.location.pathname;
+       var pageUrl = window.location.href;
        var rules = [];
        $(".ui-dialog-content input[name='cssAttr']").each(function(index, elem){
             rules.push({

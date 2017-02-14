@@ -911,6 +911,7 @@
     padding: 2px 4px;
     border-radius: 4px;
     font-size: 13px;
+    white-space: normal !important;
 }
 .ui-dialog-content .popup-separator {
     width: 100%;
@@ -1141,6 +1142,7 @@
     border-top: 2px solid black;
     display: inline-block;
     border-bottom: 2px solid black;
+    box-sizing: content-box !important;
 }
 .fpms-nav{
     position:fixed!important;

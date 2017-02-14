@@ -49,12 +49,13 @@ conn.on('open', function () {
     // 启动passport配置
     require('./config/passport')();
 
-    // 启动UI监控服务
-    require('./app/service/uiMonitoring')();
+
 
 // 启动应用并开启监听端口
 //     if (cluster.isMaster) {
 //         console.log('宿主启动...');
+//         // 启动UI监控服务（将监控任务由master执行，防止出现任务重复生成的情况
+//         require('./app/service/uiMonitoring')();
 //
 //         for (var i = 0; i < numCPUs; i++) {
 //             cluster.fork();
@@ -73,6 +74,7 @@ conn.on('open', function () {
 //     }
 
     app.listen(config.port);
+    require('./app/service/uiMonitoring')();
 
     // 打印应用启动日志
     console.log('FPMS started on port ' + config.port + ' and process.env.NODE_ENV = ' + process.env.NODE_ENV);

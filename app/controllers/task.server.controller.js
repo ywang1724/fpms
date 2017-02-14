@@ -59,23 +59,25 @@ var update = function (req, res) {
  * 删除任务
  */
 var remove = function (req, res) {
+    console.log("req.task", req.task);
     var task = req.task;
-    Mon.find({task: task._id}, function(err, mons) {
+    Mon.find({taskId: task._id}, function(err, mons) {
         if(err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
         } else {
-            mons.forEach(function (mon) {
-                mon.data && mon.data.forEach(function (file) {
-                    // 删除监控图片和临时数据
-                    gridfs.remove({_id: file}, function (err) {
+            console.log("======== 开始删除mons =========");
+            console.log("mons:", mons)
+            _.forEach(mons, function(mon){
+                mon.data && _.forEach(mon.data.toObject(), function(value, key){
+                    value && gridfs.remove({_id: value.toString()}, function (err) {
                         if (err) console.err(err.toString());
                         console.log('file delete success');
                     });
                     mon.remove();
                 })
-            });
+            })
 
             task.remove(function(err){
                 if(err) {
@@ -111,6 +113,7 @@ var list = function (req, res) {
  * App middleware
  */
 var taskByID = function (req, res, next, id) {
+    console.log("进入 taskById 函数：", id);
     Task.findById(id).populate('app', 'user').exec(function (err, task) {
         if (err) return next(err);
         if (!task) return next(new Error('Failed to load Task ' + id));
