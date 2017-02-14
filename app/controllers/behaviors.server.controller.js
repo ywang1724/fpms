@@ -9,6 +9,7 @@ var mongoose = require('mongoose');
 var errorHandler = require('./errors.server.controller');
 var Behavior = mongoose.model('Behavior');
 var CustomEvent = mongoose.model('CustomEvent');
+var Event = mongoose.model('Event');
 var App = mongoose.model('App');
 var Page = mongoose.model('Page');
 var Q = require('q');
@@ -377,17 +378,24 @@ function addBehavior(req, res, app) {
  * @param app
  */
 function addEventData(req, res, app) {
-  var customData = {
-    name: req.query.name,
-    cssPath: req.query.cssPath,
-    text: req.query.text,
-    url: req.query.url,
+  var eventData = req.query;
+  CustomEvent.find({
+    cssPath:eventData.cssPath,
+    text:eventData.text,
+    url:eventData.url,
     following: app._id.toString()
-  };
-
-  var customeEvent = new CustomEvent(customData);
-  customeEvent.save();
-  res.sendStatus(200);
+  }).exec(function (err, event) {
+    if(err) {
+      console.log(errorHandler.getErrorMessage(err));
+    } else {
+      var event = new Event({
+        timestamp:+(new Date()),
+        following: eventData.following
+      });
+      event.save();
+      res.sendStatus(200);
+    }
+  })
 }
 
 /**

@@ -334,7 +334,7 @@
       '<input id="ubas-tooltip-listenerName" type="text" placeholder="输入自定义事件名称">' +
       '</div>' +
       '<div class="body-center-checkbox">' +
-      '<input id="ubas-tooltip-limitPage" type="checkbox">限制当前页面' +
+      '<input id="ubas-tooltip-limitPage" type="checkbox" checked>限制当前页面' +
       '</div>' +
       '</div>' +
       '<div class="body-bottom"></div>' +
@@ -354,7 +354,7 @@
   function submitListenerInfo() {
     var name = document.getElementById('ubas-tooltip-listenerName').value;
     var limitPage = document.getElementById('ubas-tooltip-limitPage');
-    var url = limitPage.checked?window.location.href:'';
+    var url = window.location.href;
     var cssPath = document.getElementById('ubas-content-cssPath').innerHTML;
     var text = document.getElementById('ubas-content-text').innerHTML;
     var str = '&name=' + encodeURIComponent(name) + '&url='+ encodeURIComponent(url) + '&cssPath=' + encodeURIComponent(cssPath)+'&text='+encodeURIComponent(text);

@@ -15,22 +15,13 @@ var Schema = mongoose.Schema;
  * Exception Schema
  */
 var EventSchema = new Schema({
-  cssPath: {
-    type: String,
-    default: '',
-  }, // css路径
-  text: {
-    type: String,
-    default: ''
-  }, // 文本
-  url: {
-    type: String,
-    default: ''
-  }, //所在页面url
+  timestamp:{
+    type: Number
+  },
   following: {
     type: String,
     default: '',
-  }, // 隶属项目
+  } // 隶属项目
 });
 
-mongoose.model('EventSchema', EventSchema);
+mongoose.model('Event', EventSchema);
