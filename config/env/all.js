@@ -54,6 +54,7 @@ module.exports = {
                 'public/lib/highcharts/highcharts.src.js',
                 'public/lib/highcharts/highcharts-more.src.js',
 								'public/lib/highcharts/modules/map.src.js',
+				        'public/lib/highcharts/modules/funnel.src.js',
                 'public/lib/highcharts/modules/exporting.src.js',
 				        'https://code.highcharts.com/mapdata/countries/cn/custom/cn-all-sar-taiwan.js',
                 'public/lib/highcharts-ng/dist/highcharts-ng.js',
