@@ -352,12 +352,12 @@
    * 向服务端发送数据
    */
   function submitListenerInfo() {
-    var listenerName = document.getElementById('ubas-tooltip-listenerName').value;
+    var name = document.getElementById('ubas-tooltip-listenerName').value;
     var limitPage = document.getElementById('ubas-tooltip-limitPage');
     var url = limitPage.checked?window.location.href:'';
     var cssPath = document.getElementById('ubas-content-cssPath').innerHTML;
-    var contentText = document.getElementById('ubas-content-text').innerHTML;
-    var str = '&listenerName=' + listenerName + '&url='+ url + '&cssPath=' + cssPath+'&contentText='+contentText;
+    var text = document.getElementById('ubas-content-text').innerHTML;
+    var str = '&name=' + encodeURIComponent(name) + '&url='+ encodeURIComponent(url) + '&cssPath=' + encodeURIComponent(cssPath)+'&text='+encodeURIComponent(text);
 
     var elem =  document.getElementById("feException");
     var serverHost =elem.src.split('/bookie.js/')[0];

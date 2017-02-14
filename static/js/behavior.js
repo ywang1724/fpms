@@ -8,7 +8,7 @@
  */
 'use strict';
 
-;(function () {
+;(function (document) {
   var UID,ot;
   var expDays = 30;
   var exp = new Date();
@@ -23,7 +23,6 @@
    */
   function init() {
     setUp();//启动cookies
-
     reportData();
   }
 
@@ -186,4 +185,10 @@
       ((option.domain == null) ? "" : ("; domain=" + option.domain)) +
       ((option.secure == true) ? "; secure" : "");
   }
-}());
+
+  document.addEventListener('mousedown', function (e) {
+    if(event.button==0){
+      console.log("鼠标左键点击了");
+    }
+  }, true)
+}(document));
