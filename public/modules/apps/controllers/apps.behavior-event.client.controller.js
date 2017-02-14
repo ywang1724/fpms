@@ -32,4 +32,9 @@ angular.module('apps').controller('AppsBehaviorEventController', ['$scope', '$st
       });
     };
 
+    $scope.redirect = function()  {
+      location.href = $('#redirectURL').val();
+      document.cookie = 'customEvent=true';
+    };
+
   }]);

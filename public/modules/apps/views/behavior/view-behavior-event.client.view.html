@@ -3,9 +3,20 @@
     <tabset data-ng-if="showChart && showData">
       <tab>
         <tab-heading>
-          <i class=""></i>热点图
+          <i class=""></i>埋点配置
         </tab-heading>
-        <highchart></highchart>
+        <div class="panel panel-success">
+          <div class="panel-heading">自定义事件绑定</div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label>请输入监测网站的域名：</label>
+              <input type="text" id="redirectURL" class="form-control" placeholder="http://www.csdc.info">
+            </div>
+            <div class="text-center">
+              <button class="btn btn-success" ng-click="redirect()">确定</button>
+            </div>
+          </div>
+        </div>
       </tab>
       <tab>
         <tab-heading>
@@ -15,6 +26,7 @@
       </tab>
     </tabset>
   </div>
+
   <small>
     <em class="text-muted">
       由
