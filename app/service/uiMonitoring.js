@@ -46,20 +46,21 @@ function processData(channel, gridfs) {
     console.log("等待接收消息.....");
     channel.consume(queue, function (msg) {
         console.log("收到新消息", msg.content.toString() + "\n");
-        msg = JSON.parse(msg.content.toString("utf-8"));
-        if(msg.errInfo) {
-            console.error(msg.errInfo);
+        var parsedMsg = JSON.parse(msg.content.toString("utf-8"));
+        if(parsedMsg.errInfo) {
+            console.error(parsedMsg.errInfo);
         } else {
-            if(msg.mon && msg.mon.hasException) { // 有异常发生
-                var mon = msg.mon;
-                Task.findById(msg.taskId).populate('app').exec(function (err, task) {
+            if(parsedMsg.mon && parsedMsg.mon.hasException) { // 有异常发生
+                var mon = parsedMsg.mon;
+                Task.findById(parsedMsg.taskId).populate('app').exec(function (err, task) {
                     if(err) console.error(err.toString());
                     else {
-                        sendMail(task.app.alarmEmail, '页面监测异常报警', mon, task.app, task.url, 'ui', gridfs)
+                        sendMail(task.app.alarmEmail, '页面监测异常报警', mon, task.app, task.url, 'ui', gridfs);
                     }
                 });
             }
         }
+        channel.ack(msg); // 向消息队列发出应答，表明已经处理了此条消息
     }, { noAck: false });
 }
 

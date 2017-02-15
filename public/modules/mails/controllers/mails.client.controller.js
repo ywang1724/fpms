@@ -1,8 +1,8 @@
 'use strict';
 
 // Mails controller
-angular.module('mails').controller('MailsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Mails', 'DTOptionsBuilder', 'ModalService',
-	function($scope, $stateParams, $location, Authentication, Mails, DTOptionsBuilder, ModalService) {
+angular.module('mails').controller('MailsController', ['$scope', '$sce', '$stateParams', '$location', 'Authentication', 'Mails', 'DTOptionsBuilder', 'ModalService',
+	function($scope, $sce,  $stateParams, $location, Authentication, Mails, DTOptionsBuilder, ModalService) {
 		$scope.authentication = Authentication;
 
 
@@ -61,7 +61,8 @@ angular.module('mails').controller('MailsController', ['$scope', '$stateParams',
 				controller: function($scope, close, title, mail){
 					$scope.title = title;
 					$scope.mail = mail;
-					$scope.close = function (result){
+					$scope.explicitlyTrustedEmailDetail = $sce.trustAsHtml(mail.content);
+                    $scope.close = function (result){
 						close(result, 200);
 					};
 				}

@@ -34,7 +34,7 @@ a[ng-click] {
     border-bottom: 1px solid #eee;
 }
 
-.myModal {
+.email-modal {
     /* Fallback for web browsers that don't support RGBa */
     background-color: rgb(0, 0, 0);
     /* RGBa with 0.6 opacity */
@@ -43,6 +43,10 @@ a[ng-click] {
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
     /* For IE 8*/
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
+}
+.email-modal .panel-body {
+    max-height: 500px;
+    overflow-y: scroll;
 }
 .view-container {
     padding:5px 0;

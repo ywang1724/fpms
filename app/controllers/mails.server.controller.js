@@ -55,7 +55,6 @@ var sendMail = function (toAddress, subject, exception, app, page, type, gridfs)
             domExceptions: exception.domExceptions,
             uiExceptions:exception.uiExceptions
 		});
-        console.log("message", mailMessage);
         var mailOptions = {
             from: config.mailer.from, // 发件地址
             to: toAddress, // 收件列表
