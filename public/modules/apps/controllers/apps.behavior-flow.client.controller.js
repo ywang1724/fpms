@@ -471,7 +471,9 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
 
     $scope.$on('chartConfigEvent', function (e, args) {
       $scope.originConfig.series[0].data = args.origin;
+      $scope.originConfig.options.chart.width = $('.panel-heading').width();
       $scope.searchEngineConfig.series[0].data = args.browser;
+      $scope.searchEngineConfig.options.chart.width = $('.panel-heading').width();
     });
 
   }]);
