@@ -11,8 +11,7 @@ module.exports = function(app) {
   var apps = require('../../app/controllers/apps.server.controller');
 
   // behavior Routes
-  app.route('/behaviors')
-    .get(users.requiresLogin, behaviors.statisticList);
+  app.route('/behaviors').get(users.requiresLogin, behaviors.statisticList);
   //
   // app.route('/behaviors/:behaviorId')
   //    .get(users.requiresLogin, behaviors.read);
@@ -21,6 +20,10 @@ module.exports = function(app) {
   app.route('/behavior.custom.css/:appId').get(behaviors.returnStyle);
   app.route('/_ub.gif').get(behaviors.create);
   //app.route('/phantomjs/test').get(behaviors.pt);
+
+  app.route('/custom/:appId').get(behaviors.customList);
+
+
 
   // Finish by binding the Timing middleware
   app.param('behaviorId', behaviors.behaviorByID);

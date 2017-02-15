@@ -153,3 +153,18 @@ a[ng-click] {
     border-color: #ddd #ddd #ddd transparent;
     *border-left-color: #ffffff;
 }
+
+.marginLeft {
+    display: inline-block;
+    margin-left: 20px;
+}
+.marginRight {
+    display: inline-block;
+    margin-right: 20px;
+}
+.arraw-down {
+    display: inline-block;
+    top:-5px;
+    margin-left: 8px;
+    font-size: 20px;
+}

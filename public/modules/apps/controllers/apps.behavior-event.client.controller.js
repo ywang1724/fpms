@@ -79,4 +79,27 @@ angular.module('apps').controller('AppsBehaviorEventController', ['$scope', '$st
       }]
     };
 
+    $scope.$on('chartConfigEvent', function (e, args) {
+      $scope.funnelConfig.options.chart.width = $('.panel-heading').width();
+    });
+
+    // $scope.events = [{'_id':1,'name':'请选择指定事件'},{'_id':2,'name':'请选择指定aa'}];
+    // $scope.selectEvent = $scope.events[0];
+
+    $scope.info={};
+    $scope.info.selectEvents = [{key:0,value:'tip'}];
+
+    /**
+     * 添加漏斗事件节点
+     */
+    $scope.info.add = function ($index) {
+      $scope.info.selectEvents.splice($index + 1, 0, {key: $index + 1, value: ''});
+    };
+    /**
+     * 删除漏斗事件节点
+     */
+    $scope.info.delete = function ($index) {
+      $scope.info.selectEvents.splice($index, 1);
+    }
+
   }]);

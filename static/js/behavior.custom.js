@@ -365,6 +365,7 @@
     //通过Image对象请求发送数据
     var img = new Image(1, 1);
     img.src = serverHost + '/_ub.gif?type=2' + str;
+    removeOnClink();
   }
 
   function exitCustom() {

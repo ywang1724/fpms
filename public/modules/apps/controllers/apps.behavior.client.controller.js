@@ -13,6 +13,8 @@ angular.module('apps').controller('AppsBehaviorController', ['$scope', '$statePa
 
     $scope.initBehavior = function () {
       $scope.showData = true;
+      $scope.customEvents = [{'_id':1,'name':'请选择指定事件'}];
+      $scope.selectEvent = $scope.customEvents[0];
       $scope.app = Apps.get({
         appId: $stateParams.appId
       });
@@ -29,8 +31,8 @@ angular.module('apps').controller('AppsBehaviorController', ['$scope', '$statePa
           useUTC: false
         }
       });
-      $http.get('pages/' + $stateParams.appId).
-      success(function (data) {
+      $http.get('pages/' + $stateParams.appId)
+        .success(function (data) {
         $scope.pagesNum = data.length || 0;
         if (data.length) {
           $scope.showChart = true;
@@ -77,7 +79,6 @@ angular.module('apps').controller('AppsBehaviorController', ['$scope', '$statePa
           $scope.parentObj.selectInterval = $scope.selectInterval;
           $scope.parentObj.fromDate = $scope.fromDate;
           $scope.parentObj.untilDate = $scope.untilDate;
-
 
           var getBehaviors = function() {
             var trueFromDate, trueUntilDate;
@@ -139,8 +140,17 @@ angular.module('apps').controller('AppsBehaviorController', ['$scope', '$statePa
           $scope.refrashChart = getBehaviors;
           getBehaviors();
         }
-      })
-    }
+      });
+
+      $http.get('custom/' + $stateParams.appId)
+        .success(function (data) {
+          for (var i=0;i<data.length;i++) {
+            $scope.customEvents.push({'_id':data[i]._id,'name':data[i].name});
+          }
+
+        })
+        
+    };
 
 
     $scope.back = function () {
