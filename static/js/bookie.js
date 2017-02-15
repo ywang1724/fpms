@@ -160,7 +160,7 @@
             reportException(7, '内存使用过多，超过85%，请优化', '', '', '内存使用过多，超过85%，请优化');
         }
     };
-    var jsMemoryObj = window.performance.memory;
+    var jsMemoryObj = window.performance && window.performance.memory;
     var jsMemoryUsageTimer;
     if(jsMemoryObj){
         jsMemoryUsageTimer = setInterval(jsMemoryUsage, 2000);

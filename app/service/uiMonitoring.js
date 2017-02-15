@@ -5,6 +5,7 @@ var schedule = require('node-schedule'),
     config = require("../../config/config"),
     Mon = mongoose.model("Mon"),
     Task = mongoose.model("Task"),
+    sendMail = require("../controllers/mails.server.controller").sendMail,
     _ = require("lodash");
 
 
@@ -37,7 +38,7 @@ function generateTask(channel) {
     });
 }
 
-function processData(channel) {
+function processData(channel, gridfs) {
     var queue = 'phantomjs_response_queue';// 声明消息队列名
     channel.assertQueue(queue, { durable: true }); // 设置消息队列
     channel.prefetch(1); // 设置 RabbitMQ 每次接受的消息不超过1条
@@ -45,17 +46,32 @@ function processData(channel) {
     console.log("等待接收消息.....");
     channel.consume(queue, function (msg) {
         console.log("收到新消息", msg.content.toString() + "\n");
-        channel.ack(msg);
+        msg = JSON.parse(msg.content.toString("utf-8"));
+        if(msg.errInfo) {
+            console.error(msg.errInfo);
+        } else {
+            if(msg.mon && msg.mon.hasException) { // 有异常发生
+                var mon = msg.mon;
+                Task.findById(msg.taskId).populate('app').exec(function (err, task) {
+                    if(err) console.error(err.toString());
+                    else {
+                        sendMail(task.app.alarmEmail, '页面监测异常报警', mon, task.app, task.url, 'ui', gridfs)
+                    }
+                });
+            }
+        }
     }, { noAck: false });
 }
 
 
 /* 启动 */
-module.exports = function() {
-    amqp.connect(config.rabbitURI, function (err, conn) { // 连接Rabbit MQ
-        conn.createChannel(function (err, channel) { // 创建通道
-            generateTask(channel);
-            processData(channel);
-        })
-    });
+module.exports = function(gridfs) {
+    return function() {
+        amqp.connect(config.rabbitURI, function (err, conn) { // 连接Rabbit MQ
+            conn.createChannel(function (err, channel) { // 创建通道
+                generateTask(channel);
+                processData(channel, gridfs);
+            })
+        });
+    }
 }

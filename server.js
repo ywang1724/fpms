@@ -74,7 +74,7 @@ conn.on('open', function () {
 //     }
 
     app.listen(config.port);
-    require('./app/service/uiMonitoring')();
+    require('./app/service/uiMonitoring')(gridfs)();
 
     // 打印应用启动日志
     console.log('FPMS started on port ' + config.port + ' and process.env.NODE_ENV = ' + process.env.NODE_ENV);

@@ -134,7 +134,7 @@
                         <span class="label label-danger" ng-hide="!mon.hasException"> 有 </span>
                         <span class="label label-success" ng-hide="mon.hasException">无</span>
                     </td>
-                    <td class="text-center"><code>{{ mon.domException.length}}</code></td>
+                    <td class="text-center"><code>{{ mon.domExceptions.length}}</code></td>
                     <td class="text-center">
                         <span ng-repeat="(key, data) in mon.uiExceptions">
                             <code>{{uiType[key]}} : {{data}}</code>

@@ -31,7 +31,7 @@ var MonSchema = new Schema({
         text: Number,
         style: Number
     },
-    domException: [Schema.Types.Mixed]
+    domExceptions: [Schema.Types.Mixed]
 });
 
 mongoose.model('Mon', MonSchema);
