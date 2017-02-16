@@ -37,52 +37,65 @@
             <tabset>
                 <tab>
                     <tab-heading>
-                        <i class="fa fa-area-chart"></i> DOM检测规则列表
+                        <i class="fa fa-area-chart"></i> DOM检测异常
                     </tab-heading>
                     <div class="panel-body">
-                        <table datatable="ng" dt-options="dtPageOptions" class="table table-striped table-bordered table-hover myTable">
+                        <table class="table table-bordered">
                             <thead>
-                            <tr>
-                                <th>序号</th>
-                                <th>规则</th>
-                                <th>操作</th>
+                            <tr >
+                                <th width="100" class="text-center">序号</th>
+                                <th class="text-center">异常详情</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr data-ng-repeat="domRule in task.domRules">
-                                <td>{{ $index + 1}}</td>
-                                <td><code>{{ domRule }}</code></td>
-                                <td class="text-center">
-                                    <button class="btn btn-danger btn-sm" onclick="removeDomRule()">删除</button>
-                                </td>
+                            <tr data-ng-repeat="domException in mon.domExceptions" data-ng-if="mon.domExceptions.length">
+                                <th class="text-center">{{ $index + 1}}</th>
+                                <td class="text-center"><code>{{domException.exception}}</code></td>
                             </tr>
-                            </tbody>
+                            <tr data-ng-if="!mon.domExceptions.length">
+                                <td class="text-center" colspan="2">没有异常数据。</td>
+                            </tr>
                         </table>
                     </div>
                 </tab>
                 <tab >
                     <tab-heading>
-                        <i class="fa fa-cloud"></i> 页面对比规则列表
+                        <i class="fa fa-cloud"></i> 页面对比异常
                     </tab-heading>
                     <div class="panel-body">
-                        <table datatable="ng" dt-options="dtPageOptions" class="table table-striped table-bordered table-hover myTable">
+                        <table class="table table-bordered">
                             <thead>
-                            <tr>
-                                <th>序号</th>
-                                <th>规则（排除的DOM节点）</th>
-                                <th>操作</th>
+                            <tr >
+                                <th class="text-center">增加的DOM节点</th>
+                                <th class="text-center">删除的DOM节点</th>
+                                <th class="text-center">变化的CSS样式数</th>
+                                <th class="text-center">变化的文字数</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr data-ng-repeat="diffRule in task.diffRules">
-                                <td>{{ $index + 1}}</td>
-                                <td><code>{{ diffRule }}</code></td>
-                                <td class="text-center">
-                                    <button class="btn btn-danger btn-sm" onclick="removeDiffRule()">删除</button>
-                                </td>
+                            <tr>
+                                <td class="text-center"><code>{{mon.uiExceptions.add}}</code></td>
+                                <td class="text-center"><code>{{mon.uiExceptions.remove}}</code></td>
+                                <td class="text-center"><code>{{mon.uiExceptions.style}}</code></td>
+                                <td class="text-center"><code>{{mon.uiExceptions.text}}</code></td>
                             </tr>
-                            </tbody>
                         </table>
+                        <div class="panel panel-success" data-ng-if="mon.data.screenShot">
+                            <div class="panel-heading">
+                                页面截图
+                            </div>
+                            <div class="panel-body">
+                                <img style="max-width: 100%;width: 100%;" src="/mon/getFile?fileId={{mon.data.screenShot}}" alt="">
+                            </div>
+                        </div>
+                        <div class="panel panel-success" data-ng-if="mon.data.diffPic">
+                            <div class="panel-heading">
+                                页面对比图片
+                            </div>
+                            <div class="panel-body">
+                                <img style="max-width: 100%;width: 100%;" src="/mon/getFile?fileId={{mon.data.diffPic}}" alt="" >
+                            </div>
+                        </div>
                     </div>
                 </tab>
             </tabset>

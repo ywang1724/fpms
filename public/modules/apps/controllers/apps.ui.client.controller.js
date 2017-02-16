@@ -118,6 +118,31 @@ angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$w
         $scope.downloadFile = function (id) {
             $window.open("/mon/getFile?fileId=" + id, '_blank');
         }
+
+        $scope.modifyInterval = function(){
+            SweetAlert.swal({
+                    title: "请输入监控时间间隔（ms）",
+                    type: "input",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    animation: "slide-from-top",
+                    inputPlaceholder: "请输入"
+                },
+                function(inputValue){
+                    if (inputValue === false) return false;
+
+                    if (inputValue === "" || !Number.isInteger(parseInt(inputValue))) {
+                        swal.showInputError("输入不合法，请检查后输入");
+                        return false;
+                    }
+                    $scope.task.monitoringInterval = inputValue;
+                    $scope.task.$update(function () {
+                        swal("监控时间间隔更新成功!", "新的监控时间间隔为：" + inputValue + "ms", "success");
+                    }, function (errorResponse) {
+                        swal('更新失败!', '服务器开了小差 :)', 'error');
+                    });
+                });
+        }
         //datatble配置
         $scope.dtPageOptions = DTOptionsBuilder
             .newOptions()

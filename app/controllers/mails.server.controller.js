@@ -53,7 +53,8 @@ var sendMail = function (toAddress, subject, exception, app, page, type, gridfs)
             name: app.name,
             url: page,
             domExceptions: exception.domExceptions,
-            uiExceptions:exception.uiExceptions
+            uiExceptions:exception.uiExceptions,
+            attachments: exception.data
 		});
         var mailOptions = {
             from: config.mailer.from, // 发件地址

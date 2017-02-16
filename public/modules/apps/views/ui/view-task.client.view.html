@@ -3,9 +3,6 @@
         <a title="返回" class="btn btn-primary btn-sm" data-ng-click="back();">
             <i class="glyphicon glyphicon-arrow-left"></i>
         </a>
-        <a title="设置" class="btn btn-primary btn-sm" href="">
-            <i class="glyphicon glyphicon-edit"></i>
-        </a>
         <a title="删除" class="btn btn-primary btn-sm" data-ng-click="remove();">
             <i class="glyphicon glyphicon-trash"></i>
         </a>
@@ -22,7 +19,7 @@
             </div>
             <div class="col-xs-12 col-md-6 view-container">
                 <span class="col-xs-5 text-right key">监控时间间隔：</span>
-                <span class="col-xs-7 text-left">{{task.monitoringInterval}} <span class="label label-danger">ms</span></span>
+                <span class="col-xs-7 text-left">{{task.monitoringInterval}} <span class="label label-danger">ms</span> <button class="btn btn-info btn-sm" ng-click="modifyInterval()">修改</button></span>
             </div>
             <div class="col-xs-12 col-md-6 view-container">
                 <span class="col-xs-5 text-right key">创建时间：</span>
@@ -58,7 +55,7 @@
                     </tab-heading>
                     <div class="panel-body">
                         <div class="pull-right btn-bar">
-                            <button class="btn btn-success btn-sm" data-ng-click="addRule()">增加</button>
+                            <button class="btn btn-success btn-sm" data-ng-click="addRule()">增加DOM检测规则</button>
                         </div>
                         <table datatable="ng" dt-options="dtPageOptions" class="table table-striped table-bordered table-hover myTable">
                             <thead>
@@ -86,7 +83,7 @@
                     </tab-heading>
                     <div class="panel-body">
                         <div class="pull-right btn-bar">
-                            <button class="btn btn-success btn-sm"  data-ng-click="addRule()">增加</button>
+                            <button class="btn btn-success btn-sm"  data-ng-click="addRule()">增加页面对比规则</button>
                         </div>
                         <table datatable="ng" dt-options="dtPageOptions" class="table table-striped table-bordered table-hover myTable">
                             <thead>

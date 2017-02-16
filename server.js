@@ -52,29 +52,29 @@ conn.on('open', function () {
 
 
 // 启动应用并开启监听端口
-//     if (cluster.isMaster) {
-//         console.log('宿主启动...');
-//         // 启动UI监控服务（将监控任务由master执行，防止出现任务重复生成的情况
-//         require('./app/service/uiMonitoring')();
-//
-//         for (var i = 0; i < numCPUs; i++) {
-//             cluster.fork();
-//         }
-//         cluster.on('listening', function (worker, address) {
-//             console.log('核心' + i + ' pid:' + worker.process.pid);
-//         });
-//         cluster.on('exit', function (worker, code, signal) {
-//             console.log('核心' + i + ' pid:' + worker.process.pid + ' 重启');
-//             setTimeout(function () {
-//                 cluster.fork();
-//             }, 2000);
-//         });
-//     } else {
-//         app.listen(config.port);
-//     }
+    if (cluster.isMaster) {
+        console.log('宿主启动...');
+        // 启动UI监控服务（将监控任务由master执行，防止出现任务重复生成的情况
+        require('./app/service/uiMonitoring')(gridfs)();
 
-    app.listen(config.port);
-    require('./app/service/uiMonitoring')(gridfs)();
+        for (var i = 0; i < numCPUs; i++) {
+            cluster.fork();
+        }
+        cluster.on('listening', function (worker, address) {
+            console.log('核心' + i + ' pid:' + worker.process.pid);
+        });
+        cluster.on('exit', function (worker, code, signal) {
+            console.log('核心' + i + ' pid:' + worker.process.pid + ' 重启');
+            setTimeout(function () {
+                cluster.fork();
+            }, 2000);
+        });
+    } else {
+        app.listen(config.port);
+    }
+
+    // app.listen(config.port);
+    // require('./app/service/uiMonitoring')(gridfs)();
 
     // 打印应用启动日志
     console.log('FPMS started on port ' + config.port + ' and process.env.NODE_ENV = ' + process.env.NODE_ENV);

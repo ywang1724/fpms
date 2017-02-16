@@ -41,9 +41,11 @@ var read = function (req, res) {
  */
 var update = function (req, res) {
     var task = req.task;
-
-    task = _.extend(task, req.body);
-
+    if(_.isEqual(task.diffRules, req.body.diffRules)) {
+        task = _.extend(task, req.body);
+    } else {
+        task = _.extend(task, req.body, {base: null}); //diffRule变更了，重置base页面
+    }
     task.save(function (err) {
         if (err) {
             return res.status(400).send({
@@ -110,7 +112,6 @@ var list = function (req, res) {
  * App middleware
  */
 var taskByID = function (req, res, next, id) {
-    console.log("进入 taskById 函数：", id);
     Task.findById(id).populate('app', 'user').exec(function (err, task) {
         if (err) return next(err);
         if (!task) return next(new Error('Failed to load Task ' + id));
@@ -203,8 +204,12 @@ var addRule = function(req, res) {
                 var uookie = JSON.parse(decodeURIComponent(req.url.substring(req.url.indexOf('?') + 1)));
                 Task.findOne({app: req.session.appId, url: uookie.pageUrl}, function(err, task) {
                     if(uookie.type == "diff") {
+                        var _diffRules = _.extend({}, task.diffRules);
                         task.diffRules.push(uookie.rule)
                         task.diffRules = _.unique(task.diffRules);
+                        if(!_.isEqual(task.diffRules, _diffRules)) {
+                            task.base = null; // 规则变更了充值base页面
+                        }
                         task.save(function(err){
                             if (err) {
                                 console.log(errorHandler.getErrorMessage(err));

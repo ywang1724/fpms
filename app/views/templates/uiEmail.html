@@ -10,16 +10,19 @@
 <h1 style="font-size:25px;font-weight:normal;text-align:center;font-family:Microsoft YaHei,WenQuanYi Micro Hei;"> {{title}} </h1>
 <hr />
 <p style="font-size:16px;font-weight:normal;font-family:Microsoft YaHei,WenQuanYi Micro Hei;">
-    您好，您在FPMS平台上检测的应用 {{ name}} 下的页面 <a href="{{url}}"> {{ url }}</a> 发生了异常，异常详情如下：
+    您好，您在FPMS平台上检测的应用 {{ name}} 下的页面 <a href="{{url}}"> {{ url }}</a>  发生了异常，异常详情如下：
 </p>
 <h2 style="margin: 5px;font-size:20px;font-weight:normal;font-family:Microsoft YaHei,WenQuanYi Micro Hei;">1. DOM检测异常 </h2>
 <ol style="font-family:Microsoft YaHei,WenQuanYi Micro Hei;font-size:14px;margin:10px;padding: 0;">
-    <li style="margin:5px 10px"><code style="font-size:13px;font-family: Monaco, consolas;color:#c7254e;background-color:#f9f2f4;padding:2px 4px">window.getComputedStyle($('html body.container div.article h1.title')[0])['width'] !== '10000px'</code></li>
-    {% for domE in domExceptions %}
-    <li style="margin:5px 10px">
-        <code style="font-size:13px;font-family: Monaco, consolas;color:#c7254e;background-color:#f9f2f4;padding:2px 4px">{{domE.exception}}</code>
-    </li>
-    {% endfor %}
+    {% if domExceptions.length %}
+        {% for domE in domExceptions %}
+        <li style="margin:5px 10px">
+            <code style="font-size:13px;font-family: Monaco, consolas;color:#c7254e;background-color:#f9f2f4;padding:2px 4px">{{domE.exception}}</code>
+        </li>
+        {% endfor %}
+    {% else %}
+        <span style="padding: 0 20px;">没有DOM异常发生。</span>
+    {% endif %}
 </ol>
 
 <h2 style="margin: 5px;font-size:20px;font-weight:normal;font-family:Microsoft YaHei,WenQuanYi Micro Hei;">2. 页面差异性检测异常 </h2>
@@ -29,7 +32,7 @@
         <th style="border:1px solid #ddd;padding:4px 5px">增加的DOM节点数</th>
         <th style="border:1px solid #ddd;padding:4px 5px">删除的DOM节点数</th>
         <th style="border:1px solid #ddd;padding:4px 5px">变化的CSS样式数</th>
-        <th style="border:1px solid #ddd;padding:4px 5px">变化的文本数</th>
+        <th style="border:1px solid #ddd;padding:4px 5px">变化的文字数</th>
     </tr>
     </thead>
     <tbody>
@@ -42,9 +45,9 @@
     </tbody>
 </table>
 <h2 style="margin: 5px;font-size:20px;font-weight:normal;font-family:Microsoft YaHei,WenQuanYi Micro Hei;">3. 发生异常的页面截图 </h2>
-<img style="max-width:500px" src="cid:screenShot" alt="">
-<h2 style="margin: 5px;font-size:20px;font-weight:normal;font-family:Microsoft YaHei,WenQuanYi Micro Hei;">3. 与上次监测的页面对比图 </h2>
-<img style="max-width:500px"src="cid:diffPic" alt="">
+<img style="max-width:1024px" src="cid:screenShot" alt="">
+
+<img style="max-width:1024px"src="cid:diffPic" alt="" {% if !attachments.diffPic %} style="display:none" {% endif %}>
 <p>FPMS技术支持团队</p>
 </body>
 
