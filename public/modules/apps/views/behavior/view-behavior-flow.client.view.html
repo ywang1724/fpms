@@ -1,4 +1,4 @@
-<div data-ng-controller="AppsBehaviorFlowController">
+<div data-ng-controller="AppsBehaviorFlowController" ng-init="viewFlow()">
   <div class="tabWidth">
     <tabset data-ng-if="showChart && showData">
       <tab>
@@ -17,38 +17,6 @@
             <highchart config="searchEngineConfig"></highchart>
           </div>
         </div>
-        <!--<div class="panel panel-info">-->
-          <!--<div class="panel-heading">搜索词</div>-->
-          <!--<div class="panel-body">-->
-            <!--<table datatable="ng" dt-options="dtOptions" class="table table-striped table-bordered table-hover myTable"-->
-                   <!--data-ng-if="keywords.length">-->
-              <!--<thead>-->
-                <!--<tr>-->
-                  <!--<th>名称</th>-->
-                  <!--<th>次数</th>-->
-                  <!--<th>谷歌</th>-->
-                  <!--<th>百度</th>-->
-                  <!--<th>360搜索</th>-->
-                  <!--<th>搜狗搜索</th>-->
-                  <!--<th>神马搜索</th>-->
-                  <!--<th>其它</th>-->
-                <!--</tr>-->
-              <!--</thead>-->
-              <!--<tbody>-->
-                <!--<tr data-ng-repeat="keyword in keywords">-->
-                  <!--<td>{{keyword.word}}</td>-->
-                  <!--<td>{{keyword.count}}</td>-->
-                  <!--<td>{{keyword.google}}</td>-->
-                  <!--<td>{{keyword.baidu}}</td>-->
-                  <!--<td>{{keyword.qihu}}</td>-->
-                  <!--<td>{{keyword.suogou}}</td>-->
-                  <!--<td>{{keyword.shenma}}</td>-->
-                  <!--<td>{{keyword.other}}</td>-->
-                <!--</tr>-->
-              <!--</tbody>-->
-            <!--</table>-->
-          <!--</div>-->
-        <!--</div>-->
       </tab>
       <tab>
         <tab-heading>
@@ -87,14 +55,15 @@
         </div>
         <div class="panel panel-info">
           <div class="panel-heading">终端详情</div>
-          <highchart></highchart>
+          <highchart config="browserConfig"></highchart>
         </div>
       </tab>
       <tab>
         <tab-heading>
           <i class=""></i>路径分析
         </tab-heading>
-        <nvd3 options="pathOptions" data="pathData"></nvd3>
+        <div id="pathFigure"></div>
+        <!--<nvd3 options="pathOptions" data="pathData"></nvd3>-->
       </tab>
     </tabset>
   </div>
