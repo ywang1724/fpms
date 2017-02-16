@@ -12,18 +12,15 @@ module.exports = function(app) {
 
   // behavior Routes
   app.route('/behaviors').get(users.requiresLogin, behaviors.statisticList);
-  //
-  // app.route('/behaviors/:behaviorId')
-  //    .get(users.requiresLogin, behaviors.read);
 
+  //流量分析
   app.route('/behavior.js/:appId').get(behaviors.behavior);
   app.route('/behavior.custom.css/:appId').get(behaviors.returnStyle);
   app.route('/_ub.gif').get(behaviors.create);
-  //app.route('/phantomjs/test').get(behaviors.pt);
 
+  // 事件分析
   app.route('/custom/:appId').get(behaviors.customList);
-
-
+  app.route('/funnel').get(behaviors.funnel);
 
   // Finish by binding the Timing middleware
   app.param('behaviorId', behaviors.behaviorByID);

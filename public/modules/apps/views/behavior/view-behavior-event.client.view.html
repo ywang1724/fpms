@@ -29,7 +29,7 @@
               <div ng-show="$index"><span class="glyphicon glyphicon-arrow-down arraw-down" aria-hidden="true"></span></div>
               <label class="control-label marginRight">第{{$index+1}}步</label>
               <button class="btn btn-default" name="domain{{$index+1}}" data-ng-model="selectEvent.value"
-                      placeholder="请选择绑定事件" ng-options="customEvent.name for customEvent in customEvents" bs-select>
+                      placeholder="请选择绑定事件" data-ng-change="getData($index)" ng-options="customEvent.name for customEvent in customEvents" bs-select>
               </button>
               <div class="marginLeft" ng-class="{'btn-group':$index}" role="group" aria-label="...">
                 <button type="button" ng-click="info.add($index)" class="btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
@@ -37,7 +37,7 @@
               </div>
             </div>
             <div>
-              <button class="btn btn-info">确定</button>
+              <button class="btn btn-info" ng-click="showFunnel()">确定</button>
             </div>
           </div>
         </div>

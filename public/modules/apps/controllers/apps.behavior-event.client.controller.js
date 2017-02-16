@@ -11,6 +11,9 @@ angular.module('apps').controller('AppsBehaviorEventController', ['$scope', '$st
   function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService) {
     $scope.authentication = Authentication;
 
+    $scope.info={};
+    $scope.info.selectEvents = [{key:0,value:'tip'}];
+
     $scope.viewEvent = function () {
       $scope.showData = true;
       $scope.showChart = true;
@@ -37,6 +40,9 @@ angular.module('apps').controller('AppsBehaviorEventController', ['$scope', '$st
       document.cookie = 'customEvent=true';
     };
 
+    /**
+     * highcharts的funnel图配置
+     */
     $scope.funnelConfig = {
       options: {
         chart: {
@@ -69,25 +75,39 @@ angular.module('apps').controller('AppsBehaviorEventController', ['$scope', '$st
       },
       series: [{
         name: 'Unique users',
-        data: [
-          ['Website visits', 15654],
-          ['Downloads', 4064],
-          ['Requested price list', 1987],
-          ['Invoice sent', 976],
-          ['Finalized', 846]
-        ]
+        data: []
       }]
     };
 
+    /**
+     * 重新调整highcharts图的宽度
+     */
     $scope.$on('chartConfigEvent', function (e, args) {
       $scope.funnelConfig.options.chart.width = $('.panel-heading').width();
     });
 
-    // $scope.events = [{'_id':1,'name':'请选择指定事件'},{'_id':2,'name':'请选择指定aa'}];
-    // $scope.selectEvent = $scope.events[0];
+    /**
+     * 向后台取漏斗模型的数据
+     */
+    $scope.funnelData = [];
+    $scope.getData = function ($index) {
+      var eventObj = $scope.info.selectEvents[$index].value;
+      $http.get('funnel'+'?following='+eventObj._id)
+        .success(function (result) {
+          $scope.funnelData[$index] =[eventObj.name, result];
+        });
+    };
 
-    $scope.info={};
-    $scope.info.selectEvents = [{key:0,value:'tip'}];
+    /**
+     * 展示漏斗图
+     */
+    $scope.showFunnel = function () {
+      console.log($scope.funnelData);
+      $scope.funnelConfig.series[0].data = [];
+      for (var i in $scope.funnelData) {
+        $scope.funnelConfig.series[0].data.push($scope.funnelData[i]);
+      }
+    };
 
     /**
      * 添加漏斗事件节点
@@ -95,11 +115,13 @@ angular.module('apps').controller('AppsBehaviorEventController', ['$scope', '$st
     $scope.info.add = function ($index) {
       $scope.info.selectEvents.splice($index + 1, 0, {key: $index + 1, value: ''});
     };
+
     /**
      * 删除漏斗事件节点
      */
     $scope.info.delete = function ($index) {
       $scope.info.selectEvents.splice($index, 1);
+      $scope.funnelData.splice($index, 1);
     }
 
   }]);

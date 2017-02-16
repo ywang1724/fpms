@@ -240,6 +240,20 @@ exports.customList = function (req, res) {
   });
 };
 
+exports.funnel = function (req, res) {
+  Event.count({
+    following: req.query.following
+  }).exec(function (err, result) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      res.jsonp(result);
+    }
+  })
+}
+
 /**
  * behavior middleware
  */
@@ -399,15 +413,18 @@ function addEventData(req, res, app) {
     text:eventData.text,
     url:eventData.url,
     following: app._id.toString()
-  }).exec(function (err, event) {
+  }).exec(function (err, result) {
     if(err) {
       console.log(errorHandler.getErrorMessage(err));
     } else {
-      var event = new Event({
-        timestamp:+(new Date()),
-        following: eventData.following
-      });
-      event.save();
+      for(var i=0;i<result.length;i++) {
+        var event = new Event({
+          timestamp:+(new Date()),
+          following: result[i]._id.toString()
+        });
+        event.save();
+      }
+
       res.sendStatus(200);
     }
   })
