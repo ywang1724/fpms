@@ -80,6 +80,14 @@
                                    placeholder="请填写您的应用报警邮箱" required>
                         </div>
                     </div>
+                    <div class="form-group" ng-class="{ 'has-error': appForm.toggleOpenUB.$dirty && appForm.toggleOpenUB.$invalid }">
+                        <label for="toggleOpenUB" class="col-sm-2 control-label">异常报警间隔</label>
+                        <div class="col-sm-10 controls">
+                            <select id="toggleOpenUB" name="toggleOpenUB" data-ng-model="app.toggleOpenUB" ng-options="toggleOpenUB.value as toggleOpenUB.label for toggleOpenUB in toggleOpenUBs"
+                                    class="form-control" required>
+                            </select>
+                        </div>
+                    </div>
                     <div class="form-group text-center">
                         <input type="submit" value="更新" class="btn btn-primary" ng-disabled="!canUpdate()">
                         <input type="button" value="取消" class="btn btn-default" ng-click="back()">

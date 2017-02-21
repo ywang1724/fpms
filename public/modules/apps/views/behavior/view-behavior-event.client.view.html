@@ -1,0 +1,58 @@
+<div data-ng-controller="AppsBehaviorEventController" ng-init="viewEvent()" xmlns="http://www.w3.org/1999/html">
+  <div class="tabWidth">
+    <tabset data-ng-if="showChart && showData">
+      <tab>
+        <tab-heading>
+          <i class=""></i>埋点配置
+        </tab-heading>
+        <div class="panel panel-success">
+          <div class="panel-heading">自定义事件绑定</div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label>请输入监测网站的域名：</label>
+              <input type="text" id="redirectURL" class="form-control" placeholder="http://www.csdc.info">
+            </div>
+            <div class="text-center">
+              <button class="btn btn-success" ng-click="redirect()">确定</button>
+            </div>
+          </div>
+        </div>
+      </tab>
+      <tab>
+        <tab-heading>
+          <i class=""></i>漏斗模型
+        </tab-heading>
+        <div class="panel panel-success">
+          <div class="panel-heading">漏斗模型配置</div>
+          <div class="panel-body">
+            <div class="form-group" ng-repeat="selectEvent in info.selectEvents">
+              <div ng-show="$index"><span class="glyphicon glyphicon-arrow-down arraw-down" aria-hidden="true"></span></div>
+              <label class="control-label marginRight">第{{$index+1}}步</label>
+              <button class="btn btn-default" name="domain{{$index+1}}" data-ng-model="selectEvent.value"
+                      placeholder="请选择绑定事件" data-ng-change="getData($index)" ng-options="customEvent.name for customEvent in customEvents" bs-select>
+              </button>
+              <div class="marginLeft" ng-class="{'btn-group':$index}" role="group" aria-label="...">
+                <button type="button" ng-click="info.add($index)" class="btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+                <button ng-show="$index" type="button" ng-click="info.delete($index)" class="btn btn-default"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button></button>
+              </div>
+            </div>
+            <div>
+              <button class="btn btn-info" ng-click="showFunnel()">确定</button>
+            </div>
+          </div>
+        </div>
+        <highchart config="funnelConfig"></highchart>
+      </tab>
+    </tabset>
+  </div>
+
+  <small>
+    <em class="text-muted">
+      由
+      <span data-ng-bind="app.user.displayName"></span>
+      创建于
+      <span data-ng-bind="app.created | date:'yyyy-MM-dd HH:mm:ss'"></span>
+    </em>
+  </small>
+</div>
+

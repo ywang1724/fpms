@@ -171,18 +171,27 @@
 
 
     /**
-     * 插入性能监控脚本函数
+     * 插入性能监控脚本函数&插入用户行为监测脚本
      *
      */
-    var addPerformanceJS = (function (document){
+    var addOtherJS = (function (document){
         var script   = document.createElement("script");
         script.type  = "text/javascript";
         script.async = 'true';
         var elem =  document.getElementById("feException");
         script.src   = elem.src.replace('bookie', 'rookie');
 
+        //添加用户监测脚本
+        var UBscript   = document.createElement("script");
+        UBscript.type  = "text/javascript";
+        UBscript.async = 'true';
+        var UBelem =  document.getElementById("feException");
+        UBscript.src   = UBelem.src.replace('bookie', 'behavior');
+        UBscript.src = UBscript.src + (document.referrer?("?referrer=" + document.referrer):'');
+
         return function (){
             document.body.appendChild(script);
+            document.body.appendChild(UBscript);
         };
     })(document);
 
@@ -197,7 +206,7 @@
         }
     };
 
-    addFunctionOnWindowLoad(addPerformanceJS);
+    addFunctionOnWindowLoad(addOtherJS);
 })(window);
 
 

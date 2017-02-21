@@ -40,6 +40,11 @@ angular.module('apps').config(['$stateProvider',
         state('viewUIMon', {
             url: '/apps/:appId/ui/:taskId/mon/:monId',
             templateUrl: 'modules/apps/views/ui/view-mon.client.view.html'
-        });
+        }).
+		state('viewAppBehavior', {
+			url: '/apps/behavior/:appId',
+			templateUrl: 'modules/apps/views/behavior/view-behavior.client.view.html'
+		});
+
 	}
 ]);

@@ -32,6 +32,13 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             {label: '1个月', value: 2592000000}
         ];
 
+        //是否开启用户行为监测
+        $scope.toggleOpenUB = 0;
+        $scope.toggleOpenUBs = [
+            {label: '开启', value:1},
+            {label: '关闭', value: 0}
+        ];
+
         $scope.alarmtype = [1, 2, 3, 4];
         $scope.alarmtypes = [
             {label: 'JavaScript异常', value: 1, checked: true},
@@ -82,8 +89,13 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                         's.parentNode.insertBefore(fp, s);</script>';
         */
 
+        // 性能&异常监测脚本
         $scope.script = '<script type="text/javascript" ' + 'id="feException" ' + 'src="http://' + $location.host() + ':' +
                         $location.port() + '/bookie.js/' + $stateParams.appId + '"' + '></script>';
+
+        // 用户行为监测脚本
+        $scope.UBscript = '<script type="text/javascript" ' + 'id="feException" ' + 'src="http://' + $location.host() + ':' +
+                        $location.port() + '/behavior.js/' + $stateParams.appId + '"' + '></script>';
 
         // Create new App
         $scope.create = function () {
@@ -96,7 +108,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 uiInterval: this.uiInterval,
                 alarmtype: this.alarmtype,
                 alarmInterval: this.alarmInterval,
-                alarmEmail: this.alarmEmail
+                alarmEmail: this.alarmEmail,
+                toggleOpenUB: this.toggleOpenUB
             });
 
             // Redirect after save
@@ -112,6 +125,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 $scope.deadLinkInterval = 3600000;
                 $scope.alarmInterval = 900000;
                 $scope.alarmEmail = '';
+                $scopt.toggleOpenUB = 0;
             }, function (errorResponse) {
                 $scope.error = errorResponse.data.message;
             });

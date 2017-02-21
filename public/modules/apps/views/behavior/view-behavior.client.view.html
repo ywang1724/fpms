@@ -1,0 +1,25 @@
+<section class="bahavior-section" data-ng-controller="AppsBehaviorController" ng-init="initBehavior()">
+  <div class="pull-right" data-ng-show="(authentication.user)">
+    <a title="返回" class="btn btn-primary btn-sm" data-ng-click="back();">
+      <i class="glyphicon glyphicon-arrow-left"></i>
+    </a>
+  </div>
+
+  <div class="page-header">
+    <h1 data-ng-bind="app.name"></h1>
+  </div>
+
+  <div>
+    <tabset class="tabs-left">
+      <tab heading="主面板">
+        <div class="col-md-10 col-sm-10" ng-include="'modules/apps/views/behavior/view-behavior-dashboard.client.view.html'"></div>
+      </tab>
+      <tab heading="流量监测">
+        <div class="col-md-10 col-sm-10" ng-include="'modules/apps/views/behavior/view-behavior-flow.client.view.html'"></div>
+      </tab>
+      <tab heading="事件监测">
+        <div class="col-md-10 col-sm-10" ng-include="'modules/apps/views/behavior/view-behavior-event.client.view.html'"></div>
+      </tab>
+    </tabset>
+  </div>
+</section>

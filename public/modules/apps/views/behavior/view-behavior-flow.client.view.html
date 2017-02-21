@@ -1,0 +1,81 @@
+<div data-ng-controller="AppsBehaviorFlowController">
+  <div class="tabWidth">
+    <tabset data-ng-if="showChart && showData">
+      <tab>
+        <tab-heading>
+          <i class=""></i>来源分析
+        </tab-heading>
+        <div class="panel panel-info ">
+          <div class="panel-heading">来源分类</div>
+          <div class="panel-body">
+            <highchart config="originConfig"></highchart>
+          </div>
+        </div>
+        <div class="panel panel-info">
+          <div class="panel-heading">搜索引擎</div>
+          <div class="panel-body">
+            <highchart config="searchEngineConfig"></highchart>
+          </div>
+        </div>
+      </tab>
+      <tab>
+        <tab-heading>
+          <i class=""></i>受访页面
+        </tab-heading>
+        <table datatable="ng" dt-options="dtOptions_page" class="table table-striped table-bordered table-hover myTable" data-ng-if="listData.length">
+          <thead>
+            <tr>
+              <th>页面地址</th>
+              <th>上次访问页面</th>
+              <th>操作系统</th>
+              <th>分辨率</th>
+              <th>浏览器</th>
+              <th>访问时间</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-ng-repeat="item in listData">
+              <td>{{item.url}}</td>
+              <td>{{item.referer}}</td>
+              <td>{{item.system}}</td>
+              <td>{{item.screen}}</td>
+              <td>{{item.browser}}</td>
+              <td>{{item.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </tab>
+      <tab>
+        <tab-heading>
+          <i class=""></i>访客分析
+        </tab-heading>
+        <div class="panel panel-info">
+          <div class="panel-heading">地理位置</div>
+          <highchart config="mapsConfig"></highchart>
+        </div>
+        <div class="panel panel-info">
+          <div class="panel-heading">终端详情</div>
+          <highchart config="browserConfig"></highchart>
+        </div>
+      </tab>
+      <tab>
+        <tab-heading>
+          <i class=""></i>路径分析
+        </tab-heading>
+        <button ng-click="getPathData()">路径分析</button>
+        <div id="pathFigure"></div>
+        <ul>
+          <li ng-repeat="item in nodesDetail track by item.id">{{item.id}} --> {{item.path}}</li>
+        </ul>
+      </tab>
+    </tabset>
+  </div>
+  <small>
+    <em class="text-muted">
+      由
+      <span data-ng-bind="app.user.displayName"></span>
+      创建于
+      <span data-ng-bind="app.created | date:'yyyy-MM-dd HH:mm:ss'"></span>
+    </em>
+  </small>
+</div>

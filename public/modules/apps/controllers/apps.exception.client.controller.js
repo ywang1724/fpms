@@ -454,6 +454,21 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
         };
 
         /**
+         * 切换至用户行为监控页面
+         */
+        $scope.gotoBehavior = function (){
+            if($scope.selectPage.pathname === '全部'){
+                $location.path('apps/behavior/' + $scope.app._id);
+            } else {
+                PageService.setCurrentPage({'_id': $scope.selectPage._id, 'pathname': $scope.selectPage.pathname});
+                PageService.setIdentifier(2);
+                $location.path('apps/behavior/' + $scope.app._id);
+            }
+        };
+
+
+
+        /**
          * 手动报警
          */
         $scope.manualAlarm = function (exception){
