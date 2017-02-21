@@ -46,8 +46,8 @@
 </table>
 <h2 style="margin: 5px;font-size:20px;font-weight:normal;font-family:Microsoft YaHei,WenQuanYi Micro Hei;">3. 发生异常的页面截图 </h2>
 <img style="max-width:1024px" src="cid:screenShot" alt="">
-
-<img style="max-width:1024px"src="cid:diffPic" alt="" {% if !attachments.diffPic %} style="display:none" {% endif %}>
+<h2 style="margin: 5px;font-size:20px;font-weight:normal;font-family:Microsoft YaHei,WenQuanYi Micro Hei;{% if !attachments.diffPic %} display:none;{% endif %}">4. 与上次监测页面对比图 </h2>
+<img style="max-width:1024px;{% if !attachments.diffPic %} display:none;{% endif %}"src="cid:diffPic" alt="" >
 <p>FPMS技术支持团队</p>
 </body>
 
