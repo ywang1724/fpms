@@ -1,0 +1,17 @@
+.container {
+    width: 1000px;
+    margin: 0 auto;
+}
+.title {
+    color: green;
+}
+.article {
+    text-align: center;
+}
+.article .title {
+    font-weight: 700;
+}
+.time-container {
+    text-align: right;
+    color: red;
+}

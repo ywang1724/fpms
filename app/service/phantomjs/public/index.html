@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>测试页面</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body class="container">
+    <div class="article">
+        <h1>测试</h1>
+        <h1 class="title" title="hehe">水调歌头 - 明月几时有</h1>
+        <p style="color: #aaa">丙辰中秋，欢饮达旦，大醉作此篇，兼怀子由。</p>
+        <img src="pic.jpg" alt="">
+        <p>明月几时有，把酒问青天。</p>
+        <p>不知天上宫阙，今夕是何年。</p>
+        <p>我欲乘风归去，又恐琼楼玉宇，高处不胜寒。</p>
+        <p>起舞弄清影，何似在人间？</p>
+        <p>转朱阁低绮户照无眠。</p>
+        <p>不应有恨，何事长向别时圆？</p>
+        <p>人有悲欢离合，月有阴晴圆缺，此事古难全。</p>
+        <p>但愿人长久，千里共婵娟。</p>
+    </div>
+    <p class="time-container">现在是：<span id="time"></span></p>
+    <script>
+        window.onload = function () {
+            setInterval(function () {
+                document.getElementById("time").innerText = (new Date()).toLocaleTimeString();
+            }, 1000);
+        }
+    </script>
+    <script type="text/javascript" id="feException" src="http://localhost:8088/bookie.js/58a1b410a9e129bc4194516d"></script>
+</body>
+
+
+</html>

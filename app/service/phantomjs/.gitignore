@@ -1,0 +1,6 @@
+node_modules/
+temp/
+.idea/
+.vscode/
+/npm-debug.log
+test.js
