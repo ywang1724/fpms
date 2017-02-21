@@ -1,4 +1,4 @@
-<div data-ng-controller="AppsBehaviorFlowController" ng-init="viewFlow()">
+<div data-ng-controller="AppsBehaviorFlowController">
   <div class="tabWidth">
     <tabset data-ng-if="showChart && showData">
       <tab>
@@ -22,7 +22,7 @@
         <tab-heading>
           <i class=""></i>受访页面
         </tab-heading>
-        <table datatable="ng" dt-options="dtOptions" class="table table-striped table-bordered table-hover myTable" data-ng-if="listData.length">
+        <table datatable="ng" dt-options="dtOptions_page" class="table table-striped table-bordered table-hover myTable" data-ng-if="listData.length">
           <thead>
             <tr>
               <th>页面地址</th>
@@ -64,7 +64,9 @@
         </tab-heading>
         <button ng-click="getPathData()">路径分析</button>
         <div id="pathFigure"></div>
-        <!--<nvd3 options="pathOptions" data="pathData"></nvd3>-->
+        <ul>
+          <li ng-repeat="item in nodesDetail track by item.id">{{item.id}} --> {{item.path}}</li>
+        </ul>
       </tab>
     </tabset>
   </div>
