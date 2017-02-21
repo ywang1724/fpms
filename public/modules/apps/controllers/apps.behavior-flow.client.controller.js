@@ -332,10 +332,38 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
         "value": 72
       }
     ];
+    $scope.pathAnalysisData = {};
 
     $scope.viewFlow = function () {
 
     };
+
+    $scope.getPathData = function () {
+      // $http.get('pathAnalysis?appId=' + '12')
+      //   .success(function (result) {
+      //     for(var i=0; i<result.data.length; i++) {
+      //       var ref = [];
+      //       for(var j=0; j<result.data[i][2].length; j++) {
+      //         var temp = {
+      //           'from': result.data[i][2][j][0],
+      //           'to': result.data[i][2][j][1],
+      //           'edge_width': result.data[i][2][j][2]/1000
+      //         };
+      //         ref.push(temp);
+      //       }
+      //       $scope.pathAnalysisData[result.data[i][0]] = {
+      //         'id': result.data[i][0],
+      //         'confusionmatrix': [[result.data[i][1]]],
+      //         'name': '节点' + i,
+      //         'ref':ref
+      //       }
+      //     }
+      //
+      //
+      //   })
+      var myGraph = new Graph(d3);
+      init_page(myGraph, $scope.pathAnalysisData);
+    }
 
     //highcharts来源分类配置
     $scope.originConfig = {
@@ -410,7 +438,7 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
           map: {
             mapData: Highcharts.maps['countries/cn/custom/cn-all-sar-taiwan'],
             joinBy: ['hc-key'],
-            name:'你好',
+            name:'访问量',
             dataLabels: {
               enabled: true,
               format: '{point.name}'
@@ -524,9 +552,9 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
 
       $scope.browserConfig.options.chart.width = $('.panel-heading').width();
 
-      var myGraph = new Graph(d3); //http://d3js.org/
-      init_page(myGraph);
     });
+
+
 
     function Graph(d3) {
       //step 0, new graph() ,import "http://d3js.org/d3.v3.min.js" to get d3
@@ -680,7 +708,7 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
 
 
         var _clear = function () {
-          d3.select("svg").remove();
+          d3.select("#pathFigure svg").remove();
 
           svg = d3.select("#pathFigure").append("svg")
             .attr("width", width)
@@ -741,23 +769,20 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
             })
             .attr("d", diagonal)
             .transition()
-            .duration(1000)
+            .duration(3000)
             .style("stroke-width", function (d) {
               if (d.faked) {
                 return 1;
               }
-              if (d.ref.edge_width) return Math.max(1, boxHeight / 2 * d.ref.edge_width); //won't become invisible if too thin
+              if (d.ref.edge_width) return d.ref.edge_width; //won't become invisible if too thin
               else return self.config.edge_def_width; //default value
-            })
+            });
 
           // when path changes
-          path.attr("d", diagonal)
+          path.attr("d", diagonal);
 
           // when path's removed
           path.exit().remove();
-
-
-
 
         }
 
@@ -805,7 +830,6 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
 
         if (self.config.node_draggable) {
           newNodes.call(d3.behavior.drag().origin(Object).on("drag", function (d) {
-
             //拖动时移动节点
             //translate the node
             function translate(x, y) {
@@ -825,7 +849,6 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
             d.y = d.y + d3.event.dx;
 
             _redrawEdges();
-
 
           }));
         }
@@ -998,72 +1021,43 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
 
 
     }
-    function init_page(myGraph){
+    function init_page(myGraph,data){
       // request data here
       var data = {
         "0": {
           id: 0,
           name: "root",
-          load: Math.random(),
           confusionmatrix: [
             ['/']
           ],
           ref: [{
             from: 0,
             to: 1,
-            edge_width: 0.12,
-          }, {
-            from: 0,
-            to: 4,
-            edge_width: 0.3,
+            edge_width: 12,
           }]
         },
         "1": {
           id: 1,
           name: "systemA",
-          load: Math.random(),
           confusionmatrix: [
             ['/signup'],
-
           ],
           ref: [{
             from: 1,
             to: 2,
-            edge_width: 0.5,
-          }, ]
+            edge_width: 23,
+          } ]
         },
         "2": {
           id: 2,
           name: "systemB",
-          load: Math.random(),
           confusionmatrix: [
             ['/signin']
           ],
           ref: [{
             from: 2,
-            to: 3,
-            edge_width: 0.23,
-          }, ]
-        },
-        "3": {
-          id: 3,
-          name: "systemC",
-          load: Math.random(),
-          confusionmatrix: [
-            ['/app/get/aaa/dfklj']
-          ],
-        },
-        "4": {
-          id: 4,
-          name: "systemD",
-          load: Math.random(),
-          confusionmatrix: [
-            ['/app/detail']
-          ],
-          ref: [{
-            from: 4,
-            to: 2,
-            edge_width: 0.42,
+            to: 0,
+            edge_width: 45,
           }, ]
         }
       };
@@ -1078,7 +1072,7 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
       });
 
       myGraph.showPathDesc(function (d) {
-        return d.ref.edge_width*100;
+        return '-[' + d.ref.edge_width + ']->';
       });
 
       myGraph.bind(data);

@@ -149,7 +149,7 @@ angular.module('apps').controller('AppsBehaviorController', ['$scope', '$statePa
           }
 
         })
-        
+
     };
 
 

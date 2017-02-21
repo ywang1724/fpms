@@ -17,6 +17,7 @@ module.exports = function(app) {
   app.route('/behavior.js/:appId').get(behaviors.behavior);
   app.route('/behavior.custom.css/:appId').get(behaviors.returnStyle);
   app.route('/_ub.gif').get(behaviors.create);
+  app.route('/pathAnalysis').get(behaviors.pathAnalysis);
 
   // 事件分析
   app.route('/custom/:appId').get(behaviors.customList);

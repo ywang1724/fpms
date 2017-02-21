@@ -14,6 +14,12 @@ var App = mongoose.model('App');
 var Page = mongoose.model('Page');
 var Q = require('q');
 var rqt = require('request');
+var xmlrpc=require('xmlrpc');
+
+var client = xmlrpc.createClient({
+  port: 8888,
+  host: '192.168.88.64'
+});
 
 /**
  * Create a behavior
@@ -217,7 +223,7 @@ exports.statisticList = function (req, res) {
       }
 
     });
-    
+
     Q.all([promise1, promise2, promise3,promise4,promise5]).then(function () {
       res.json(result);
     })
@@ -240,6 +246,11 @@ exports.customList = function (req, res) {
   });
 };
 
+/**
+ * 请求事件分析漏斗图数据
+ * @param req
+ * @param res
+ */
 exports.funnel = function (req, res) {
   Event.count({
     following: req.query.following
@@ -338,6 +349,23 @@ exports.returnStyle = function (req, res) {
       res.status(err.status).end();
     } else {
       console.log(new Date() + 'Sent:', fileName);
+    }
+  });
+};
+
+/**
+ * 请求路径分析的数据
+ * @param req
+ * @param res
+ */
+exports.pathAnalysis = function (req, res) {
+  client.methodCall('geturlDatas', ['811756202','http://wenkechu.hust.edu.cn'], function (err,result) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      res.jsonp(result);
     }
   });
 };
