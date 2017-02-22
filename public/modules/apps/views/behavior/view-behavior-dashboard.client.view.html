@@ -7,15 +7,23 @@
       </div>
       <div data-ng-show="showChart">
         <div class="form-group">
-          <label class="control-label">页面：</label>
-          <button ng-change="changeArgs()" class="btn btn-default" name="selectPage" data-ng-model="selectPage"
-                  placeholder="暂无监控页面" ng-options="page.pathname for page in pages" bs-select>
-          </button>
-          <!--<label class="control-label">浏览器分类：</label>-->
-          <!--<button ng-change="changeArgs()" class="btn btn-defaul  " name="selectBrowser" data-ng-model="selectBrowser"-->
-                  <!--ng-options="item.name for item in browsers" bs-select>-->
+          <label class="control-label">请选择监测页面：</label>
+          <!--<button ng-change="changeArgs()" class="btn btn-default" name="selectPage" data-ng-model="selectPage"-->
+                  <!--placeholder="暂无监控页面" ng-options="page.pathname for page in pages" bs-select>-->
           <!--</button>-->
-        </div>
+            <div angucomplete-alt id="ex1"
+                 placeholder="请输入路径"
+                 maxlength="50"
+                 pause="100"
+                 selected-object="selectPageFunc"
+                 local-data="selectPageData"
+                 search-fields="name"
+                 title-field="name"
+                 focus-out = "focusOutFunc()"
+                 minlength="1"
+                 input-class="form-control form-control-small"
+                 match-class="highlight"></div>
+          </div>
 
         <div class="form-group">
           <label class="control-label">统计间隔：</label>

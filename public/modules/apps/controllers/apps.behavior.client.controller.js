@@ -39,19 +39,44 @@ angular.module('apps').controller('AppsBehaviorController', ['$scope', '$statePa
           $scope.parentObj = {}; //与child scope进行数据绑定的过渡对象
 
           //页面选择
-          var ids = [];
-          for (var i = 0; i < data.length; i++) {
+          // var ids = [];
+          // for (var i = 0; i < data.length; i++) {
+          //   ids.push(data[i]._id);
+          // }
+          // $scope.pages = [{'_id':ids, 'name': '全部'}].concat(data);
+          // if(PageService.getIdentifier() === 2){
+          //   //表示从应用详情跳转过来
+          //   $scope.selectPage = $scope.pages.filter(function(elem){
+          //     return elem._id === PageService.getCurrentPage()._id;
+          //   })[0];
+          // }else{
+          //   $scope.selectPage = $scope.pages[0];
+          // }
+          $scope.selectPageData = [];
+          var ids=[];
+          for (var i=0; i<data.length; i++) {
+            $scope.selectPageData.push({name:data[i].pathname, id: data[i]._id});
             ids.push(data[i]._id);
           }
-          $scope.pages = [{'_id':ids, 'pathname': '全部'}].concat(data);
-          if(PageService.getIdentifier() === 2){
-            //表示从应用详情跳转过来
-            $scope.selectPage = $scope.pages.filter(function(elem){
-              return elem._id === PageService.getCurrentPage()._id;
-            })[0];
-          }else{
-            $scope.selectPage = $scope.pages[0];
-          }
+          $scope.selectPage = {'id': ids, 'name':'全部'};
+
+          $scope.selectPageFunc = function (obj) {
+            if (obj) {
+              if (obj.description && obj.description == '') {
+                $scope.selectPage = {'id': ids, 'name':'全部'}
+              } else {
+                $scope.selectPage = obj.description;
+              }
+            } else {
+              $scope.selectPage.id = '';
+            }
+          };
+          $scope.focusOutFunc = function () {
+            if(!$('#ex1_val').val()) {
+              $scope.selectPage = {'id': ids, 'name':'全部'};
+            }
+          };
+
 
           //统计间隔
           $scope.intervals = [
@@ -114,7 +139,7 @@ angular.module('apps').controller('AppsBehaviorController', ['$scope', '$statePa
 
             $http.get('behaviors', {
               params: {
-                pageId: $scope.parentObj.selectPage._id,
+                pageId: $scope.selectPage.id,
                 fromDate: +(new Date(trueFromDate)),
                 untilDate: +(new Date(trueUntilDate)),
                 interval: $scope.parentObj.selectInterval.id
@@ -151,6 +176,7 @@ angular.module('apps').controller('AppsBehaviorController', ['$scope', '$statePa
         })
 
     };
+
 
 
     $scope.back = function () {

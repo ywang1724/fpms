@@ -25,10 +25,10 @@ module.exports = {
 				'public/lib/bootstrap/dist/css/bootstrap.css',
 				'public/lib/bootstrap/dist/css/bootstrap-theme.css',
 				'public/lib/bootstrap-additions/dist/bootstrap-additions.css',
+				'public/lib/angucomplete-alt/angucomplete-alt.css',
 				'public/lib/angular-motion/dist/angular-motion.css',
 				'public/lib/datatables/media/css/jquery.dataTables.css',
 				'public/lib/datatables-responsive/css/dataTables.responsive.css',
-				'public/lib/nvd3/build/nv.d3.css',
 				'public/lib/font-awesome/css/font-awesome.css',
 				'public/lib/sweetalert/dist/sweetalert.css'
 			],
@@ -62,6 +62,7 @@ module.exports = {
                 'public/lib/zeroclipboard/dist/ZeroClipboard.js',
 				'public/lib/angular-modal-service/dst/angular-modal-service.js',
 				'public/lib/cytoscape/dist/cytoscape.min.js',
+				'public/lib/angucomplete-alt/dist/angucomplete-alt.min.js',
 				'public/lib/sweetalert/dist/sweetalert.min.js',
 				'public/lib/angular-sweetalert/SweetAlert.js',
 				'public/lib/moment/min/moment.min.js'

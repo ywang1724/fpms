@@ -27,7 +27,8 @@
     "angular-modal-service": "~0.6.9",
     "angular-sweetalert": "~1.1.0",
     "moment": "^2.17.1",
-    "cytoscape": "^2.7.15"
+    "cytoscape": "^2.7.15",
+    "angucomplete-alt": "^3.0.0"
   },
   "resolutions": {
     "angular": "~1.3"

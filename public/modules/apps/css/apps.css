@@ -190,3 +190,10 @@ a[ng-click] {
     width: 800px;
     position: relative;
 }
+
+#ex1_dropdown {
+    overflow-y: auto;
+    max-height: 150px;
+    width:100%;
+    margin-top:0;
+}
