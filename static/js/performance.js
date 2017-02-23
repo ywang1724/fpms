@@ -1,23 +1,8 @@
 /**
- * Rookie.js v0.0.2
+ * performance.js v0.0.2
  * Copyright (c) 2015 wangyi xujiangwei
  */
 
-
-/**
- * 添加UI监控自定义规则录入脚本
- */
-var addUIMonitorJs = (function(document){
-    var script   = document.createElement("script");
-    script.type  = "text/javascript";
-    script.async = 'true';
-    var elem =  document.getElementById("feException");
-    script.src   = elem.src.replace('bookie', 'uookie');
-
-    return function (){
-        document.body.appendChild(script);
-    };
-})(document);
 
 /**
  * 性能采集脚本
@@ -61,7 +46,6 @@ var addUIMonitorJs = (function(document){
             var img = new Image(1, 1);
             img.src = serverHost + '/_fp.gif?' + encodeURIComponent(JSON.stringify(rookie));
         }, 0);
-        addUIMonitorJs();
     } else {
         rookie.errs.push('浏览器不支持Resource Timing API！');
     }

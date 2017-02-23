@@ -18,12 +18,5 @@ module.exports = function(app) {
 	// 绑定App中间件
 
 	app.param('monId', mon.monByID);
-	app.route('/test')
-		.get(function(req,res){
-            Task.findById('58a2a9656da13f8c1a9dba25').populate('app').exec(function (err, task) {
-                if(err) res.json(err);
-                res.json(task);
-            });
-		})
 
 };
