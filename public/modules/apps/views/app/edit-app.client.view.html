@@ -2,12 +2,13 @@
     <div class="page-header text-center">
         <h1>设置</h1>
     </div>
-    <div class="rowpanel panel-info">
-        <div class="panel-heading">
-            请配置您的应用：
-        </div>
-        <div class="panel-body">
-            <form name="appForm" class="form-horizontal" data-ng-submit="update()" novalidate>
+    <form name="appForm" class="form-horizontal" data-ng-submit="update()" novalidate>
+        <!--基础配置-->
+        <div class="row panel panel-info">
+            <div class="panel-heading">
+                基础配置
+            </div>
+            <div class="panel-body">
                 <fieldset>
                     <div class="form-group" ng-class="{ 'has-error': appForm.name.$dirty }">
                         <label for="name" class="col-sm-2 control-label">名称</label>
@@ -34,45 +35,6 @@
                                    placeholder="请填写您的应用所在域" data-ng-change="removeErr()" required>
                         </div>
                     </div>
-                    <div class="form-group" ng-class="{ 'has-error': appForm.alarmtype.$dirty && appForm.alarmtype.$invalid }">
-                        <label class="col-sm-2 control-label">报警类型</label>
-                        <div class="col-sm-10 controls">
-                            <label ng-repeat="alarmitmen in alarmtypes">
-                                <input
-                                        type="checkbox"
-                                        name="alarmtype[]"
-                                        value="{{alarmitmen.value}}"
-                                        ng-model="alarmtype"
-                                        ng-checked="alarmitmen.checked"
-                                        ng-click="toggleSelection($event, 2)"
-                                        > {{alarmitmen.label}}
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group" ng-class="{ 'has-error': appForm.deadLinkInterval.$dirty && appForm.deadLinkInterval.$invalid }">
-                        <label for="deadLinkInterval" class="col-sm-2 control-label">死链接检测间隔</label>
-                        <div class="col-sm-10 controls">
-                            <select id="deadLinkInterval" name="deadLinkInterval" data-ng-model="app.deadLinkInterval" ng-options="deadLinkInterval.value as deadLinkInterval.label for deadLinkInterval in deadLinkIntervals"
-                                    class="form-control" required>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group" ng-class="{ 'has-error': appForm.alarmInterval.$dirty && appForm.alarmInterval.$invalid }">
-                        <label for="alarmInterval" class="col-sm-2 control-label">异常报警间隔</label>
-                        <div class="col-sm-10 controls">
-                            <select id="alarmInterval" name="alarmInterval" data-ng-model="app.alarmInterval" ng-options="alarmInterval.value as alarmInterval.label for alarmInterval in alarmIntervals"
-                                    class="form-control" required>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group" ng-class="{ 'has-error': appForm.uiInterval.$dirty && appForm.uiInterval.$invalid }">
-                        <label for="uiInterval" class="col-sm-2 control-label">主动监控时间间隔</label>
-                        <div class="col-sm-10 controls">
-                            <select id="uiInterval" name="uiInterval" data-ng-model="app.uiInterval" ng-options="uiInterval.value as uiInterval.label for uiInterval in uiIntervals"
-                                    class="form-control" required>
-                            </select>
-                        </div>
-                    </div>
                     <div class="form-group" ng-class="{ 'has-error': appForm.alarmEmail.$dirty && appForm.alarmEmail.$invalid }">
                         <label for="alarmEmail" class="col-sm-2 control-label">报警邮箱</label>
                         <div class="col-sm-10 controls">
@@ -80,23 +42,139 @@
                                    placeholder="请填写您的应用报警邮箱" required>
                         </div>
                     </div>
-                    <div class="form-group" ng-class="{ 'has-error': appForm.toggleOpenUB.$dirty && appForm.toggleOpenUB.$invalid }">
-                        <label for="toggleOpenUB" class="col-sm-2 control-label">异常报警间隔</label>
-                        <div class="col-sm-10 controls">
-                            <select id="toggleOpenUB" name="toggleOpenUB" data-ng-model="app.toggleOpenUB" ng-options="toggleOpenUB.value as toggleOpenUB.label for toggleOpenUB in toggleOpenUBs"
-                                    class="form-control" required>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group text-center">
-                        <input type="submit" value="更新" class="btn btn-primary" ng-disabled="!canUpdate()">
-                        <input type="button" value="取消" class="btn btn-default" ng-click="back()">
-                    </div>
-                    <div data-ng-show="error" class="text-danger">
-                        <strong data-ng-bind="error"></strong>
-                    </div>
                 </fieldset>
-            </form>
+            </div>
         </div>
-    </div>
+
+        <!--性能配置-->
+        <div class="row panel panel-info">
+            <div class="panel-heading">
+                性能监控
+                <span class="glyphicon panel-heading-arrow-right"
+                      ng-click="togglePanelOpen('performance')"
+                      ng-class="{'glyphicon-chevron-right':!isPanelOpen.performance, 'glyphicon-chevron-down':isPanelOpen.performance }"></span>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">状态配置</label>
+                    <div class="col-sm-10 controls">
+                        <select name="config.performance"
+                                ng-model="app.config.performance"
+                                ng-options="selectItem.value as selectItem.label for selectItem in selectItems"
+                                class="form-control" required></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!--异常配置-->
+        <div class="row panel panel-info">
+            <div class="panel-heading">
+                异常报警
+                <span class="glyphicon panel-heading-arrow-right"
+                      ng-click="togglePanelOpen('exception')"
+                      ng-class="{'glyphicon-chevron-right':!isPanelOpen.exception, 'glyphicon-chevron-down':isPanelOpen.exception }"></span>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">状态配置</label>
+                    <div class="col-sm-10 controls">
+                        <select name="config.exception"
+                                ng-model="app.config.exception"
+                                ng-options="selectItem.value as selectItem.label for selectItem in selectItems"
+                                class="form-control" required></select>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error': appForm.alarmtype.$dirty && appForm.alarmtype.$invalid }">
+                    <label class="col-sm-2 control-label">报警类型</label>
+                    <div class="col-sm-10 controls">
+                        <label ng-repeat="alarmitmen in alarmtypes">
+                            <input
+                                type="checkbox"
+                                name="alarmtype[]"
+                                value="{{alarmitmen.value}}"
+                                ng-model="alarmtype"
+                                ng-checked="alarmitmen.checked"
+                                ng-click="toggleSelection($event, 2)"
+                            > {{alarmitmen.label}}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error': appForm.deadLinkInterval.$dirty && appForm.deadLinkInterval.$invalid }">
+                    <label for="deadLinkInterval" class="col-sm-2 control-label">死链接检测间隔</label>
+                    <div class="col-sm-10 controls">
+                        <select id="deadLinkInterval" name="deadLinkInterval" data-ng-model="app.deadLinkInterval" ng-options="deadLinkInterval.value as deadLinkInterval.label for deadLinkInterval in deadLinkIntervals"
+                                class="form-control" required>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error': appForm.alarmInterval.$dirty && appForm.alarmInterval.$invalid }">
+                    <label for="alarmInterval" class="col-sm-2 control-label">异常报警间隔</label>
+                    <div class="col-sm-10 controls">
+                        <select id="alarmInterval" name="alarmInterval" data-ng-model="app.alarmInterval" ng-options="alarmInterval.value as alarmInterval.label for alarmInterval in alarmIntervals"
+                                class="form-control" required>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--UI配置-->
+        <div class="row panel panel-info">
+            <div class="panel-heading">
+                UI监控
+                <span class="glyphicon panel-heading-arrow-right"
+                      ng-click="togglePanelOpen('ui')"
+                      ng-class="{'glyphicon-chevron-right':!isPanelOpen.ui, 'glyphicon-chevron-down':isPanelOpen.ui }"></span>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">状态配置</label>
+                    <div class="col-sm-10 controls">
+                        <select name="config.ui"
+                                ng-model="app.config.ui"
+                                ng-options="selectItem.value as selectItem.label for selectItem in selectItems"
+                                class="form-control" required></select>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error': appForm.uiInterval.$dirty && appForm.uiInterval.$invalid }">
+                    <label for="uiInterval" class="col-sm-2 control-label">主动监控时间间隔</label>
+                    <div class="col-sm-10 controls">
+                        <select id="uiInterval" name="uiInterval" data-ng-model="app.uiInterval" ng-options="uiInterval.value as uiInterval.label for uiInterval in uiIntervals"
+                                class="form-control" required>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--用户行为配置-->
+        <div class="row panel panel-info">
+            <div class="panel-heading">
+                用户行为监控
+                <span class="glyphicon panel-heading-arrow-right"
+                      ng-click="togglePanelOpen('behavior')"
+                      ng-class="{'glyphicon-chevron-right':!isPanelOpen.behavior, 'glyphicon-chevron-down':isPanelOpen.behavior }"></span>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">状态配置</label>
+                    <div class="col-sm-10 controls">
+                        <select name="config.behavior"
+                                ng-model="app.config.behavior"
+                                ng-options="selectItem.value as selectItem.label for selectItem in selectItems"
+                                class="form-control" required></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group text-center">
+            <input type="submit" value="更新" class="btn btn-primary" ng-disabled="!canUpdate()">
+            <input type="button" value="取消" class="btn btn-default" ng-click="back()">
+        </div>
+        <div data-ng-show="error" class="text-danger">
+            <strong data-ng-bind="error"></strong>
+        </div>
+    </form>
 </section>

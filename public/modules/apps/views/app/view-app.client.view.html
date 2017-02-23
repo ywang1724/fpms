@@ -11,17 +11,30 @@
             <i class="glyphicon glyphicon-trash"></i>
         </a>
     </div>
-	<div class="page-header">
-		<h1 data-ng-bind="app.name"></h1>
-	</div>
+
+    <div class="page-header">
+        <h1 data-ng-bind="app.name"></h1>
+    </div>
+
     <div class="panel panel-info">
-        <div class="panel-heading">
-            应用配置信息如下：
+        <div class="panel-heading"><b>性能&异常监测脚本</b>（请复制以下代码到您需监控的应用页面html代码的head里，即其它资源请求文件之前）：
+            <span class="pull-right fa fa-copy fa-lg cursor" title="复制代码" clip-copy="script" clip-click="clip()"></span>
         </div>
         <div class="panel-body">
+            <code class="center-block">{{script}}</code>
+            <div class="text-center text-success" data-ng-show="isClip">
+                <strong>已复制代码到剪贴板。</strong>
+            </div>
+        </div>
+    </div>
 
-
-            <form class="form-horizontal">
+    <form class="form-horizontal">
+        <!--基础配置-->
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                基础配置
+            </div>
+            <div class="panel-body">
                 <div class="form-group">
                     <label for="type" class="col-sm-2 control-label">类型</label>
                     <div class="col-sm-10">
@@ -34,19 +47,74 @@
                         <input type="text" class="form-control" id="host" data-ng-model="app.host" ng-readonly="true">
                     </div>
                 </div>
+                <div class="form-group" ng-class="{ 'has-error': appForm.alarmEmail.$dirty && appForm.alarmEmail.$invalid }">
+                    <label for="alarmEmail" class="col-sm-2 control-label">报警邮箱</label>
+                    <div class="col-sm-10 controls">
+                        <input name="alarmEmail" type="text" data-ng-model="app.alarmEmail" id="alarmEmail" class="form-control"
+                               placeholder="请填写您的应用报警邮箱" ng-readonly="true">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--性能配置-->
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                性能监控
+                <span class="glyphicon panel-heading-arrow-right"
+                      ng-click="togglePanelOpen('performance')"
+                      ng-class="{'glyphicon-chevron-right':!isPanelOpen.performance, 'glyphicon-chevron-down':isPanelOpen.performance }"></span>
+            </div>
+            <div class="panel-body" ng-class="{hidden:!isPanelOpen.performance}">
+                <div class="form-group" ng-class="{'has-error': appForm.alarmEmail.$dirty && appForm.alarmEmail.$invalid }">
+                    <label class="col-sm-2 control-label">状态配置</label>
+                    <div class="col-sm-10 controls">
+                        <div ng-switch on="app.config.performance">
+                            <div ng-switch-when=true>
+                                <input type="text" class="form-control" value="开启" ng-readonly="true">
+                            </div>
+                            <div ng-switch-when=false>
+                                <input type="text" class="form-control" value="关闭" ng-readonly="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--异常配置-->
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                异常报警
+                <span class="glyphicon panel-heading-arrow-right" ng-click="togglePanelOpen('exception')" ng-class="{'glyphicon-chevron-right':!isPanelOpen.exception, 'glyphicon-chevron-down':isPanelOpen.exception }"></span>
+            </div>
+            <div class="panel-body" ng-class="{hidden:!isPanelOpen.exception}">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">状态配置</label>
+                    <div class="col-sm-10">
+                        <div ng-switch on="app.config.exception">
+                            <div ng-switch-when=true>
+                                <input type="text" class="form-control" value="开启" ng-readonly="true">
+                            </div>
+                            <div ng-switch-when=false>
+                                <input type="text" class="form-control" value="关闭" ng-readonly="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">报警类型</label>
                     <div class="col-sm-10">
                         <label ng-repeat="alarmitmen in alarmtypes | filter: {checked: true}">
                             <input
-                                    type="checkbox"
-                                    name="alarmtype[]"
-                                    value="{{alarmitmen.value}}"
-                                    ng-model="alarmtype"
-                                    ng-checked="alarmitmen.checked"
-                                    ng-click="toggleSelection($event, 2)"
-                                    ng-disabled="true"
-                                    > {{alarmitmen.label}}
+                                type="checkbox"
+                                name="alarmtype[]"
+                                value="{{alarmitmen.value}}"
+                                ng-model="alarmtype"
+                                ng-checked="alarmitmen.checked"
+                                ng-click="toggleSelection($event, 2)"
+                                ng-disabled="true"
+                            > {{alarmitmen.label}}
                         </label>
                     </div>
                 </div>
@@ -111,6 +179,29 @@
 
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!--UI配置-->
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                UI监控
+                <span class="glyphicon panel-heading-arrow-right" ng-click="togglePanelOpen('ui')" ng-class="{'glyphicon-chevron-right':!isPanelOpen.ui, 'glyphicon-chevron-down':isPanelOpen.ui }"></span>
+            </div>
+            <div class="panel-body" ng-class="{hidden:!isPanelOpen.ui}">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">状态配置</label>
+                    <div class="col-sm-10 controls">
+                        <div ng-switch on="app.config.ui">
+                            <div ng-switch-when=true>
+                                <input type="text" class="form-control" value="开启" ng-readonly="true">
+                            </div>
+                            <div ng-switch-when=false>
+                                <input type="text" class="form-control" value="关闭" ng-readonly="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="form-group">
                     <label for="uiInterval" class="col-sm-2 control-label">主动监控时间间隔</label>
                     <div class="col-sm-10">
@@ -137,40 +228,32 @@
 
                     </div>
                 </div>
-                <div class="form-group" ng-class="{ 'has-error': appForm.alarmEmail.$dirty && appForm.alarmEmail.$invalid }">
-                    <label for="alarmEmail" class="col-sm-2 control-label">报警邮箱</label>
-                    <div class="col-sm-10 controls">
-                        <input name="alarmEmail" type="text" data-ng-model="app.alarmEmail" id="alarmEmail" class="form-control"
-                               placeholder="请填写您的应用报警邮箱" ng-readonly="true">
-                    </div>
-                </div>
+            </div>
+        </div>
+
+        <!--用户行为配置-->
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                用户行为监控
+                <span class="glyphicon panel-heading-arrow-right" ng-click="togglePanelOpen('behavior')" ng-class="{'glyphicon-chevron-right':!isPanelOpen.behavior, 'glyphicon-chevron-down':isPanelOpen.behavior }"></span>
+            </div>
+            <div class="panel-body" ng-class="{hidden:!isPanelOpen.behavior}">
                 <div class="form-group">
-                    <label for="toggleOpenUB" class="col-sm-2 control-label">用户行为监测</label>
-                    <div class="col-sm-10">
-                        <div ng-switch on="app.toggleOpenUB" id="toggleOpenUB">
-                            <div ng-switch-when="0">
-                                <input type="text" class="form-control" value="关闭" ng-readonly="true">
-                            </div>
-                            <div ng-switch-when="1">
+                    <label class="col-sm-2 control-label">状态配置</label>
+                    <div class="col-sm-10 controls">
+                        <div ng-switch on="app.config.behavior">
+                            <div ng-switch-when=true>
                                 <input type="text" class="form-control" value="开启" ng-readonly="true">
+                            </div>
+                            <div ng-switch-when=false>
+                                <input type="text" class="form-control" value="关闭" ng-readonly="true">
                             </div>
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
-    </div>
-    <div class="panel panel-info">
-        <div class="panel-heading"><b>性能&异常监测脚本</b>（请复制以下代码到您需监控的应用页面html代码的head里，即其它资源请求文件之前）：
-            <span class="pull-right fa fa-copy fa-lg cursor" title="复制代码" clip-copy="script" clip-click="clip()"></span>
-        </div>
-        <div class="panel-body">
-            <code class="center-block">{{script}}</code>
-            <div class="text-center text-success" data-ng-show="isClip">
-                <strong>已复制代码到剪贴板。</strong>
             </div>
         </div>
-    </div>
+    </form>
 
     <tabset>
         <tab>

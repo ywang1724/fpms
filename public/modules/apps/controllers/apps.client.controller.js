@@ -10,22 +10,24 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         $scope.type = 'java';
         $scope.types = ['java', 'node.js', 'android', 'ios'];
 
+        // 配置panel是否首期
         $scope.isPanelOpen ={
-            performance: false,
-            exception: false,
-            ui: false,
-            behavior: false
+            performance: true,
+            exception: true,
+            ui: true,
+            behavior: true
         };
         $scope.togglePanelOpen = function (type) {
             $scope.isPanelOpen[type] = !$scope.isPanelOpen[type];
         };
 
+        // 配置功能绑定
         $scope.config = {
             performance: false,
             exception: false,
             ui: false,
             behavior: false
-        }
+        };
 
         $scope.selectItems = [{
             label: '关闭',
