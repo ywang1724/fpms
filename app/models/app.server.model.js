@@ -72,7 +72,7 @@ var AppSchema = new Schema({
 			type: Boolean,
 			default: true
 		},
-		behaviour:{
+		behavior:{
             type: Boolean,
             default: false
 		},

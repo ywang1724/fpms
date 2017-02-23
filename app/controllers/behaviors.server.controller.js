@@ -232,6 +232,11 @@ exports.statisticList = function (req, res) {
 
 }
 
+/**
+ * 删除用户自定义事件
+ * @param req
+ * @param res
+ */
 exports.deleteCustomEvent = function (req, res) {
   CustomEvent.findByIdAndRemove(req.query.id)
     .exec(function (err,customEvent) {
@@ -313,22 +318,29 @@ exports.behavior = function (req, res) {
     var fileName = 'behavior.js';
   }
 
-
   //存储appId到session
   req.session.appId = req.app._id;
   //发送文件
-  res.sendFile(fileName, options, function (err) {
-    if (err) {
-      if (err.code === 'ECONNABORT' && res.statusCode === 304) {
-        console.log(new Date() + '304 cache hit for ' + fileName);
-        return;
-      }
-      console.log(err);
-      res.status(err.status).end();
+  App.findById(req.app._id, function (err,app) {
+    if(app.config.behavior) {
+      res.sendFile(fileName, options, function (err) {
+        if (err) {
+          if (err.code === 'ECONNABORT' && res.statusCode === 304) {
+            console.log(new Date() + '304 cache hit for ' + fileName);
+            return;
+          }
+          console.log(err);
+          res.status(err.status).end();
+        } else {
+          console.log(new Date() + 'Sent:', fileName);
+        }
+      });
     } else {
-      console.log(new Date() + 'Sent:', fileName);
+      res.type('text/javascipt');
+      res.send('');
     }
-  });
+  })
+
 };
 
 /**

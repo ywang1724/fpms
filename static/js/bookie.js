@@ -36,7 +36,7 @@
         UBscript.type  = "text/javascript";
         UBscript.async = 'true';
         UBscript.src  = elem.src.replace('bookie', 'behavior');
-        UBscript.src = elem.src + (document.referrer?("?referrer=" + document.referrer):'');
+        UBscript.src = UBscript.src + (document.referrer?("?referrer=" + document.referrer):'');
 
         // 添加UI监控自定义规则录入脚本
         var uiScript   = document.createElement("script");
