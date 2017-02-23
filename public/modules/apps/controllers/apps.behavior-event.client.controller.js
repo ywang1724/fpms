@@ -6,9 +6,9 @@
 'use strict';
 
 //Apps controller
-angular.module('apps').controller('AppsBehaviorEventController', ['$scope', '$stateParams', '$location',
+angular.module('apps').controller('AppsBehaviorEventController', ['$scope', '$stateParams', '$window','$location',
   'Authentication', 'Apps', 'DTOptionsBuilder', '$http', '$timeout', 'PageService',
-  function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService) {
+  function ($scope, $stateParams, $window, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService) {
     $scope.authentication = Authentication;
 
     $scope.info={};
@@ -64,8 +64,14 @@ angular.module('apps').controller('AppsBehaviorEventController', ['$scope', '$st
       .withOption('bAutoWidth', false);
 
     $scope.redirect = function()  {
-      location.href = 'http://' + $scope.app.host;
-      document.cookie = 'customEvent=true';
+      var img = new Image(1, 1);
+      img.src = '/_ub.gif/send?' + JSON.stringify({isOpenBehavior: true});
+      img.onload = function(){
+        $window.open('http://' + $scope.app.host, '_blank');
+      };
+      img.onerror = function(err){
+        SweetAlert.swal('跳转失败!', '服务器开了小差 :)', 'error');
+      }
     };
 
     /**

@@ -376,7 +376,18 @@
   }
 
   function exitCustom() {
-    window.location.href= document.getElementById("feException").src.replace('bookie.js','#!/apps/behavior');
+    var elem =  document.getElementById("feException");
+    var serverHost =elem.src.split('/bookie.js/')[0];
+    //通过Image对象请求发送数据
+    var img = new Image(1, 1);
+    img.src = serverHost + '/_ub.gif/send?' + JSON.stringify({isOpenBehavior: false});
+    img.onload = function(){
+      window.location.reload();
+    }
+    img.onerror = function(err){
+      alert("服务器发生异常，退出中...");
+      window.location.reload();
+    }
   }
 
 })(document);

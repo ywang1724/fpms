@@ -312,7 +312,7 @@ exports.behavior = function (req, res) {
       }
     };
 
-  if (req.cookies.customEvent=='true') {
+  if (req.session.isOpenBehavior) {
     var fileName = 'behavior.custom.js';
   } else {
     var fileName = 'behavior.js';
@@ -396,6 +396,48 @@ exports.pathAnalysis = function (req, res) {
     }
   });
 };
+
+/**
+ * 切换被监测网站是否带有绑定工具条
+ * @param req
+ * @param res
+ */
+exports.switchBehaviorBar = function (req, res) {
+  if (req.session.appId) {
+    App.findById(req.session.appId).exec(function (err, app) {
+      if (err) {
+        console.log(errorHandler.getErrorMessage(err));
+      } else {
+        var data = JSON.parse(decodeURIComponent(req.url.substring(req.url.indexOf('?') + 1)));
+        req.session.isOpenBehavior = data.isOpenBehavior;
+      }
+    })
+  }
+
+  var options = {
+      root: 'static/img/',
+      dotfiles: 'allow',
+      headers: {
+        'Content-Type': 'image/gif',
+        'Pragma': 'no-cache',
+        'Cache-Control': 'private, no-cache, no-cache=Set-Cookie, proxy-revalidate'
+      }
+    },
+    fileName = '_ub.gif';
+
+  res.sendFile(fileName, options, function (err) {
+    if (err) {
+      if (err.code === 'ECONNABORT' && res.statusCode === 304) {
+        console.log(new Date() + '304 cache hit for ' + fileName);
+        return;
+      }
+      console.log(err);
+      res.status(err.status).end();
+    } else {
+      console.log(new Date() + 'Sent:', fileName);
+    }
+  });
+}
 
 /**
  * 添加一条用户访问数据

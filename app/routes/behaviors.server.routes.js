@@ -13,10 +13,12 @@ module.exports = function(app) {
   // behavior Routes
   app.route('/behaviors').get(users.requiresLogin, behaviors.statisticList);
 
+  app.route('/_ub.gif').get(behaviors.create);
+  app.route('/_ub.gif/send').get(behaviors.switchBehaviorBar);
+
   //流量分析
   app.route('/behavior.js/:appId').get(behaviors.behavior);
   app.route('/behavior.custom.css/:appId').get(behaviors.returnStyle);
-  app.route('/_ub.gif').get(behaviors.create);
   app.route('/pathAnalysis').get(behaviors.pathAnalysis);
 
   // 事件分析
