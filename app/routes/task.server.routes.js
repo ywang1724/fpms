@@ -15,7 +15,8 @@ module.exports = function(app) {
 
     app.route('/uookie.js/:appId').get(task.uookie);
     app.route('/uookie.css/:appId').get(task.uookieCSS);
-	app.route('/_ui.gif').get(task.addRule);
+	app.route('/_ui.gif/addRule').get(task.addRule);
+    app.route('/_ui.gif/send').get(task.switchUIBar);
 	// 绑定App中间件
 	app.param('taskId', task.taskByID);
 

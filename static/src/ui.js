@@ -158,6 +158,7 @@ require("./dialog");
             '<a href="javascript:void" class="fpms-mode fpms-mode-active" data-mode="diff">页面Diff规则</a>' +
             '<a href="javascript:void" class="fpms-mode" data-mode="dom">DOM检测规则</a>' +
             '</div>' +
+            '<a href="javascript:void" class="fpms-exit" data-mode="dom">退出</a>' +
             '</div>';
 
         $(navBar).appendTo(document.body);
@@ -168,6 +169,21 @@ require("./dialog");
             $(".fpms-mode").removeClass("fpms-mode-active");
             $(this).addClass("fpms-mode-active");
         });
+        $(".fpms-exit").click(function () {
+            var elem =  document.getElementById("feException");
+            var serverHost =elem.src.split('/bookie.js/')[0];
+            //通过Image对象请求发送数据
+            var img = new Image(1, 1);
+            img.src = serverHost + '/_ui.gif/send?' + JSON.stringify({isOpenUI: false});
+            img.onload = function(){
+                window.location.reload();
+            }
+            img.onerror = function(err){
+                alert("服务器发生异常，退出中...");
+                window.location.reload();
+            }
+        });
+
     }
 
 
@@ -207,7 +223,7 @@ require("./dialog");
 
         //通过Image对象请求发送数据
         var img = new Image(1, 1);
-        img.src = serverHost + '/_ui.gif?' + encodeURIComponent(JSON.stringify(data));
+        img.src = serverHost + '/_ui.gif/addRule?' + encodeURIComponent(JSON.stringify(data));
         img.onload = function(){
             callback(null);
         }

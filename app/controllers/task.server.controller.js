@@ -130,14 +130,9 @@ var hasAuthorization = function (req, res, next) {
     next();
 };
 /**
- * 获取bookie.js
+ * 获取uookie.js
  */
 var uookie = function (req, res) {
-    if (!req.isAuthenticated() || !req.user.isActive ) {
-        res.type("text/javascript");
-        res.send("");
-        return;
-    }
     //配置文件参数
     var options = {
             root: process.env.NODE_ENV === 'production' ? 'static/dist/' : 'static/js/',
@@ -151,6 +146,13 @@ var uookie = function (req, res) {
         fileName = 'ui.js';
     //存储appId到session
     req.session.appId = req.app._id;
+
+    if (!req.isAuthenticated() || !req.user.isActive || !req.session.isOpenUI) {
+        res.type("text/javascript");
+        res.send("");
+        return;
+    }
+
     //发送文件
     App.findById(req.app._id, function (err, app) {
         if (app.config.ui) {
@@ -261,6 +263,45 @@ var addRule = function(req, res) {
         }
     });
 }
+
+
+var switchUIBar = function(req, res) {
+    if (req.session.appId) {
+        App.findById(req.session.appId).exec(function (err, app) {
+            if (err) {
+                console.log(errorHandler.getErrorMessage(err));
+            } else {
+                var data = JSON.parse(decodeURIComponent(req.url.substring(req.url.indexOf('?') + 1)));
+                req.session.isOpenUI = data.isOpenUI;
+            }
+        })
+    }
+
+    var options = {
+            root: 'static/img/',
+            dotfiles: 'allow',
+            headers: {
+                'Content-Type': 'image/gif',
+                'Pragma': 'no-cache',
+                'Cache-Control': 'private, no-cache, no-cache=Set-Cookie, proxy-revalidate'
+            }
+        },
+        fileName = '_ui.gif';
+
+    res.sendFile(fileName, options, function (err) {
+        if (err) {
+            if (err.code === 'ECONNABORT' && res.statusCode === 304) {
+                console.log(new Date() + '304 cache hit for ' + fileName);
+                return;
+            }
+            console.log(err);
+            res.status(err.status).end();
+        } else {
+            console.log(new Date() + 'Sent:', fileName);
+        }
+    });
+
+}
 /** 传入gridfs **/
 module.exports = function (gsf) {
     gridfs = gsf;
@@ -274,6 +315,7 @@ module.exports = function (gsf) {
         hasAuthorization: hasAuthorization,
         uookie: uookie,
         uookieCSS: uookieCSS,
-        addRule: addRule
+        addRule: addRule,
+        switchUIBar: switchUIBar
     }
 }

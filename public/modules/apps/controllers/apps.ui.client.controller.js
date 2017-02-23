@@ -77,7 +77,15 @@ angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$w
         };
 
         $scope.addRule = function () {
-            $window.open($scope.task.url, '_blank');
+            //通过Image对象请求发送数据
+            var img = new Image(1, 1);
+            img.src = '/_ui.gif/send?' + JSON.stringify({isOpenUI: true});
+            img.onload = function(){
+                $window.open($scope.task.url, '_blank');
+            }
+            img.onerror = function(err){
+                SweetAlert.swal('跳转失败!', '服务器开了小差 :)', 'error');
+            }
         };
 
         $scope.removeRule = function ($event, index, type) {
