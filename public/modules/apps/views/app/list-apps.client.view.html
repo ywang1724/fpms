@@ -23,7 +23,7 @@
             <td>
                 <a data-ng-href="#!/apps/performance/{{app._id}}">性能</a>
                 / <a data-ng-href="#!/apps/exception/{{app._id}}">异常</a>
-                <span data-ng-show="app.toggleOpenUB">/ <a data-ng-href="#!/apps/behavior/{{app._id}}">行为</a></span>
+                <span data-ng-show="app.config.behavior">/ <a data-ng-href="#!/apps/behavior/{{app._id}}">行为</a></span>
             </td>
             <td data-ng-show="showName">{{ app.user.displayName }}</td>
             <td>{{ app.type }}</td>

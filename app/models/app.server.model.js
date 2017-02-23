@@ -59,10 +59,6 @@ var AppSchema = new Schema({
 		default: '',
 		match: [/.+\@.+\..+/, '请填写一个有效的邮箱地址']
 	},
-	toggleOpenUB: {
-		type: Number,
-		default: 0
-	},
 	config:{
 		exception: {
 			type: Boolean,

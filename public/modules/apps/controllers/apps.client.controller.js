@@ -10,6 +10,31 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         $scope.type = 'java';
         $scope.types = ['java', 'node.js', 'android', 'ios'];
 
+        $scope.isPanelOpen ={
+            performance: false,
+            exception: false,
+            ui: false,
+            behavior: false
+        };
+        $scope.togglePanelOpen = function (type) {
+            $scope.isPanelOpen[type] = !$scope.isPanelOpen[type];
+        };
+
+        $scope.config = {
+            performance: false,
+            exception: false,
+            ui: false,
+            behavior: false
+        }
+
+        $scope.selectItems = [{
+            label: '关闭',
+            value: false
+        },{
+            label: '开启',
+            value: true
+        }];
+
         $scope.deadLinkInterval = 3600000;
         $scope.deadLinkIntervals = [
             {label: '30分钟',value: 1800000},
@@ -30,13 +55,6 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             {label: '1天', value: 86400000},
             {label: '1周', value: 604800000},
             {label: '1个月', value: 2592000000}
-        ];
-
-        //是否开启用户行为监测
-        $scope.toggleOpenUB = 0;
-        $scope.toggleOpenUBs = [
-            {label: '开启', value:1},
-            {label: '关闭', value: 0}
         ];
 
         $scope.alarmtype = [1, 2, 3, 4];
@@ -109,7 +127,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 alarmtype: this.alarmtype,
                 alarmInterval: this.alarmInterval,
                 alarmEmail: this.alarmEmail,
-                toggleOpenUB: this.toggleOpenUB
+                config: this.config
             });
 
             // Redirect after save
