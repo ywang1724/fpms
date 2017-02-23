@@ -125,7 +125,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 $scope.deadLinkInterval = 3600000;
                 $scope.alarmInterval = 900000;
                 $scope.alarmEmail = '';
-                $scopt.toggleOpenUB = 0;
+                $scope.toggleOpenUB = 0;
             }, function (errorResponse) {
                 $scope.error = errorResponse.data.message;
             });

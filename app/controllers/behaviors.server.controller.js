@@ -50,6 +50,7 @@ exports.create = function (req, res) {
       }
     },
     fileName = '_ub.gif';
+
   res.sendFile(fileName, options, function (err) {
     if (err) {
       if (err.code === 'ECONNABORT' && res.statusCode === 304) {

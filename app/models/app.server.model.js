@@ -62,6 +62,24 @@ var AppSchema = new Schema({
 	toggleOpenUB: {
 		type: Number,
 		default: 0
+	},
+	config:{
+		exception: {
+			type: Boolean,
+			default:true
+		},
+		performance: {
+			type: Boolean,
+			default: true
+		},
+		behaviour:{
+            type: Boolean,
+            default: false
+		},
+		ui:{
+            type: Boolean,
+            default: false
+		}
 	}
 });
 
