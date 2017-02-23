@@ -1181,6 +1181,11 @@
 .fpms-nav .fpms-mode-switch .fpms-mode.fpms-mode-active{
     color:#258fb8
 }
+.fpms-nav .fpms-exit{
+    float: right;
+    line-height: 50px;
+    color: green;
+}
 body{
     margin-top:50px!important;
 }
