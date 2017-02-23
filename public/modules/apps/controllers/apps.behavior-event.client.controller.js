@@ -35,8 +35,36 @@ angular.module('apps').controller('AppsBehaviorEventController', ['$scope', '$st
       });
     };
 
+    $scope.dtOptions_customEvents = DTOptionsBuilder
+      .newOptions()
+      .withLanguage({
+        'sLengthMenu': '每页显示 _MENU_ 条数据',
+        'sInfo': '从 _START_ 到 _END_ /共 _TOTAL_ 条数据',
+        'sInfoEmpty': '没有数据',
+        'sInfoFiltered': '(从 _MAX_ 条数据中检索)',
+        'sZeroRecords': '没有检索到数据',
+        'sSearch': '检索:',
+        'oPaginate': {
+          'sFirst': '首页',
+          'sPrevious': '上一页',
+          'sNext': '下一页',
+          'sLast': '末页'
+        }
+      })
+      // Add Bootstrap compatibility
+      .withBootstrap()
+      .withBootstrapOptions({
+        pagination: {
+          classes: {
+            ul: 'pagination pagination-sm'
+          }
+        }
+      })
+      .withOption('responsive', true)
+      .withOption('bAutoWidth', false);
+
     $scope.redirect = function()  {
-      location.href = $('#redirectURL').val();
+      location.href = 'http://' + $scope.app.host;
       document.cookie = 'customEvent=true';
     };
 
@@ -98,6 +126,7 @@ angular.module('apps').controller('AppsBehaviorEventController', ['$scope', '$st
         });
     };
 
+    
     /**
      * 展示漏斗图
      */

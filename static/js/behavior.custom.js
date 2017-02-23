@@ -186,8 +186,8 @@
     var modal = document.getElementById('ubas-modal');
     tooltip.style.display = 'inline';
     modal.style.display = 'block';
-    modal.style.width = document.body.offsetWidth + 'px';
-    modal.style.height = document.body.offsetHeight + 'px';
+    modal.style.width = document.body.scrollWidth  + 'px';
+    modal.style.height = document.body.scrollHeight + 'px';
 
 
     var ttHeight = tooltip.offsetHeight;
@@ -211,7 +211,14 @@
     console.log(cssPath(element));
     console.log(nodeText(element));
 
-    // removeElmentEvent(e);
+    if(e && e.preventDefault) {
+      //阻止默认浏览器动作(W3C)
+      e.stopPropagation();
+    } else {
+      //IE中阻止函数器默认动作的方式
+      window.event.returnValue = false;
+    }
+    //removeElmentEvent(e);
     return false;
   }
 
@@ -369,7 +376,6 @@
   }
 
   function exitCustom() {
-    document.cookie='customEvent=false';
     window.location.href= document.getElementById("feException").src.replace('bookie.js','#!/apps/behavior');
   }
 

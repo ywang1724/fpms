@@ -22,6 +22,7 @@ module.exports = function(app) {
   // 事件分析
   app.route('/custom/:appId').get(behaviors.customList);
   app.route('/funnel').get(behaviors.funnel);
+  app.route('/customEvent').delete(behaviors.deleteCustomEvent);
 
   // Finish by binding the Timing middleware
   app.param('behaviorId', behaviors.behaviorByID);

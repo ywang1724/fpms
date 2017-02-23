@@ -7,13 +7,15 @@
 
 //Apps controller
 angular.module('apps').controller('AppsBehaviorController', ['$scope', '$stateParams', '$location',
-  'Authentication', 'Apps', 'DTOptionsBuilder', '$http', '$timeout', 'PageService',
-  function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService) {
+  'Authentication', 'Apps', 'DTOptionsBuilder', '$http', '$timeout', 'PageService','SweetAlert',
+  function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService,SweetAlert) {
     $scope.authentication = Authentication;
 
     $scope.initBehavior = function () {
+      document.cookie = 'customEvent=false'; //置换customEvent，使得用户正常访问被监控网站时不会出现绑定组件
       $scope.showData = true;
       $scope.customEvents = [{'_id':1,'name':'请选择指定事件'}];
+      $scope.customEventsListData = [];
       $scope.selectEvent = $scope.customEvents[0];
       $scope.app = Apps.get({
         appId: $stateParams.appId
@@ -159,25 +161,62 @@ angular.module('apps').controller('AppsBehaviorController', ['$scope', '$statePa
               } else {
                 $scope.showData = false;
               }
-            })
+            });
+
+            $http.get('custom/' + $stateParams.appId)
+              .success(function (data) {
+                $scope.customEvents=[];
+                $scope.customEventsListData=[];
+                for (var i=0;i<data.length;i++) {
+                  $scope.customEvents.push({'_id':data[i]._id,'name':data[i].name});
+                  $scope.customEventsListData.push({
+                    'id':data[i]._id,
+                    'name': data[i].name,
+                    'url':data[i].url,
+                    'cssPath':data[i].cssPath,
+                    'text':data[i].text,
+                  });
+                }
+              })
           };
 
           $scope.refrashChart = getBehaviors;
           getBehaviors();
+
+          /**
+           * 删除用户自定义事件
+           */
+          $scope.deleteCustomEvent = function (e) {
+            SweetAlert.swal({
+                title: '确定删除该事件?',
+                text: '删除后将丢失该事件监控数据!',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#DD6B55',
+                confirmButtonText: '确定，删掉它!',
+                cancelButtonText: '不删，考虑一下!',
+                closeOnConfirm: false,
+                closeOnCancel: false
+              },
+              function (isConfirm) {
+                if (isConfirm) {
+                  //删除应用代码
+                  $http.delete('/customEvent?id='+e.target.id)
+                    .success(function (result) {
+                      if(result._id) {
+                        SweetAlert.swal('删除成功!', '该页面已被成功删除.', 'success');
+                        getBehaviors();
+                      }
+                    })
+                } else {
+                  SweetAlert.swal('删除取消!', '该应用仍然存在 :)', 'error');
+                }
+              });
+
+          }
         }
       });
-
-      $http.get('custom/' + $stateParams.appId)
-        .success(function (data) {
-          for (var i=0;i<data.length;i++) {
-            $scope.customEvents.push({'_id':data[i]._id,'name':data[i].name});
-          }
-
-        })
-
     };
-
-
 
     $scope.back = function () {
       window.history.back();

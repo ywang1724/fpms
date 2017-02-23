@@ -231,11 +231,25 @@ exports.statisticList = function (req, res) {
 
 }
 
+exports.deleteCustomEvent = function (req, res) {
+  CustomEvent.findByIdAndRemove(req.query.id)
+    .exec(function (err,customEvent) {
+      if(err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        })
+      } else {
+        res.jsonp(customEvent);
+      }
+
+  })
+}
+
 /**
  * 获取用户自定义规则
  */
 exports.customList = function (req, res) {
-  CustomEvent.find({following: req.app.id}, '_id name').exec(function (err, customEvent) {
+  CustomEvent.find({following: req.app.id}).exec(function (err, customEvent) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
