@@ -13,6 +13,10 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
 
     $scope.nodesDetail = [];
 
+    /**
+     * 受访页面datatable配置
+     * @type {any}
+     */
     $scope.dtOptions_page = DTOptionsBuilder
       .newOptions()
       .withLanguage({
@@ -40,35 +44,6 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
       })
       .withOption('responsive', true)
       .withOption('bAutoWidth', false);
-
-    $scope.dtOptions_path = DTOptionsBuilder
-      .newOptions()
-      .withLanguage({
-        'sLengthMenu': '每页显示 _MENU_ 条数据',
-        'sInfo': '从 _START_ 到 _END_ /共 _TOTAL_ 条数据',
-        'sInfoEmpty': '没有数据',
-        'sInfoFiltered': '(从 _MAX_ 条数据中检索)',
-        'sZeroRecords': '没有检索到数据',
-        'sSearch': '检索:',
-        'oPaginate': {
-          'sFirst': '首页',
-          'sPrevious': '上一页',
-          'sNext': '下一页',
-          'sLast': '末页'
-        }
-      })
-      // Add Bootstrap compatibility
-      .withBootstrap()
-      .withBootstrapOptions({
-        pagination: {
-          classes: {
-            ul: 'pagination pagination-sm'
-          }
-        }
-      })
-      .withOption('responsive', true)
-      .withOption('bAutoWidth', false);
-
 
     var data = [
       {
@@ -704,7 +679,9 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
         }]
       };
 
-    //highcharts搜索引擎配置
+    /**
+     * highcharts搜索引擎配置
+     */
     $scope.searchEngineConfig = {
         options:{
           chart: {
@@ -735,7 +712,9 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
 
       };
 
-    //highmaps配置
+    /**
+     * highmaps地理位置配置
+     */
     $scope.mapsConfig = {
       options: {
         chart:{},
@@ -775,7 +754,9 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
       ]
     }
 
-    // highcharts浏览器终端配置
+    /**
+     * highcharts浏览器终端配置
+     */
     $scope.browserConfig = {
       options:{
         chart: {
@@ -804,26 +785,18 @@ angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$sta
         name: '占比',
         colorByPoint: true,
         innerSize: '50%',
-        data: [
-          ['Firefox',   10.38],
-          ['IE',       56.33],
-          ['Chrome', 24.03],
-          ['Safari',    4.77],
-          ['Opera',     0.91],
-        ]
+        data: []
       }]
     };
 
     $scope.$on('chartConfigEvent', function (e, args) {
       $scope.originConfig.series[0].data = args.origin;
       $scope.originConfig.options.chart.width = $('.panel-heading').width();
-      $scope.searchEngineConfig.series[0].data = args.browser;
+      $scope.searchEngineConfig.series[0].data = args.searchEngine;
       $scope.searchEngineConfig.options.chart.width = $('.panel-heading').width();
-
-      $scope.mapsConfig.options.chart.width = $('.panel-heading').width();
-
+      $scope.browserConfig.series[0].data=args.browser;
       $scope.browserConfig.options.chart.width = $('.panel-heading').width();
-
+      $scope.mapsConfig.options.chart.width = $('.panel-heading').width();
     });
 
     /**
