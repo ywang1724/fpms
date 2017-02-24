@@ -6,7 +6,7 @@ var config = require("./config");
 Grid.mongo = mongoose.mongo; 
 
 require("./models/mon"); // 引入Model
-require("./models/task");
+require("./models/task"); // 引入Task
 
 mongoose.Promise = global.Promise; // 设置mongoose的Promise为原生自带的Promise
 

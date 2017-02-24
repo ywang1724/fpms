@@ -1,9 +1,27 @@
 'use strict';
 
 // Apps controller
+angular.module('apps').filter("formatTime", function(){
+    return function(inputData) {
+        var standard = [
+            {label: '30分钟',value: 1800000},
+            {label: '1个小时', value: 3600000},
+            {label: '半天', value: 43200000},
+            {label: '1天', value: 86400000},
+            {label: '1周', value: 604800000},
+            {label: '1个月', value: 2592000000}
+        ];
+        for(var i = 0; i < standard.length; i++) {
+            if(standard[i].value == inputData){
+                return standard[i].label;
+            }
+        }
+        return inputData + "毫秒";
+    }
+})
 angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$window', '$location', 'Authentication', 'Tasks', 'Mons',
-    'DTOptionsBuilder', '$http', '$timeout', 'PageService', 'SweetAlert',
-    function ($scope, $stateParams, $window, $location, Authentication, Tasks, Mons, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert) {
+    'DTOptionsBuilder', '$http', '$timeout', 'PageService', 'SweetAlert', 'ModalService',
+    function ($scope, $stateParams, $window, $location, Authentication, Tasks, Mons, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert, ModalService) {
         $scope.authentication = Authentication;
         $scope.uiType = {
             'add': '添加DOM节点',
@@ -17,6 +35,14 @@ angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$w
             'info': '页面信息.json',
             'tree': 'DOM树信息.json'
         };
+        $scope.monitoringIntervals = [
+            {label: '30分钟',value: 1800000},
+            {label: '1个小时', value: 3600000},
+            {label: '半天', value: 43200000},
+            {label: '1天', value: 86400000},
+            {label: '1周', value: 604800000},
+            {label: '1个月', value: 2592000000}
+        ];
         $scope.create = function () {
             // 创建新的任务
             var task = new Tasks({
@@ -127,29 +153,28 @@ angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$w
             $window.open("/mon/getFile?fileId=" + id, '_blank');
         }
 
-        $scope.modifyInterval = function(){
-            SweetAlert.swal({
-                    title: "请输入监控时间间隔（ms）",
-                    type: "input",
-                    showCancelButton: true,
-                    closeOnConfirm: false,
-                    animation: "slide-from-top",
-                    inputPlaceholder: "请输入"
+        $scope.modifyInterval = function(monitoringIntervals, task){
+            ModalService.showModal({
+                templateUrl: 'modules/apps/views/ui/modify-interval.client.view.html',
+                inputs: {
+                    title: '修改监控时间间隔'
                 },
-                function(inputValue){
-                    if (inputValue === false) return false;
-
-                    if (inputValue === "" || !Number.isInteger(parseInt(inputValue))) {
-                        swal.showInputError("输入不合法，请检查后输入");
-                        return false;
+                controller: function($scope, close){
+                    var _monitoringInterval = task.monitoringInterval;
+                    $scope.monitoringIntervals = monitoringIntervals;
+                    $scope.task = task;
+                    $scope.ok = function (result){
+                        $scope.task.$update();
+                        close(100);
+                    };
+                    $scope.cancel = function(){
+                        task.monitoringInterval = _monitoringInterval;
+                        close(100);
                     }
-                    $scope.task.monitoringInterval = inputValue;
-                    $scope.task.$update(function () {
-                        swal("监控时间间隔更新成功!", "新的监控时间间隔为：" + inputValue + "ms", "success");
-                    }, function (errorResponse) {
-                        swal('更新失败!', '服务器开了小差 :)', 'error');
-                    });
-                });
+                }
+            }).then(function (modal) {
+                modal.element.show();
+            });
         }
         //datatble配置
         $scope.dtPageOptions = DTOptionsBuilder

@@ -10,18 +10,18 @@ var mongoose = require('mongoose'),
     mime = require("mime");
 
 /**
- * Create a App
+ * Create a MonitoringResult
  */
 
 var gridfs;
 /**
- * Show the current App
+ * Show the current MonitoringResult
  */
 var read = function (req, res) {
     res.jsonp(req.mon);
 };
 /**
- * List of Tasks
+ * List of MonitoringResults
  */
 var list = function (req, res) {
     var taskId = req.query.taskId;
@@ -52,7 +52,7 @@ var getFileById = function(req, res) {
     })
 }
 /**
- * App middleware
+ * MonitoringResult middleware
  */
 var monByID = function (req, res, next, id) {
     Mon.findById(id).populate('app', 'user').exec(function (err, mon) {

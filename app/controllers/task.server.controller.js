@@ -17,16 +17,26 @@ var mongoose = require('mongoose'),
 var gridfs;
 var create = function (req, res) {
     var task = new Task(req.body);
-    req.task = task;
-    task.save(function (err) {
-        if (err) {
+    App.findById(task.app, function (err, app) {
+        if(err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
         } else {
-            res.jsonp(task);
+            task.monitoringInterval = app.uiInterval;
+            req.task = task;
+            task.save(function (err) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                } else {
+                    res.jsonp(task);
+                }
+            });
         }
-    });
+    })
+
 };
 
 /**

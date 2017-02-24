@@ -3,10 +3,10 @@ var config = require("../config");
 
 /**
  * 存储文件到Gridfs
- * @param gridfs
- * @param filename
- * @param fileUri
- * @returns {Promise}
+ * @param gridfs 访问gridfs的引用
+ * @param filename 文件名
+ * @param fileUri 文件路径
+ * @returns {Promise} 返回Promsie
  */
 exports.saveToGridFS = function (gridfs, filename, fileUri) {
     return new Promise(function (resolve, reject) {
@@ -26,10 +26,10 @@ exports.saveToGridFS = function (gridfs, filename, fileUri) {
 
 /**
  * 从Gridfs中读取文件
- * @param gridfs
- * @param id
- * @param filepath
- * @returns {Promise}
+ * @param gridfs 访问gridfs的引用
+ * @param id 文件ID
+ * @param filepath 文件路径
+ * @returns {Promise} 返回Promsie
  */
 exports.readFromGridFS = function (gridfs, id, filepath) {
     return new Promise(function (resolve, reject) {

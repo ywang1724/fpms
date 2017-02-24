@@ -19,7 +19,7 @@
             </div>
             <div class="col-xs-12 col-md-6 view-container">
                 <span class="col-xs-5 text-right key">监控时间间隔：</span>
-                <span class="col-xs-7 text-left">{{task.monitoringInterval}} <span class="label label-danger">ms</span> <button class="btn btn-info btn-sm" ng-click="modifyInterval()">修改</button></span>
+                <span class="col-xs-7 text-left">{{task.monitoringInterval | formatTime}} <button style="margin-left: 50px;" class="btn btn-info btn-sm" ng-click="modifyInterval(monitoringIntervals, task)">修改</button></span>
             </div>
             <div class="col-xs-12 col-md-6 view-container">
                 <span class="col-xs-5 text-right key">创建时间：</span>

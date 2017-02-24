@@ -8,7 +8,12 @@ var schedule = require('node-schedule'),
     sendMail = require("../controllers/mails.server.controller").sendMail,
     _ = require("lodash");
 
-
+/**
+ *
+ * @param channel 消息队列通道
+ * @param queueName 消息队列名称
+ * @returns {Function} 返回配置好的函数
+ */
 function sendMessageUtil(channel, queueName) {
     return function (message) {
         console.log('======================= send message ========================');
@@ -16,14 +21,20 @@ function sendMessageUtil(channel, queueName) {
         channel.sendToQueue(queueName, new Buffer(JSON.stringify(message), "utf-8"), {persistent: true});
     }
 }
-
+/**
+ *
+ * @param channel 消息队列通道
+ */
 function generateTask(channel) {
     var addTask = sendMessageUtil(channel, 'phantomjs_task_queue'),
         rule = new schedule.RecurrenceRule(); // 创建定时任务规则
+    //
+    // rule.second = 0;
+    // rule.minute = 0;
+    // rule.hour = [0, 30];// 每个小时的0分，30分执行一次，也就是美半小时执行一次任务
+    rule.second = _.range(0, 59, 5); // 测试用
 
-    // rule.second = [0, 30]; // 每个小时的0分，30分执行一次，也就是美半小时执行一次任务
-    rule.second = _.range(0, 59, 5);
-    var myjob = schedule.scheduleJob(rule, function () { // 启动任务
+    var generateTaskJob = schedule.scheduleJob(rule, function () { // 启动任务
         var now = new Date();
         Task.find({}, function (err, tasks) {
             if (err) console.error(err.toString())
@@ -39,14 +50,17 @@ function generateTask(channel) {
         });
     });
 }
-
+/**
+ *
+ * @param gridfs 访问gridfs
+ */
 function clean(gridfs) {
     var rule = new schedule.RecurrenceRule(); // 创建定时任务规则
-    // rule.minute = 0;
-    // rule.hour = 0;
-    // rule.month = [1, 15];
-    rule.second = _.range(0, 59, 5);
-    var job = schedule.scheduleJob(rule, function () { // 启动任务
+    rule.minute = 0;
+    rule.hour = 0;
+    rule.month = [1, 15]; // 半个月执行一次
+    // rule.second = _.range(0, 59, 5); // 测试用
+    var cleanJob = schedule.scheduleJob(rule, function () { // 启动任务
         Mon.find({"timestamp": {"$lt": Date.now() - 1 * 60 * 1000}}, function (err, mons) { // 移除一个月之前的old data
             _.forEach(mons, function (mon) {
                 mon.data && _.forEach(mon.data.toObject(), function (value, key) {
@@ -61,6 +75,11 @@ function clean(gridfs) {
         })
     });
 }
+/**
+ *
+ * @param channel 消息队列通道
+ * @param gridfs 访问gridfs
+ */
 function processData(channel, gridfs) {
     var queue = 'phantomjs_response_queue';// 声明消息队列名
     channel.assertQueue(queue, {durable: true}); // 设置消息队列
@@ -97,9 +116,9 @@ module.exports = function (gridfs) {
     return function () {
         amqp.connect(config.rabbitURI, function (err, conn) { // 连接Rabbit MQ
             conn.createChannel(function (err, channel) { // 创建通道
-                generateTask(channel);
-                processData(channel, gridfs);
-                // clean(gridfs);
+                generateTask(channel); // 生成任务
+                processData(channel, gridfs); // 处理PhantomJS server返回的数据
+                clean(gridfs); // 执行清除old data 任务
             })
         });
     }

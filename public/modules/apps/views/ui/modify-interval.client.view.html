@@ -1,0 +1,24 @@
+<div class="modal email-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="cancel()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{{ title }}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="col-xs-6">监控时间间隔：</div>
+                <div class="col-xs-6">
+                    <select id="monitoringInterval" name="monitoringInterval" data-ng-model="task.monitoringInterval" ng-options="monitoringInterval.value as monitoringInterval.label for monitoringInterval in monitoringIntervals"
+                            class="form-control" required>
+                    </select>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" ng-click="ok()" class="btn btn-primary" data-dismiss="modal">OK</button>
+                <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

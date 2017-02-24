@@ -7,7 +7,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 /**
- * Monitor Schema
+ * MonitoringResult Schema
  */
 var MonSchema = new Schema({
     taskId:{
