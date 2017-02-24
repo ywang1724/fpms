@@ -83,11 +83,14 @@ exports.statisticList = function (req, res) {
   if(req.param('dateNumber')) {
     console.log('dateNumber')
   } else {
-    var result = {};
-    result.numData= [];
-    result.browser = [];
-    result.origin = [];
-    result.listData = [];
+    var result = {
+      numData:[],
+      origin:[],
+      searchEngine:[],
+      listData:[],
+      mapData:[],
+      browser:[]
+    };
 
     /**
      * 访问量
@@ -150,11 +153,7 @@ exports.statisticList = function (req, res) {
             }
           }
         }
-        result.browser.push(['谷歌', num1]);
-        result.browser.push(['百度', num2]);
-        result.browser.push(['360搜索', num3]);
-        result.browser.push(['搜狗搜索', num4]);
-        result.browser.push(['神马搜索', num5]);
+        result.searchEngine.push(['谷歌', num1],['百度', num2],['360搜索', num3],['搜狗搜索', num4],['神马搜索', num5]);
       }
     });
 
@@ -183,15 +182,13 @@ exports.statisticList = function (req, res) {
                 num4++;
               }
             }
-            result.origin.push(['直接输入网址或书签', num1]);
-            result.origin.push(['站内来源', num2]);
-            result.origin.push(['搜索引擎', num3]);
-            result.origin.push(['其他外部链接', num4]);
+            result.origin.push(['直接输入网址或书签', num1],['站内来源', num2],['搜索引擎', num3],['其他外部链接', num4]);
           }
         });
 
     /**
      * 关键字
+     * 未使用
      */
     var promise4 = Behavior.find({
       following: {$in: pages},
@@ -222,10 +219,34 @@ exports.statisticList = function (req, res) {
           result.listData.push(behaviors[i]);
         }
       }
-
     });
 
-    Q.all([promise1, promise2, promise3,promise4,promise5]).then(function () {
+    /**
+     * 终端详情
+     */
+    var promise6 = Behavior.find({
+      following: {$in: pages},
+      timestamp: {$gte: reqData.fromDate, $lt: reqData.untilDate}
+      }).exec(function (err, behaviors) {
+          if(err) {
+            console.log(errorHandler.getErrorMessage(err));
+          } else {
+            var chromeNum = 0,operaNum=0,ieNum=0,safariNum=0,firefoxNum=0;
+            for(var i=0; i<behaviors.length;i++) {
+              switch (behaviors[i].browser) {
+                case 'chrome': chromeNum++;break;
+                case 'opera': operaNum++;break;
+                case 'ie': ieNum++;break;
+                case 'safari': safariNum++;break;
+                case 'firefox': firefoxNum++;break;
+              }
+            }
+            result.browser.push(['Chrome', chromeNum],['Opera', operaNum],['IE', ieNum],['Safari', safariNum],['Firefox',firefoxNum]);
+          }
+        });
+
+
+    Q.all([promise1, promise2, promise3,promise4,promise5,promise6]).then(function () {
       res.json(result);
     })
   }
@@ -648,6 +669,6 @@ function getBrowserType(ua) {
   else if (ua.indexOf('msie') != -1) return "ie";
   else if (ua.indexOf('safari') != -1) return "safari";
   else if (ua.indexOf('firefox') != -1) return "firefox";
-  else if (ua.indexOf('gecko') != -1) return "gecko";
+  else if (ua.indexOf('gecko') != -1) return "firefox";
   else return "ie";
 }

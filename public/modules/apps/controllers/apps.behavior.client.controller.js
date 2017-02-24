@@ -153,6 +153,7 @@ angular.module('apps').controller('AppsBehaviorController', ['$scope', '$statePa
                 $scope.$broadcast('chartConfigEvent',{
                   numData:result.numData,
                   origin: result.origin,
+                  searchEngine: result.searchEngine,
                   browser: result.browser
                 });
                 $scope.listData = result.listData;
