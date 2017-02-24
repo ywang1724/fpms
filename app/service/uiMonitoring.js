@@ -29,10 +29,10 @@ function generateTask(channel) {
     var addTask = sendMessageUtil(channel, 'phantomjs_task_queue'),
         rule = new schedule.RecurrenceRule(); // 创建定时任务规则
     //
-    // rule.second = 0;
-    // rule.minute = 0;
-    // rule.hour = [0, 30];// 每个小时的0分，30分执行一次，也就是美半小时执行一次任务
-    rule.second = _.range(0, 59, 5); // 测试用
+    rule.second = 0;
+    rule.minute = 0;
+    rule.hour = [0, 30];// 每个小时的0分，30分执行一次，也就是美半小时执行一次任务
+    // rule.second = _.range(0, 59, 5); // 测试用
 
     var generateTaskJob = schedule.scheduleJob(rule, function () { // 启动任务
         var now = new Date();

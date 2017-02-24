@@ -26,7 +26,7 @@ module.exports = function (gridfs, db) {
 
             ch.prefetch(1); // 设置 RabbitMQ 每次接受的消息不超过1条
 
-            console.log("[*] Waiting for messages in %s. To exit press CTRL+C", queue);
+            console.log("等待接受消息", queue);
 
             var sendMessage = util.sendMessage(ch, response_queue);
 
@@ -37,9 +37,7 @@ module.exports = function (gridfs, db) {
                 Task.findById(taskId).then(function (task) {
                     config.phantomConfig.walk.excludeSelectors = task.diffRules;
                     config.phantomConfig.domRules = task.domRules;
-                    console.log("===================== domRules ============");
                     console.log(config.phantomConfig.domRules);
-                    console.log("===================== task ============");
                     console.log(task);
                     var monitor = new Monitor(task.url, config.phantomConfig);
                     monitor.on('debug', function (data) {
@@ -170,7 +168,7 @@ module.exports = function (gridfs, db) {
                                 sendMessage({
                                     taskId: taskId,
                                     status: -1,
-                                    errInfo: monitor.lEEog.error
+                                    errInfo: monitor.log.error
                                 });
                                 ch.nack(msg); // 异常出现，将消息返回给队列
                                 return;
@@ -211,7 +209,7 @@ module.exports = function (gridfs, db) {
                                     }
                                 })
                                 .then(function () {
-                                    monitor.diff(basePage, timestamp, function (code) {
+                                    monitor.diff(basePage, timestamp, function (code) { // 开始对比页面差异
                                         console.log("========== diff page ===========\n");
                                         if (!monitor.log.info[0]) {
                                             console.log("页面没有变化！\n");
@@ -248,22 +246,22 @@ module.exports = function (gridfs, db) {
 
                                         }
                                         Promise.all(files.map(function (file) {
-                                            return util.saveToGridFS(gridfs, file.filename, file.fileUri)
+                                            return util.saveToGridFS(gridfs, file.filename, file.fileUri) // 存储对比文件到Mongodb
                                         }))
-                                            .then(function (files) {
-                                                // res.json(files);
-                                                var hasException = !(count.add == 0 &&
-                                                    count.remove == 0 &&
-                                                    count.style == 0 &&
-                                                    count.text == 0) || domException.length;
-                                                return Promise.all([
-                                                    (new Mon({
-                                                        taskId: taskId,
-                                                        timestamp: timestamp,
-                                                        hasException: hasException,
-                                                        data: {
-                                                            tree: files[0]._id,
-                                                            info: files[1]._id,
+                                                            .then(function (files) {
+                                                                var hasException = !(count.add == 0 &&
+                                                                    count.remove == 0 &&
+                                                                    count.style == 0 &&
+                                                                    count.text == 0) || domException.length;
+                                                                return Promise.all([
+                                                                    // 文件存储完毕后，新建 监控结果对象，存入数据库。
+                                                                    (new Mon({
+                                                                        taskId: taskId,
+                                                                        timestamp: timestamp,
+                                                                        hasException: hasException,
+                                                                        data: {
+                                                                            tree: files[0]._id,
+                                                                            info: files[1]._id,
                                                             screenShot: files[2]._id,
                                                             diffPic: (files[3] && files[3]._id) || null
                                                         },
@@ -274,24 +272,27 @@ module.exports = function (gridfs, db) {
                                                 ])
                                             })
                                             .then(function (data) {
+                                                // 处理完毕，将处理结果发送到消息队列，等待数据处理程序处理。
                                                 sendMessage({
                                                     taskId: taskId,
                                                     status: 0,
                                                     mon: data[0]
                                                 });
-                                                ch.ack(msg);
+                                                ch.ack(msg); // 确认消息接受并成功处理了。
                                             })
                                             .catch(function (err) {
+                                                // 异常出现，上报异常信息。
                                                 sendMessage({
                                                     taskId: taskId,
                                                     status: -1,
                                                     errInfo: err.toString()
                                                 });
-                                                ch.ack(msg);
+                                                ch.ack(msg);// 确认消息接受并成功处理了。
                                             })
                                     });
                                 })
                                 .catch(function (err) {
+                                    // 异常出现，上报异常信息。
                                     sendMessage({
                                         taskId: taskId,
                                         status: -1,
@@ -309,7 +310,7 @@ module.exports = function (gridfs, db) {
                     });
                     ch.ack(msg);
                 })
-            }, {noAck: false});
+            }, {noAck: false}); // 启用消息确认机制
         });
     });
 }
