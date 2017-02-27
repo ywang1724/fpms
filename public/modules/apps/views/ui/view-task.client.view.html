@@ -136,10 +136,11 @@
                         <span class="label label-success" ng-hide="mon.hasException">无</span>
                     </td>
                     <td class="text-center"><code>{{ mon.domExceptions.length}}</code></td>
-                    <td class="text-center">
+                    <td class="">
                         <span ng-repeat="(key, data) in mon.uiExceptions">
-                            <code>{{uiType[key]}} : {{data}}</code>
+                            <code ng-if="data">{{uiType[key]}} : {{data}}</code>
                         </span>
+                        <code ng-if="!mon.uiExceptions.add && !mon.uiExceptions.remove && !mon.uiExceptions.style && !mon.uiExceptions.text">无</code>
                     </td>
                 </tr>
                 </tbody>
