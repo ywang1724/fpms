@@ -24,6 +24,6 @@ module.exports = {
         },
         domRules: ["domrules"]
     },
-    rabbitURI: "amqp://localhost",
-    mongodbURI: "mongodb://192.168.88.34/fpms"
+    rabbitURI:  process.env.rabbitURI || "amqp://localhost",
+    mongodbURI:  process.env.mongodbURI || "mongodb://192.168.88.34/fpms"
 }

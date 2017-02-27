@@ -3294,7 +3294,7 @@ angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$w
                 inputs: {
                     title: '修改监控时间间隔'
                 },
-                controller: function($scope, close){
+                controller: ['$scope', 'close', function($scope, close){
                     var _monitoringInterval = task.monitoringInterval;
                     $scope.monitoringIntervals = monitoringIntervals;
                     $scope.task = task;
@@ -3306,7 +3306,7 @@ angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$w
                         task.monitoringInterval = _monitoringInterval;
                         close(100);
                     }
-                }
+                }]
             }).then(function (modal) {
                 modal.element.show();
             });
@@ -3726,14 +3726,14 @@ angular.module('mails').controller('MailsController', ['$scope', '$sce', '$state
 					title: '邮件详情',
 					mail: mail
 				},
-				controller: function($scope, close, title, mail){
+				controller: ['$scope', 'close', 'title', 'mail', function($scope, close, title, mail){
 					$scope.title = title;
 					$scope.mail = mail;
 					$scope.explicitlyTrustedEmailDetail = $sce.trustAsHtml(mail.content);
                     $scope.close = function (result){
 						close(result, 200);
 					};
-				}
+				}]
 			}).then(function (modal) {
 				modal.element.show();
 				modal.close.then(function (result) {

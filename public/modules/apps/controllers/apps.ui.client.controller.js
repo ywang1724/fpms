@@ -159,7 +159,7 @@ angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$w
                 inputs: {
                     title: '修改监控时间间隔'
                 },
-                controller: function($scope, close){
+                controller: ['$scope', 'close', function($scope, close){
                     var _monitoringInterval = task.monitoringInterval;
                     $scope.monitoringIntervals = monitoringIntervals;
                     $scope.task = task;
@@ -171,7 +171,7 @@ angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$w
                         task.monitoringInterval = _monitoringInterval;
                         close(100);
                     }
-                }
+                }]
             }).then(function (modal) {
                 modal.element.show();
             });
