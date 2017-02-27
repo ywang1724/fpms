@@ -1,1 +1,65 @@
-"use strict";!function(){function getPlatformInfo(){return{pathname:window.location.pathname,appHost:window.location.host,userAgent:window.navigator.userAgent,platform:window.navigator.platform}}window.reportException=function(type,message,errorurl,requrl,stack){var bookie={};bookie.occurTime=new Date,bookie.type=type,bookie.userPlatformInfo=getPlatformInfo(),bookie.message=message,bookie.errorurl=errorurl,bookie.requrl=requrl,bookie.stack=stack,console.log("sending......");var elem=document.getElementById("feException"),serverHost=elem.src.split("/bookie.js/")[0],img=new Image(1,1);img.src=serverHost+"/_fe.gif?"+encodeURIComponent(JSON.stringify(bookie))},window.onerror=function(msg,url,line,column){var stack="错误文件: "+url+"; 错误位置: 第"+line+"行，第"+column+"列.";return reportException(1,msg,url,"",stack),!0},function(XHR){var open=XHR.prototype.open,send=XHR.prototype.send;XHR.prototype.open=function(method,url,async,user,pass){this._url=url,open.call(this,method,url,async,user,pass)},XHR.prototype.send=function(data){function onReadyStateChange(){if(4==self.readyState&&404==self.status){var scripts=document.getElementsByTagName("script"),errorurl=scripts[scripts.length-1].src,msg=self._url+"的请求"+self.statusText,requrl=self._url;reportException(2,msg,errorurl,requrl,"")}oldOnReadyStateChange&&oldOnReadyStateChange()}var oldOnReadyStateChange,self=this;this._url;this.noIntercept||(this.addEventListener?this.addEventListener("readystatechange",onReadyStateChange,!1):(oldOnReadyStateChange=this.onreadystatechange,this.onreadystatechange=onReadyStateChange)),send.call(this,data)}}(XMLHttpRequest),window.addEventListener("error",function(e,url){var eleArray=["IMG","SCRIPT","LINK"],resourceMap={IMG:"图片",SCRIPT:"脚本文件",LINK:"样式文件"},ele=e.target;if(eleArray.indexOf(ele.tagName)!=-1){var url="LINK"==ele.tagName?ele.href:ele.src;console.log("地址为："+url+"的"+resourceMap[ele.tagName]+"加载失败");var msg=url.substring(url.lastIndexOf("/")+1)+"的"+resourceMap[ele.tagName]+"加载失败",errorurl=ele.baseURI,requrl=url;return reportException(3,msg,errorurl,requrl,""),!0}},!0);var jsMemoryUsageTimer,jsMemoryUsage=function(){var usedJSHeapSize=jsMemoryObj.usedJSHeapSize,totalJSHeapSize=jsMemoryObj.totalJSHeapSize;jsMemoryObj.jsHeapSizeLimit;usedJSHeapSize/totalJSHeapSize>=.85&&(console.log("内存使用过多"),clearInterval(jsMemoryUsageTimer),reportException(7,"内存使用过多，超过85%，请优化","","","内存使用过多，超过85%，请优化"))},jsMemoryObj=window.performance.memory;jsMemoryObj?jsMemoryUsageTimer=setInterval(jsMemoryUsage,2e3):console.log("不支持内存检测");var addPerformanceJS=function(document){var script=document.createElement("script");script.type="text/javascript",script.async="true";var elem=document.getElementById("feException");return script.src=elem.src.replace("bookie","rookie"),function(){document.body.appendChild(script)}}(document),addFunctionOnWindowLoad=function(callback){window.addEventListener?window.addEventListener("load",callback,!1):window.attachEvent("onload",callback)};addFunctionOnWindowLoad(addPerformanceJS)}(window);
+/**
+ * Bookie.js v0.0.1
+ * Copyright (c) 2015 xujiangwei
+ */
+
+
+/**
+ * TODO
+ * 1. 链接获取向后端传输，应该放在页面底部；
+ * 2. 与性能脚本rookie.js合并的问题；
+ * 3. DOM结构异常检测，应该放在页面底部；
+ * 4. Virtual DOM
+ * 5. XSS Attack
+ */
+
+
+"use strict";
+
+(function(){
+
+    {{'exception'}}
+    ;
+    /**
+     * 插入性能监控脚本函数&插入用户行为监测脚本 & 添加UI监控自定义规则录入脚本
+     *
+     */
+    var addOtherJS = (function (document){
+        var script   = document.createElement("script");
+        script.type  = "text/javascript";
+        script.async = 'true';
+        var elem =  document.getElementById("feException");
+        script.src   = elem.src.replace('bookie', 'rookie');
+
+        //添加用户监测脚本
+        var UBscript   = document.createElement("script");
+        UBscript.type  = "text/javascript";
+        UBscript.async = 'true';
+        UBscript.src  = elem.src.replace('bookie', 'behavior');
+        UBscript.src = UBscript.src + (document.referrer?("?referrer=" + document.referrer):'');
+
+        // 添加UI监控自定义规则录入脚本
+        var uiScript   = document.createElement("script");
+        uiScript.type  = "text/javascript";
+        uiScript.async = 'true';
+        uiScript.src   = elem.src.replace('bookie', 'uookie');
+        return function (){
+            document.body.appendChild(script);
+            document.body.appendChild(UBscript);
+            document.body.appendChild(uiScript);
+        };
+    })(document);
+
+    //兼容不同版本浏览器，并插入性能脚本
+    var addFunctionOnWindowLoad = function(callback){
+        if(window.addEventListener){
+            window.addEventListener('load',callback,false);
+        }else{
+            window.attachEvent('onload',callback);
+        }
+    };
+
+    addFunctionOnWindowLoad(addOtherJS);
+})(window);
+
+

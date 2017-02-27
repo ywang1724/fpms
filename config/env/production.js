@@ -46,9 +46,11 @@ module.exports = {
                 'public/lib/ng-clip/dest/ng-clip.min.js',
                 'public/lib/zeroclipboard/dist/ZeroClipboard.min.js',
 				'public/lib/angular-modal-service/dst/angular-modal-service.min.js',
+				'public/lib/cytoscape/dist/cytoscape.min.js',
+				'public/lib/angucomplete-alt/dist/angucomplete-alt.min.js',
 				'public/lib/sweetalert/dist/sweetalert.min.js',
-				'public/lib/angular-sweetalert/SweetAlert.min.js'
-
+				'public/lib/angular-sweetalert/SweetAlert.min.js',
+				'public/lib/moment/min/moment.min.js'
 			]
 		},
 		css: 'public/dist/application.min.css',
