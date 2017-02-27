@@ -21,7 +21,7 @@
       "script": "./app/service/phantomjs/app.js",
       "env": {
         "rabbitURI": "amqp://localhost",
-        "mongodbURI": "mongodb://192.168.88.34/fpms"
+        "mongodbURI": "mongodb://127.0.0.1/fpms"
       }
     }
   ]
