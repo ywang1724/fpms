@@ -51,12 +51,10 @@ module.exports = function (gridfs, db) {
                         tree, // tree.json ObjectId
                         tree, // tree.json ObjectId
                         info, // info.json ObjectId
-                        screenShot, // screenShot.jpg ObjectId
-                        diffPic, // diff picture ObjectId
                         domException = [], // DOM 异常
                         timestamp; // 时间戳
                     if (!task.base) { // 没有基准页面
-                        var files = ["tree.json", "info.json", "screenShot.jpg"];
+                        var files = ["tree.json", "info.json", "screenshot.jpg"];
                         monitor.capture(function (code) {
                             if (code != 0) {
                                 sendMessage({
@@ -143,8 +141,8 @@ module.exports = function (gridfs, db) {
                                     name: "info"
                                 },
                                 {
-                                    filename: "screenShot.jpg",
-                                    name: "screenShot"
+                                    filename: "screenshot.jpg",
+                                    name: "screenshot"
                                 }],
                             basePage = task.base.getTime(), // 获取基准页面时间戳
                             basePageDir, // 基准页面dir
@@ -239,7 +237,7 @@ module.exports = function (gridfs, db) {
                                             var info = JSON.parse(monitor.log.info[0])
                                             files.push({
                                                 filename: basePage + " - " + timestamp + ".jpg",
-                                                name: "screenShot",
+                                                name: "screenshot",
                                                 fileUri: info.diff.screenshot
                                             })
                                             var count = info.diff.count;
@@ -248,20 +246,20 @@ module.exports = function (gridfs, db) {
                                         Promise.all(files.map(function (file) {
                                             return util.saveToGridFS(gridfs, file.filename, file.fileUri) // 存储对比文件到Mongodb
                                         }))
-                                                            .then(function (files) {
-                                                                var hasException = !(count.add == 0 &&
-                                                                    count.remove == 0 &&
-                                                                    count.style == 0 &&
-                                                                    count.text == 0) || domException.length;
-                                                                return Promise.all([
-                                                                    // 文件存储完毕后，新建 监控结果对象，存入数据库。
-                                                                    (new Mon({
-                                                                        taskId: taskId,
-                                                                        timestamp: timestamp,
-                                                                        hasException: hasException,
-                                                                        data: {
-                                                                            tree: files[0]._id,
-                                                                            info: files[1]._id,
+                                            .then(function (files) {
+                                                var hasException = !(count.add == 0 &&
+                                                    count.remove == 0 &&
+                                                    count.style == 0 &&
+                                                    count.text == 0) || domException.length;
+                                                return Promise.all([
+                                                    // 文件存储完毕后，新建 监控结果对象，存入数据库。
+                                                    (new Mon({
+                                                        taskId: taskId,
+                                                        timestamp: timestamp,
+                                                        hasException: hasException,
+                                                        data: {
+                                                            tree: files[0]._id,
+                                                            info: files[1]._id,
                                                             screenShot: files[2]._id,
                                                             diffPic: (files[3] && files[3]._id) || null
                                                         },
