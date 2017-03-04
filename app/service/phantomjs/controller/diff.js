@@ -55,14 +55,14 @@ module.exports = function (gridfs, db) {
                         timestamp; // 时间戳
                     if (!task.base) { // 没有基准页面
                         var files = ["tree.json", "info.json", "screenshot.jpg"];
-                        monitor.capture(function (code) {
-                            if (code != 0) {
+                        monitor.capture(function (code) { // 截图
+                            if (code != 0) { // 异常处理
                                 sendMessage({
                                     taskId: taskId,
                                     status: -1,
                                     errInfo: monitor.log.error
                                 });
-                                ch.ack(msg);
+                                ch.ack(msg); // 消息确认应答
                                 return;
                             }
                             monitor.log.debug.forEach(function (value, index) {
@@ -70,23 +70,23 @@ module.exports = function (gridfs, db) {
                                     basedir = value.match(/\[(.*)\]/)[1];
                                 }
                             });
-                            if (!basedir) {
+                            if (!basedir) {// phantomjs 异常处理
                                 sendMessage({
                                     taskId: taskId,
                                     status: -1,
                                     errInfo: monitor.log.error
                                 });
-                                ch.ack(msg);
+                                ch.ack(msg); // 消息确认应答
                                 return;
                             }
-                            timestamp = parseInt(path.parse(basedir).name);
-                            task.base = new Date(timestamp);
+                            timestamp = parseInt(path.parse(basedir).name); // 读取截图的时间点
+                            task.base = new Date(timestamp); // 设置基准页面
 
                             if (monitor.log.dom && monitor.log.dom[0]) { // DOM 异常
                                 domException = JSON.parse(monitor.log.dom[0]);
                             }
 
-                            Promise.all(files.map(function (filename) {
+                            Promise.all(files.map(function (filename) { // 存储监控文件
                                 return util.saveToGridFS(gridfs, filename, path.join(basedir, filename));
                             }))
                                 .then(function (files) {
@@ -108,16 +108,16 @@ module.exports = function (gridfs, db) {
                                                 style: 0
                                             },
                                             domExceptions: domException
-                                        })).save(),
-                                        task.save()
+                                        })).save(), // 创建监控结果对象
+                                        task.save() // 更新任务信息
                                     ])
                                         .then(function (data) {
-                                            sendMessage({
+                                            sendMessage({ //将监控结果传送到消息队列
                                                 taskId: taskId,
                                                 status: 0,
                                                 mon: data[0]
                                             });
-                                            ch.ack(msg);
+                                            ch.ack(msg);// 消息确认应答
                                         })
                                         .catch(function (err) {
                                             sendMessage({
@@ -125,7 +125,7 @@ module.exports = function (gridfs, db) {
                                                 status: -1,
                                                 errInfo: err.toString()
                                             });
-                                            ch.ack(msg);
+                                            ch.ack(msg);// 消息确认应答
                                         })
                                 })
                         }, true); //
@@ -172,11 +172,13 @@ module.exports = function (gridfs, db) {
                                 return;
                             }
                             // console.log(monitor.log);
-                            console.log("basedir:", basedir);
-                            var parsedDir = path.parse(basedir)
-                            timestamp = parseInt(parsedDir.name);
+                            // console.log("basedir:", basedir);
+
+                            var parsedDir = path.parse(basedir) // 解析截图文件的URL
+                            timestamp = parseInt(parsedDir.name); // 解析截图的时间
                             parsedDir.name = parsedDir.base = basePage.toString();
-                            basePageDir = path.format(parsedDir);
+                            basePageDir = path.format(parsedDir); // 获取基准页面文件应该存放当的目录
+
                             console.log("basePageDir: ", basePageDir);
 
                             task.base = timestamp; // 重新设置基准页面
@@ -188,7 +190,7 @@ module.exports = function (gridfs, db) {
                             if (monitor.log.dom && monitor.log.dom[0]) { // DOM 异常
                                 domException = JSON.parse(monitor.log.dom[0]);
                             }
-                            util.exists(basePageDir)
+                            util.exists(basePageDir) // 判断基准页面是否存在
                                 .then(function (status) {
                                     if (!status) { // 基准页面不存在
                                         fs.mkdirSync(basePageDir);
@@ -243,16 +245,15 @@ module.exports = function (gridfs, db) {
                                             var count = info.diff.count;
 
                                         }
-                                        Promise.all(files.map(function (file) {
-                                            return util.saveToGridFS(gridfs, file.filename, file.fileUri) // 存储对比文件到Mongodb
+                                        Promise.all(files.map(function (file) { // 存储对比文件到Mongodb
+                                            return util.saveToGridFS(gridfs, file.filename, file.fileUri)
                                         }))
                                             .then(function (files) {
                                                 var hasException = !(count.add == 0 &&
                                                     count.remove == 0 &&
                                                     count.style == 0 &&
                                                     count.text == 0) || domException.length;
-                                                return Promise.all([
-                                                    // 文件存储完毕后，新建 监控结果对象，存入数据库。
+                                                return Promise.all([  // 文件存储完毕后，新建监控结果对象，存入数据库。
                                                     (new Mon({
                                                         taskId: taskId,
                                                         timestamp: timestamp,
