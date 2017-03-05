@@ -47,7 +47,7 @@ module.exports = {
 				'public/lib/angular-datatables/dist/angular-datatables.js',
 				'public/lib/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.js',
 				'public/lib/angular-datatables/dist/plugins/scroller/angular-datatables.scroller.js',
-                'public/lib/datatables-responsive/js/dataTables.responsive.js',
+				'public/lib/datatables-responsive/js/dataTables.responsive.js',
                 'public/lib/angular-strap/dist/angular-strap.js',
                 'public/lib/angular-strap/dist/angular-strap.tpl.js',
                 'public/lib/angular-i18n/angular-locale_zh-cn.js',

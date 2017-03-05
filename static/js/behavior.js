@@ -62,6 +62,10 @@
     img.src = serverHost + '/_ub.gif?type=0' + str;
   };
 
+  /**
+   * 上报事件数据
+   * @param str
+   */
   function reportEventData(str) {
       var elem =  document.getElementById("feException");
       var serverHost =elem.src.split('/bookie.js/')[0];
@@ -292,6 +296,9 @@
     return (e.innerText.length>25)?e.innerText.substr(0,25)+'...':e.innerText;
   }
 
+  /**
+   * 全局监控用户点击行为
+   */
   document.addEventListener('mousedown', function (e) {
     var element = e.target?e.target:e.srcElement;
     var str = "&cssPath=" + encodeURIComponent(cssPath(element)) +

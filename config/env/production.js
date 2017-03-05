@@ -13,11 +13,12 @@ module.exports = {
 			css: [
 				'public/lib/bootstrap/dist/css/bootstrap.min.css',
 				'public/lib/bootstrap/dist/css/bootstrap-theme.min.css',
-                'public/lib/bootstrap-additions/dist/bootstrap-additions.min.css',
-                'public/lib/angular-motion/dist/angular-motion.min.css',
+				'public/lib/bootstrap-additions/dist/bootstrap-additions.min.css',
+				'public/lib/angucomplete-alt/angucomplete-alt.css',
+				'public/lib/angular-motion/dist/angular-motion.min.css',
 				'public/lib/datatables/media/css/jquery.dataTables.min.css',
-                'public/lib/datatables-responsive/css/dataTables.responsive.css',
-                'public/lib/font-awesome/css/font-awesome.min.css',
+				'public/lib/datatables-responsive/css/dataTables.responsive.css',
+				'public/lib/font-awesome/css/font-awesome.min.css',
 				'public/lib/sweetalert/dist/sweetalert.css'
 			],
 			js: [
@@ -33,7 +34,7 @@ module.exports = {
 				'public/lib/angular-ui-utils/ui-utils.min.js',
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
 				'public/lib/angular-datatables/dist/angular-datatables.min.js',
-                'public/lib/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js',
+				'public/lib/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js',
 				'public/lib/angular-datatables/dist/plugins/scroller/angular-datatables.scroller.min.js',
 				'public/lib/datatables-responsive/js/dataTables.responsive.js',
                 'public/lib/angular-strap/dist/angular-strap.min.js',

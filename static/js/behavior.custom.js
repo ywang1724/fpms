@@ -40,7 +40,7 @@
 
 
   /**
-   * 返回元素css路径
+   * 获取元素css路径
    *
    * Returns a jQuery-style CSS path, with IDs, classes and ':nth-child' pseudo-selectors.
    *
@@ -375,6 +375,9 @@
     removeOnClink();
   }
 
+  /**
+   * 退出自定义绑定事件脚本
+   */
   function exitCustom() {
     var elem =  document.getElementById("feException");
     var serverHost =elem.src.split('/bookie.js/')[0];

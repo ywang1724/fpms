@@ -137,7 +137,6 @@ angular.module('apps').controller('AppsBehaviorEventController', ['$scope', '$st
      * 展示漏斗图
      */
     $scope.showFunnel = function () {
-      console.log($scope.funnelData);
       $scope.funnelConfig.series[0].data = [];
       for (var i in $scope.funnelData) {
         $scope.funnelConfig.series[0].data.push($scope.funnelData[i]);

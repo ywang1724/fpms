@@ -16,6 +16,10 @@ var Q = require('q');
 var rqt = require('request');
 var xmlrpc=require('xmlrpc');
 
+/**
+ * 配置rpc链接
+ * @type {Client}
+ */
 var client = xmlrpc.createClient({
   port: 8888,
   host: '192.168.88.64'
@@ -142,7 +146,7 @@ exports.statisticList = function (req, res) {
           if(referStr) {
             if(~referStr.search(googlePattern)){
               num1++;
-            } else if (~referStr.search(baiduPattern)){
+            } else if (~referStr.search(baiduPattern)){k
               num2++;
             } else if (~referStr.search(qihuPattern)) {
               num3++;
@@ -255,8 +259,8 @@ exports.statisticList = function (req, res) {
 
 /**
  * 删除用户自定义事件
- * @param req
- * @param res
+ * @param req 请求
+ * @param res 响应
  */
 exports.deleteCustomEvent = function (req, res) {
   CustomEvent.findByIdAndRemove(req.query.id)
@@ -274,6 +278,8 @@ exports.deleteCustomEvent = function (req, res) {
 
 /**
  * 获取用户自定义规则
+ * @param req 请求
+ * @param res 响应
  */
 exports.customList = function (req, res) {
   CustomEvent.find({following: req.app.id}).exec(function (err, customEvent) {
@@ -289,8 +295,8 @@ exports.customList = function (req, res) {
 
 /**
  * 请求事件分析漏斗图数据
- * @param req
- * @param res
+ * @param req 请求
+ * @param res 响应
  */
 exports.funnel = function (req, res) {
   Event.count({
@@ -308,6 +314,10 @@ exports.funnel = function (req, res) {
 
 /**
  * behavior middleware
+ * @param req 请求
+ * @param res 响应
+ * @param next
+ * @param id 应用id
  */
 exports.behaviorByID = function(req, res, next, id) {
   Behavior.findById(id).populate('user', 'displayName').exec(function(err, behavior) {
@@ -320,6 +330,8 @@ exports.behaviorByID = function(req, res, next, id) {
 
 /**
  * 获取behavior.js
+ * @param req 请求
+ * @param res 响应
  */
 exports.behavior = function (req, res) {
   //配置文件参数
@@ -366,8 +378,8 @@ exports.behavior = function (req, res) {
 
 /**
  * 返回自定义事件的css
- * @param req
- * @param res
+ * @param req 请求
+ * @param res 响应
  */
 exports.returnStyle = function (req, res) {
   //配置文件参数
@@ -403,8 +415,8 @@ exports.returnStyle = function (req, res) {
 
 /**
  * 请求路径分析的数据
- * @param req
- * @param res
+ * @param req 请求
+ * @param res 响应
  */
 exports.pathAnalysis = function (req, res) {
   client.methodCall('geturlDatas', ['811756202','http://wenkechu.hust.edu.cn'], function (err,result) {
@@ -420,8 +432,8 @@ exports.pathAnalysis = function (req, res) {
 
 /**
  * 切换被监测网站是否带有绑定工具条
- * @param req
- * @param res
+ * @param req 请求
+ * @param res 响应
  */
 exports.switchBehaviorBar = function (req, res) {
   if (req.session.appId) {
@@ -462,8 +474,9 @@ exports.switchBehaviorBar = function (req, res) {
 
 /**
  * 添加一条用户访问数据
- * @param req
- * @param app
+ * @param req 请求
+ * @param res 响应
+ * @param app app对象
  */
 function addBehavior(req, res, app) {
   var behaviorData = req.query;
@@ -521,8 +534,9 @@ function addBehavior(req, res, app) {
 
 /**
  * 添加一条用户点击数据
- * @param req
- * @param app
+ * @param req 请求
+ * @param res 响应
+ * @param app app对象
  */
 function addEventData(req, res, app) {
   var eventData = req.query;
@@ -550,8 +564,9 @@ function addEventData(req, res, app) {
 
 /**
  * 添加一条用户自定义点击数据
- * @param req
- * @param app
+ * @param req 请求
+ * @param res 响应
+ * @param app app对象
  */
 function addCustomEvent(req, res, app) {
   var customData = {
@@ -569,9 +584,8 @@ function addCustomEvent(req, res, app) {
 
 /**
  * 获取来自搜索引擎的关键词
- * @param url
- * @returns {*}
- * @constructor
+ * @param url url地址
+ * @returns {Function} 调用request函数
  */
 function getKeyword(url) {
   if (url.toString().indexOf("baidu") > 0) {
@@ -593,9 +607,9 @@ function getKeyword(url) {
 
 /**
  * 获取链接地址中某个参数的值
- * @param url
- * @param paras
- * @returns {*}
+ * @param url url地址
+ * @param paras 某个参数的 key
+ * @returns {String} 某个参数的 value
  */
 function request(url, paras) {
   var paraString = url.substring(url.indexOf("?") + 1, url.length).split("&");
@@ -614,7 +628,8 @@ function request(url, paras) {
 
 /**
  * 获取系统信息
- * @returns {string|string|string|string|string|string|*}
+ * @param ua 用户代理字段
+ * @returns {String} 系统类型
  */
 function getSysInfo(ua) {
   var isWin10 = ua.indexOf('nt 10.0') > -1;
@@ -659,8 +674,8 @@ function getSysInfo(ua) {
 
 /**
  * 获取浏览器类型
- * @returns {*}
- * @constructor
+ * @returns ua 用户代理字段
+ * @return {String} 浏览器类型
  */
 function getBrowserType(ua) {
   if (ua == null) return "ie";
