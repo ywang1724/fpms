@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Module dependencies.
+ * 引入依赖
  */
 var mongoose = require('mongoose'),
     errorHandler = require('./errors.server.controller'),
@@ -11,33 +11,45 @@ var mongoose = require('mongoose'),
     _ = require('lodash');
 
 
+
+var gridfs; // mongodb文件存储对象
+
 /**
- * Create a App
+ * 创建新任务
  */
-var gridfs;
 var create = function (req, res) {
     var task = new Task(req.body);
-    req.task = task;
-    task.save(function (err) {
-        if (err) {
+    App.findById(task.app, function (err, app) {
+        if(err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
         } else {
-            res.jsonp(task);
+            task.monitoringInterval = app.uiInterval;
+            req.task = task;
+            task.save(function (err) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                } else {
+                    res.jsonp(task);
+                }
+            });
         }
-    });
+    })
+
 };
 
 /**
- * Show the current App
+ * 返回当前任务
  */
 var read = function (req, res) {
     res.jsonp(req.task);
 };
 
 /**
- * Update a App
+ * 更新任务
  */
 var update = function (req, res) {
     var task = req.task;
@@ -93,7 +105,7 @@ var remove = function (req, res) {
 };
 
 /**
- * List of Tasks
+ * 获取任务列表
  */
 var list = function (req, res) {
     var appId = req.query.appId;
@@ -109,7 +121,7 @@ var list = function (req, res) {
 };
 
 /**
- * App middleware
+ * 任务中间件
  */
 var taskByID = function (req, res, next, id) {
     Task.findById(id).populate('app', 'user').exec(function (err, task) {
@@ -121,7 +133,7 @@ var taskByID = function (req, res, next, id) {
 };
 
 /**
- * App authorization middleware
+ * 任务授权中间件
  */
 var hasAuthorization = function (req, res, next) {
     if (req.task.app.user.toString() !== req.user.id) {
@@ -147,7 +159,7 @@ var uookie = function (req, res) {
     //存储appId到session
     req.session.appId = req.app._id;
 
-    if (!req.isAuthenticated() || !req.user.isActive || !req.session.isOpenUI) {
+    if (!req.isAuthenticated() || !req.user.isActive || !req.session.isOpenUI) { // 没有授权，返回空
         res.type("text/javascript");
         res.send("");
         return;
@@ -205,6 +217,7 @@ var uookieCSS = function (req, res) {
     });
 };
 
+// 添加页面监控规则
 var addRule = function(req, res) {
      if (req.session.appId) {
           App.findById(req.session.appId).exec(function (err, app) {
@@ -213,21 +226,20 @@ var addRule = function(req, res) {
             } else {
                 var uookie = JSON.parse(decodeURIComponent(req.url.substring(req.url.indexOf('?') + 1)));
                 Task.findOne({app: req.session.appId, url: uookie.pageUrl}, function(err, task) {
-                    if(uookie.type == "diff") {
+                    if(uookie.type == "diff") { // 页面对比规则
                         var _diffRules = _.extend({}, task.diffRules);
                         task.diffRules.push(uookie.rule)
-                        task.diffRules = _.unique(task.diffRules);
+                        task.diffRules = _.unique(task.diffRules); // 去重
                         if(!_.isEqual(task.diffRules, _diffRules)) {
-                            task.base = null; // 规则变更了充值base页面
+                            task.base = null; // 规则变更了重置base页面
                         }
                         task.save(function(err){
                             if (err) {
                                 console.log(errorHandler.getErrorMessage(err));
                             } 
                         });
-                    } else if(uookie.type == "dom") {
-                        task.domRules = _.unique(task.domRules.concat(uookie.rule), 'selector');
-                        console.log(task.domRules);
+                    } else if(uookie.type == "dom") { // DOm 检测规则
+                        task.domRules = _.unique(task.domRules.concat(uookie.rule), 'selector'); // 去重
                         task.save(function(err){
                             if (err) {
                                 console.log(errorHandler.getErrorMessage(err));
@@ -264,7 +276,7 @@ var addRule = function(req, res) {
     });
 }
 
-
+// 控制是否开启规则录入脚本
 var switchUIBar = function(req, res) {
     if (req.session.appId) {
         App.findById(req.session.appId).exec(function (err, app) {
@@ -272,7 +284,7 @@ var switchUIBar = function(req, res) {
                 console.log(errorHandler.getErrorMessage(err));
             } else {
                 var data = JSON.parse(decodeURIComponent(req.url.substring(req.url.indexOf('?') + 1)));
-                req.session.isOpenUI = data.isOpenUI;
+                req.session.isOpenUI = data.isOpenUI; //将session.isOpenUI设置为对应传过来的值
             }
         })
     }

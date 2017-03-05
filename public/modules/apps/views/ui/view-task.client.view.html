@@ -19,7 +19,7 @@
             </div>
             <div class="col-xs-12 col-md-6 view-container">
                 <span class="col-xs-5 text-right key">监控时间间隔：</span>
-                <span class="col-xs-7 text-left">{{task.monitoringInterval}} <span class="label label-danger">ms</span> <button class="btn btn-info btn-sm" ng-click="modifyInterval()">修改</button></span>
+                <span class="col-xs-7 text-left">{{task.monitoringInterval | formatTime}} <button style="margin-left: 50px;" class="btn btn-info btn-sm" ng-click="modifyInterval(monitoringIntervals, task)">修改</button></span>
             </div>
             <div class="col-xs-12 col-md-6 view-container">
                 <span class="col-xs-5 text-right key">创建时间：</span>
@@ -136,10 +136,11 @@
                         <span class="label label-success" ng-hide="mon.hasException">无</span>
                     </td>
                     <td class="text-center"><code>{{ mon.domExceptions.length}}</code></td>
-                    <td class="text-center">
+                    <td class="">
                         <span ng-repeat="(key, data) in mon.uiExceptions">
-                            <code>{{uiType[key]}} : {{data}}</code>
+                            <code ng-if="data">{{uiType[key]}} : {{data}}</code>
                         </span>
+                        <code ng-if="!mon.uiExceptions.add && !mon.uiExceptions.remove && !mon.uiExceptions.style && !mon.uiExceptions.text">无</code>
                     </td>
                 </tr>
                 </tbody>

@@ -6,7 +6,7 @@ var ApplicationConfiguration = (function() {
 	var applicationModuleName = 'fpms';
 	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',
 		'ui.router', 'ui.bootstrap', 'ui.utils', 'datatables', 'datatables.bootstrap', 'datatables.scroller',
-		'mgcrea.ngStrap', 'ngLocale', 'highcharts-ng', 'ngClipboard', 'angularModalService', 'oitozero.ngSweetAlert'];
+		'mgcrea.ngStrap', 'ngLocale', 'highcharts-ng', 'ngClipboard', 'angularModalService', 'oitozero.ngSweetAlert','angucomplete-alt'];
 
 	// 添加一个新的垂直模块
 	var registerModule = function(moduleName, dependencies) {
@@ -48,6 +48,7 @@ angular.element(document).ready(function() {
 
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('apps');
+
 'use strict';
 
 // Use Applicaion configuration module to register a new module
@@ -74,28 +75,28 @@ angular.module('apps').run(['Menus',
 	}
 ]);
 
-angular.module('apps').config(function($datepickerProvider) {
+angular.module('apps').config(['$datepickerProvider', function($datepickerProvider) {
     angular.extend($datepickerProvider.defaults, {
         animation: 'am-flip-x',
         autoclose: true,
         dateType: 'number'
     });
-});
+}]);
 
-angular.module('apps').config(function($selectProvider) {
+angular.module('apps').config(['$selectProvider', function($selectProvider) {
     angular.extend($selectProvider.defaults, {
         animation: 'am-flip-x'
     });
-});
+}]);
 
-angular.module('apps').config(function($tooltipProvider) {
+angular.module('apps').config(['$tooltipProvider', function($tooltipProvider) {
     angular.extend($tooltipProvider.defaults, {
         animation: 'am-flip-x',
         trigger: 'hover',
         placement: 'bottom',
         type: 'success'
     });
-});
+}]);
 
 angular.module('apps').config(['ngClipProvider', function(ngClipProvider) {
     ngClipProvider.setPath('lib/zeroclipboard/dist/ZeroClipboard.swf');
@@ -131,21 +132,1468 @@ angular.module('apps').config(['$stateProvider',
 		state('viewAppException', {
 			url: '/apps/exception/:appId',
 			templateUrl: 'modules/apps/views/exception/view-exception.client.view.html'
+		}).
+        state('addUITask', {
+            url: '/apps/:appId/ui/create',
+            templateUrl: 'modules/apps/views/ui/add-task.client.view.html'
+        }).
+        state('viewUITask', {
+            url: '/apps/:appId/ui/:taskId',
+            templateUrl: 'modules/apps/views/ui/view-task.client.view.html'
+        }).
+        state('viewUIMon', {
+            url: '/apps/:appId/ui/:taskId/mon/:monId',
+            templateUrl: 'modules/apps/views/ui/view-mon.client.view.html'
+        }).
+		state('viewAppBehavior', {
+			url: '/apps/behavior/:appId',
+			templateUrl: 'modules/apps/views/behavior/view-behavior.client.view.html'
 		});
+
 	}
 ]);
+
+/**
+ * @file
+ * @author tommyzqfeng
+ * @date 2017/2/7
+ *
+ */
+'use strict';
+
+//Apps controller
+angular.module('apps').controller('AppsBehaviorDashboardController', ['$scope', '$location',
+  'Authentication',
+  function ($scope, $location, Authentication) {
+    $scope.authentication = Authentication;
+
+    /**
+     * highcharts配置
+     */
+    $scope.chartConfig = {
+      options:{
+        chart: {
+          type: 'area'
+        },
+        tooltip: {
+          xDateFormat: '%Y-%m-%d',
+          shared: true,
+          style: {
+            fontSize: '14px'
+          }
+        }
+      },
+      credits: {
+        enabled: false
+      },
+      xAxis: {
+        type: 'datetime',
+        tickInterval: 2419200000,
+        labels: {
+          formatter: function () {
+            return moment(this.value).format('MM-DD')
+          }
+        },
+        tickPositioner: function(min, max) {
+          return this.series[0].xData.slice();
+        }
+      },
+      yAxis: [{
+        title: {
+          text: '访问量'
+        }
+      }],
+      series: [{
+        name: '页面访问量',
+        data: []
+      }],
+      title: {
+        text: '页面访问趋势'
+      }
+    };
+
+
+    /**
+     * 接收图表数据
+     */
+    $scope.$on('chartConfigEvent', function (e, args) {
+      $scope.chartConfig.series[0].data = args.numData;
+      console.log($scope.searchStr);
+    });
+
+    /**
+     * 当改变查询参数时，将值更新到parent scope中
+     */
+    $scope.changeArgs = function() {
+      $scope.parentObj.selectInterval = $scope.selectInterval;
+      $scope.parentObj.fromDate = $scope.fromDate;
+      $scope.parentObj.untilDate = $scope.untilDate;
+    };
+
+    /**
+     * 切换至异常监控页面
+     */
+    $scope.gotoException = function (){
+      if($scope.selectPage.name === '全部'){
+        $location.path('apps/exception/' + $scope.app._id);
+      } else {
+        PageService.setCurrentPage({'_id': $scope.selectPage._id, 'pathname': $scope.selectPage.pathname});
+        PageService.setIdentifier(2);
+        $location.path('apps/exception/' + $scope.app._id);
+      }
+    };
+
+    /**
+     * 切换至性能监控页面
+     */
+    $scope.gotoPerformance = function (){
+      if($scope.selectPage.name === '全部'){
+        $location.path('apps/performance/' + $scope.app._id);
+      } else {
+        PageService.setCurrentPage({'_id': $scope.selectPage._id, 'pathname': $scope.selectPage.pathname});
+        PageService.setIdentifier(2);
+        $location.path('apps/performance/' + $scope.app._id);
+      }
+    };
+
+  }]);
+
+/**
+ * @file
+ * @author tommyzqfeng
+ * @date 2017/2/7
+ */
+'use strict';
+
+//Apps controller
+angular.module('apps').controller('AppsBehaviorEventController', ['$scope', '$stateParams', '$window','$location',
+  'Authentication', 'Apps', 'DTOptionsBuilder', '$http', '$timeout', 'PageService',
+  function ($scope, $stateParams, $window, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService) {
+    $scope.authentication = Authentication;
+
+    $scope.info={};
+    $scope.info.selectEvents = [{key:0,value:'tip'}];
+
+    $scope.viewEvent = function () {
+      $scope.showData = true;
+      $scope.showChart = true;
+      $scope.app = Apps.get({
+        appId: $stateParams.appId
+      });
+      Highcharts.setOptions({
+        lang: {
+          contextButtonTitle: '导出',
+          printChart: '打印图表',
+          downloadJPEG: '下载JPEG',
+          downloadPDF: '下载PDF',
+          downloadPNG: '下载PNG',
+          downloadSVG: '下载SVG'
+        },
+        global: {
+          useUTC: false
+        }
+      });
+    };
+
+    $scope.dtOptions_customEvents = DTOptionsBuilder
+      .newOptions()
+      .withLanguage({
+        'sLengthMenu': '每页显示 _MENU_ 条数据',
+        'sInfo': '从 _START_ 到 _END_ /共 _TOTAL_ 条数据',
+        'sInfoEmpty': '没有数据',
+        'sInfoFiltered': '(从 _MAX_ 条数据中检索)',
+        'sZeroRecords': '没有检索到数据',
+        'sSearch': '检索:',
+        'oPaginate': {
+          'sFirst': '首页',
+          'sPrevious': '上一页',
+          'sNext': '下一页',
+          'sLast': '末页'
+        }
+      })
+      // Add Bootstrap compatibility
+      .withBootstrap()
+      .withBootstrapOptions({
+        pagination: {
+          classes: {
+            ul: 'pagination pagination-sm'
+          }
+        }
+      })
+      .withOption('responsive', true)
+      .withOption('bAutoWidth', false);
+
+    $scope.redirect = function()  {
+      var img = new Image(1, 1);
+      img.src = '/_ub.gif/send?' + JSON.stringify({isOpenBehavior: true});
+      img.onload = function(){
+        $window.open('http://' + $scope.app.host, '_blank');
+      };
+      img.onerror = function(err){
+        SweetAlert.swal('跳转失败!', '服务器开了小差 :)', 'error');
+      }
+    };
+
+    /**
+     * highcharts的funnel图配置
+     */
+    $scope.funnelConfig = {
+      options: {
+        chart: {
+          type: 'funnel',
+          marginRight: 100
+        },
+        plotOptions: {
+          series: {
+            dataLabels: {
+              enabled: true,
+              format: '<b>{point.name}</b> ({point.y:,.0f})',
+              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black',
+              softConnector: true
+            },
+            neckWidth: '30%',
+            neckHeight: '25%'
+
+            //-- Other available options
+            // height: pixels or percent
+            // width: pixels or percent
+          }
+        },
+      },
+      title: {
+        text: '',
+      },
+
+      legend: {
+        enabled: false
+      },
+      series: [{
+        name: 'Unique users',
+        data: []
+      }]
+    };
+
+    /**
+     * 重新调整highcharts图的宽度
+     */
+    $scope.$on('chartConfigEvent', function (e, args) {
+      $scope.funnelConfig.options.chart.width = $('.panel-heading').width();
+    });
+
+    /**
+     * 向后台取漏斗模型的数据
+     */
+    $scope.funnelData = [];
+    $scope.getData = function ($index) {
+      var eventObj = $scope.info.selectEvents[$index].value;
+      $http.get('funnel'+'?following='+eventObj._id)
+        .success(function (result) {
+          $scope.funnelData[$index] =[eventObj.name, result];
+        });
+    };
+
+    
+    /**
+     * 展示漏斗图
+     */
+    $scope.showFunnel = function () {
+      console.log($scope.funnelData);
+      $scope.funnelConfig.series[0].data = [];
+      for (var i in $scope.funnelData) {
+        $scope.funnelConfig.series[0].data.push($scope.funnelData[i]);
+      }
+    };
+
+    /**
+     * 添加漏斗事件节点
+     */
+    $scope.info.add = function ($index) {
+      $scope.info.selectEvents.splice($index + 1, 0, {key: $index + 1, value: ''});
+    };
+
+    /**
+     * 删除漏斗事件节点
+     */
+    $scope.info.delete = function ($index) {
+      $scope.info.selectEvents.splice($index, 1);
+      $scope.funnelData.splice($index, 1);
+    }
+
+  }]);
+
+/**
+ * @file
+ * @author tommyzqfeng
+ * @date 2017/2/7
+ */
+'use strict';
+
+//Apps controller
+angular.module('apps').controller('AppsBehaviorFlowController', ['$scope', '$stateParams', '$location',
+  'Authentication', 'Apps', 'DTOptionsBuilder', '$http', '$timeout', 'PageService',
+  function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService) {
+    $scope.authentication = Authentication;
+
+    $scope.nodesDetail = [];
+
+    /**
+     * 受访页面datatable配置
+     * @type {any}
+     */
+    $scope.dtOptions_page = DTOptionsBuilder
+      .newOptions()
+      .withLanguage({
+        'sLengthMenu': '每页显示 _MENU_ 条数据',
+        'sInfo': '从 _START_ 到 _END_ /共 _TOTAL_ 条数据',
+        'sInfoEmpty': '没有数据',
+        'sInfoFiltered': '(从 _MAX_ 条数据中检索)',
+        'sZeroRecords': '没有检索到数据',
+        'sSearch': '检索:',
+        'oPaginate': {
+          'sFirst': '首页',
+          'sPrevious': '上一页',
+          'sNext': '下一页',
+          'sLast': '末页'
+        }
+      })
+      // Add Bootstrap compatibility
+      .withBootstrap()
+      .withBootstrapOptions({
+        pagination: {
+          classes: {
+            ul: 'pagination pagination-sm'
+          }
+        }
+      })
+      .withOption('responsive', true)
+      .withOption('bAutoWidth', false);
+
+    var data = [
+      {
+        "hc-key": "tw-ph",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-sh",
+        "value": 1
+      },
+      {
+        "hc-key": "tw-km",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-zj",
+        "value": 3
+      },
+      {
+        "hc-key": "tw-lk",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-3664",
+        "value": 5
+      },
+      {
+        "hc-key": "cn-3681",
+        "value": 6
+      },
+      {
+        "hc-key": "cn-fj",
+        "value": 7
+      },
+      {
+        "hc-key": "cn-gd",
+        "value": 8
+      },
+      {
+        "hc-key": "tw-tw",
+        "value": 0
+      },
+      {
+        "hc-key": "tw-cs",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-6657",
+        "value": 1
+      },
+      {
+        "hc-key": "cn-6663",
+        "value": 2
+      },
+      {
+        "hc-key": "cn-6665",
+        "value": 1
+      },
+      {
+        "hc-key": "cn-6666",
+        "value": 1
+      },
+      {
+        "hc-key": "cn-6667",
+        "value": 1
+      },
+      {
+        "hc-key": "cn-6669",
+        "value": 1
+      },
+      {
+        "hc-key": "cn-6670",
+        "value": 1
+      },
+      {
+        "hc-key": "cn-6671",
+        "value": 0
+      },
+      {
+        "hc-key": "tw-kh",
+        "value": 0
+      },
+      {
+        "hc-key": "tw-hs",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-yn",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-xz",
+        "value": 0
+      },
+      {
+        "hc-key": "tw-hh",
+        "value": 0
+      },
+      {
+        "hc-key": "tw-cl",
+        "value": 0
+      },
+      {
+        "hc-key": "tw-ml",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-nx",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-sa",
+        "value": 0
+      },
+      {
+        "hc-key": "tw-ty",
+        "value":0
+      },
+      {
+        "hc-key": "cn-3682",
+        "value": 0
+      },
+      {
+        "hc-key": "tw-cg",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-6655",
+        "value": 3
+      },
+      {
+        "hc-key": "cn-ah",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-hu",
+        "value": 0
+      },
+      {
+        "hc-key": "tw-hl",
+        "value": 0
+      },
+      {
+        "hc-key": "tw-th",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-6656",
+        "value": 6
+      },
+      {
+        "hc-key": "tw-nt",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-6658",
+        "value": 3
+      },
+      {
+        "hc-key": "cn-6659",
+        "value": 3
+      },
+      {
+        "hc-key": "cn-cq",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-hn",
+        "value": 4
+      },
+      {
+        "hc-key": "tw-yl",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-6660",
+        "value": 3
+      },
+      {
+        "hc-key": "cn-6661",
+        "value": 4
+      },
+      {
+        "hc-key": "cn-6662",
+        "value": 5
+      },
+      {
+        "hc-key": "cn-6664",
+        "value": 6
+      },
+      {
+        "hc-key": "cn-6668",
+        "value": 7
+      },
+      {
+        "hc-key": "tw-pt",
+        "value": 0
+      },
+      {
+        "hc-key": "tw-tt",
+        "value": 0
+      },
+      {
+        "hc-key": "tw-tn",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-bj",
+        "value": 34
+      },
+      {
+        "hc-key": "cn-hb",
+        "value": 2
+      },
+      {
+        "hc-key": "tw-il",
+        "value": 0
+      },
+      {
+        "hc-key": "tw-tp",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-sd",
+        "value": 5
+      },
+      {
+        "hc-key": "tw-ch",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-tj",
+        "value": 7
+      },
+      {
+        "hc-key": "cn-ha",
+        "value": 8
+      },
+      {
+        "hc-key": "cn-jl",
+        "value": 5
+      },
+      {
+        "hc-key": "cn-qh",
+        "value": 0
+      },
+      {
+        "hc-key": "cn-xj",
+        "value": 1
+      },
+      {
+        "hc-key": "cn-nm",
+        "value": 2
+      },
+      {
+        "hc-key": "cn-hl",
+        "value": 3
+      },
+      {
+        "hc-key": "cn-sc",
+        "value": 4
+      },
+      {
+        "hc-key": "cn-gz",
+        "value": 6
+      },
+      {
+        "hc-key": "cn-gx",
+        "value": 6
+      },
+      {
+        "hc-key": "cn-ln",
+        "value": 7
+      },
+      {
+        "hc-key": "cn-js",
+        "value": 8
+      },
+      {
+        "hc-key": "cn-gs",
+        "value": 6
+      },
+      {
+        "hc-key": "cn-sx",
+        "value": 3
+      },
+      {
+        "hc-key": "cn-he",
+        "value": 3
+      },
+      {
+        "hc-key": "cn-jx",
+        "value": 4
+      }
+    ];
+
+    /**
+     * 获取路径关系数据
+     */
+    $scope.getPathData = function () {
+      // $http.get('pathAnalysis?appId=' + '12')
+      //   .success(function (result) {
+      //     drawPathNet(result);
+      //   })
+      var result = {
+        "data": [
+          [
+            0,
+            "",
+            [
+              [
+                0,
+                2,
+                507
+              ],
+              [
+                0,
+                3,
+                10
+              ],
+              [
+                0,
+                4,
+                172
+              ],
+              [
+                0,
+                5,
+                19
+              ]
+            ]
+          ],
+          [
+            1,
+            "others",
+            [
+              [
+                1,
+                2,
+                467
+              ],
+              [
+                1,
+                3,
+                3
+              ],
+              [
+                1,
+                4,
+                54
+              ]
+            ]
+          ],
+          [
+            2,
+            "http://wenkechu.hust.edu.cn/toIndex",
+            [
+              [
+                2,
+                2,
+                24
+              ],
+              [
+                2,
+                3,
+                70
+              ],
+              [
+                2,
+                4,
+                434
+              ],
+              [
+                2,
+                5,
+                135
+              ],
+              [
+                2,
+                6,
+                3
+              ],
+              [
+                2,
+                12,
+                5
+              ]
+            ]
+          ],
+          [
+            3,
+            "http://wenkechu.hust.edu.cn/navigation/viewPage",
+            [
+              [
+                3,
+                2,
+                17
+              ],
+              [
+                3,
+                3,
+                51
+              ],
+              [
+                3,
+                4,
+                8
+              ],
+              [
+                3,
+                5,
+                11
+              ]
+            ]
+          ],
+          [
+            4,
+            "http://wenkechu.hust.edu.cn/article/viewPage",
+            [
+              [
+                4,
+                2,
+                49
+              ],
+              [
+                4,
+                3,
+                13
+              ],
+              [
+                4,
+                4,
+                39
+              ],
+              [
+                4,
+                5,
+                55
+              ],
+              [
+                4,
+                6,
+                3
+              ],
+              [
+                4,
+                7,
+                1
+              ],
+              [
+                4,
+                10,
+                7
+              ],
+              [
+                4,
+                11,
+                1
+              ]
+            ]
+          ],
+          [
+            5,
+            "http://wenkechu.hust.edu.cn/article/listPage",
+            [
+              [
+                5,
+                2,
+                10
+              ],
+              [
+                5,
+                3,
+                5
+              ],
+              [
+                5,
+                4,
+                198
+              ],
+              [
+                5,
+                5,
+                10
+              ],
+              [
+                5,
+                6,
+                1
+              ],
+              [
+                5,
+                12,
+                1
+              ]
+            ]
+          ],
+          [
+            6,
+            "http://wenkechu.hust.edu.cn/doLogin",
+            [
+              [
+                6,
+                7,
+                8
+              ]
+            ]
+          ],
+          [
+            7,
+            "http://wenkechu.hust.edu.cn/block/managePage",
+            [
+              [
+                7,
+                8,
+                14
+              ]
+            ]
+          ],
+          [
+            8,
+            "http://wenkechu.hust.edu.cn/block/toBlock",
+            [
+              [
+                8,
+                9,
+                7
+              ],
+              [
+                8,
+                10,
+                1
+              ],
+              [
+                8,
+                4,
+                5
+              ]
+            ]
+          ],
+          [
+            9,
+            "http://wenkechu.hust.edu.cn/article/addPage",
+            [
+              [
+                9,
+                4,
+                7
+              ]
+            ]
+          ],
+          [
+            10,
+            "http://wenkechu.hust.edu.cn/article/modifyPage",
+            [
+              [
+                10,
+                4,
+                9
+              ]
+            ]
+          ],
+          [
+            11,
+            "http://wenkechu.hust.edu.cn/toManage",
+            [
+              [
+                11,
+                7,
+                1
+              ]
+            ]
+          ],
+          [
+            12,
+            "http://wenkechu.hust.edu.cn/toSearch",
+            [
+              [
+                12,
+                2,
+                4
+              ],
+              [
+                12,
+                12,
+                2
+              ]
+            ]
+          ],
+          [
+            13,
+            "http://wenkechu.hust.edu.cn/",
+            [
+              [
+                13,
+                2,
+                1
+              ]
+            ]
+          ]
+        ]
+      }
+      drawPathNet(result);
+    };
+
+    //highcharts来源分类配置
+    $scope.originConfig = {
+        options:{
+          chart: {
+            type: 'pie'
+          },
+          tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+          },
+          plotOptions: {
+            pie: {
+              allowPointSelect: true,
+              cursor: 'pointer',
+              dataLabels: {
+                enabled: false
+              },
+              showInLegend: true
+            }
+          }
+        },
+        title: {
+          text: '访问来源分类'
+        },
+        series: [{
+          name: '占比',
+          colorByPoint: true,
+          data: []
+        }]
+      };
+
+    /**
+     * highcharts搜索引擎配置
+     */
+    $scope.searchEngineConfig = {
+        options:{
+          chart: {
+            type: 'pie'
+            },
+          tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+          },
+          plotOptions: {
+            pie: {
+              allowPointSelect: true,
+              cursor: 'pointer',
+              dataLabels: {
+                enabled: false
+              },
+              showInLegend: true
+            }
+          }
+        },
+        title: {
+          text: '搜索引擎'
+        },
+        series: [{
+          name: '占比',
+          colorByPoint: true,
+          data: []
+        }]
+
+      };
+
+    /**
+     * highmaps地理位置配置
+     */
+    $scope.mapsConfig = {
+      options: {
+        chart:{},
+        legend: {
+          layout: 'horizontal',
+          borderWidth: 0,
+          backgroundColor: 'rgba(255,255,255,0.85)',
+          floating: true,
+          verticalAlign: 'top',
+          y: 20
+        },
+        plotOptions: {
+          map: {
+            mapData: Highcharts.maps['countries/cn/custom/cn-all-sar-taiwan'],
+            joinBy: ['hc-key'],
+            name:'访问量',
+            dataLabels: {
+              enabled: true,
+              format: '{point.name}'
+            }
+          }
+        },
+        colorAxis: {},
+      },
+      chartType: 'map',
+      title: {
+        text: '访问分布情况'
+      },
+      series: [{
+        data: data,
+        states: {
+          hover: {
+            color: '#BADA55'
+          }
+        }
+      }
+      ]
+    }
+
+    /**
+     * highcharts浏览器终端配置
+     */
+    $scope.browserConfig = {
+      options:{
+        chart: {
+          type: 'pie'
+        },
+        tooltip: {
+          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+          pie: {
+            dataLabels: {
+              enabled: true,
+              distance: -50,
+
+            },
+            startAngle: -90,
+            endAngle: 90,
+            center: ['50%', '75%']
+          }
+        }
+      },
+      title: {
+        text: '浏览器分类'
+      },
+      series: [{
+        name: '占比',
+        colorByPoint: true,
+        innerSize: '50%',
+        data: []
+      }]
+    };
+
+    $scope.$on('chartConfigEvent', function (e, args) {
+      $scope.originConfig.series[0].data = args.origin;
+      $scope.originConfig.options.chart.width = $('.panel-heading').width();
+      $scope.searchEngineConfig.series[0].data = args.searchEngine;
+      $scope.searchEngineConfig.options.chart.width = $('.panel-heading').width();
+      $scope.browserConfig.series[0].data=args.browser;
+      $scope.browserConfig.options.chart.width = $('.panel-heading').width();
+      $scope.mapsConfig.options.chart.width = $('.panel-heading').width();
+    });
+
+    /**
+     * 绘制路径的网状图
+     * @param result 从rpc取得的数据
+     */
+    function drawPathNet(result){
+      var elementsData = {};
+      var nodesData = [];
+      var edgesData =[];
+      for (var i=0; i<result.data.length; i++) {
+        nodesData.push({
+          data: {id:result.data[i][0],name:result.data[i][0],path:result.data[i][1]}
+        });
+        for (var j =0; j<result.data[i][2].length;j++) {
+          edgesData.push({
+            data: {source:result.data[i][2][j][0], target:result.data[i][2][j][1], label:result.data[i][2][j][2]},classes: 'autorotate'
+          });
+        }
+      }
+      elementsData.nodes = nodesData;
+      elementsData.edges = edgesData;
+
+
+      var cy = cytoscape({
+        container: document.querySelector('#pathFigure'),
+
+        boxSelectionEnabled: false,
+        autounselectify: true,
+
+        style: [
+          {
+            selector: 'node',
+            style: {
+              'content': 'data(name)',
+              'text-valign': 'center',
+              'color': 'white',
+              'text-outline-width': 2,
+              'background-color': '#999',
+              'text-outline-color': '#999'
+            }
+          },
+          {
+            selector: 'edge',
+            style: {
+              'label': 'data(label)',
+              'curve-style': 'bezier',
+              'target-arrow-shape': 'triangle',
+              'target-arrow-color': '#ccc',
+              'line-color': '#ccc',
+              'width': 1
+            }
+          },
+          {
+            selector: ':selected',
+            style:{
+              'background-color': '#0f0',
+              'line-color': 'black',
+              'target-arrow-color': 'black',
+              'source-arrow-color': 'black'
+            }
+          },
+          {
+            selector: '.faded',
+            style:{
+              'opacity': 0.15,
+              'text-opacity': 0
+            }
+          },
+          {
+            selector: '.autorotate',
+            style: {
+              'edge-text-rotation': 'autorotate'
+            }
+          },
+        ],
+
+        elements: elementsData,
+        layout: {
+          name: 'grid',
+          padding: 10
+        }
+      });
+
+      cy.on('tap', 'node', function(e){
+        $scope.nodesDetail = [];
+        var node = e.cyTarget;
+        var neighborhood = node.neighborhood().add(node);
+
+        var data = node.data();
+        $scope.nodesDetail.push(data);
+        for(var i=0; i<node.neighborhood().length;i++) {
+          if(node.neighborhood()[i].data().path){
+            $scope.nodesDetail.push(node.neighborhood()[i].data());
+          }
+        }
+        $scope.$apply();
+
+        cy.elements().addClass('faded');
+        neighborhood.removeClass('faded');
+      });
+
+      cy.on('tap', function(e){
+        if( e.cyTarget === cy ){
+          cy.elements().removeClass('faded');
+        }
+      });
+    }
+  }]);
+
+/**
+ * @file
+ * @author tommyzqfeng
+ * @date 2017/2/7
+ */
+'use strict';
+
+//Apps controller
+angular.module('apps').controller('AppsBehaviorController', ['$scope', '$stateParams', '$location',
+  'Authentication', 'Apps', 'DTOptionsBuilder', '$http', '$timeout', 'PageService','SweetAlert',
+  function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService,SweetAlert) {
+    $scope.authentication = Authentication;
+
+    $scope.initBehavior = function () {
+      document.cookie = 'customEvent=false'; //置换customEvent，使得用户正常访问被监控网站时不会出现绑定组件
+      $scope.showData = true;
+      $scope.customEvents = [{'_id':1,'name':'请选择指定事件'}];
+      $scope.customEventsListData = [];
+      $scope.selectEvent = $scope.customEvents[0];
+      $scope.app = Apps.get({
+        appId: $stateParams.appId
+      });
+      Highcharts.setOptions({
+        lang: {
+          contextButtonTitle: '导出',
+          printChart: '打印图表',
+          downloadJPEG: '下载JPEG',
+          downloadPDF: '下载PDF',
+          downloadPNG: '下载PNG',
+          downloadSVG: '下载SVG'
+        },
+        global: {
+          useUTC: false
+        }
+      });
+      $http.get('pages/' + $stateParams.appId)
+        .success(function (data) {
+        $scope.pagesNum = data.length || 0;
+        if (data.length) {
+          $scope.showChart = true;
+          $scope.parentObj = {}; //与child scope进行数据绑定的过渡对象
+
+          //页面选择
+          // var ids = [];
+          // for (var i = 0; i < data.length; i++) {
+          //   ids.push(data[i]._id);
+          // }
+          // $scope.pages = [{'_id':ids, 'name': '全部'}].concat(data);
+          // if(PageService.getIdentifier() === 2){
+          //   //表示从应用详情跳转过来
+          //   $scope.selectPage = $scope.pages.filter(function(elem){
+          //     return elem._id === PageService.getCurrentPage()._id;
+          //   })[0];
+          // }else{
+          //   $scope.selectPage = $scope.pages[0];
+          // }
+          $scope.selectPageData = [];
+          var ids=[];
+          for (var i=0; i<data.length; i++) {
+            $scope.selectPageData.push({name:data[i].pathname, id: data[i]._id});
+            ids.push(data[i]._id);
+          }
+          $scope.selectPage = {'id': ids, 'name':'全部'};
+
+          $scope.selectPageFunc = function (obj) {
+            if (obj) {
+              if (obj.description && obj.description == '') {
+                $scope.selectPage = {'id': ids, 'name':'全部'}
+              } else {
+                $scope.selectPage = obj.description;
+              }
+            } else {
+              $scope.selectPage.id = '';
+            }
+          };
+          $scope.focusOutFunc = function () {
+            if(!$('#ex1_val').val()) {
+              $scope.selectPage = {'id': ids, 'name':'全部'};
+            }
+          };
+
+
+          //统计间隔
+          $scope.intervals = [
+            {'name': '日', 'id': 'day'}, {'name': '月', 'id': 'month'}, {'name': '年', 'id': 'year'}
+          ];
+          $scope.selectInterval = $scope.intervals[0];
+
+          //浏览器分类
+          // $scope.browsers = [
+          //   {'name': '全部', 'id': 'all'},
+          //   {'name': 'Internet Explorer', 'id': 'Internet Explorer'}, {'name': 'Chrome', 'id': 'Chrome'},
+          //   {'name': 'Android Webkit Browser', 'id': 'Android Webkit Browser'},
+          //   {'name': 'Firefox', 'id': 'Firefox'}, {'name': 'Safari', 'id': 'Safari'}
+          // ];
+          // $scope.selectBrowser = $scope.browsers[0];
+
+          //日期范围初始化
+          var now = new Date();
+          $scope.nowDate = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+          $scope.fromDate = $scope.nowDate - 1296000000; //往前15天
+          $scope.untilDate = $scope.nowDate;
+
+          $scope.parentObj.selectPage = $scope.selectPage;
+          // $scope.parentObj.selectBrowser = $scope.selectBrowser;
+          $scope.parentObj.selectInterval = $scope.selectInterval;
+          $scope.parentObj.fromDate = $scope.fromDate;
+          $scope.parentObj.untilDate = $scope.untilDate;
+
+          var getBehaviors = function() {
+            var trueFromDate, trueUntilDate;
+            switch ($scope.parentObj.selectInterval.id) {
+              case 'day':
+                trueFromDate = $scope.parentObj.fromDate;
+                trueUntilDate = $scope.parentObj.untilDate + 86400000;
+                // $scope.chartConfig.xAxis.tickInterval = 86400000; //1天
+                // $scope.chartConfig.xAxis.labels.formatter = function () {
+                //   return moment(this.value).format('MM-DD')
+                // };
+                // $scope.chartConfig.options.tooltip.xDateFormat = '%Y-%m-%d';
+                break;
+              case 'month':
+                trueFromDate = Date.UTC((new Date($scope.parentObj.fromDate)).getFullYear(), (new Date($scope.parentObj.fromDate)).getMonth());
+                trueUntilDate = Date.UTC((new Date($scope.parentObj.untilDate)).getFullYear(), (new Date($scope.parentObj.untilDate)).getMonth() + 1);
+                // $scope.chartConfig.xAxis.tickInterval = 2419200000; //28天
+                // $scope.chartConfig.xAxis.labels.formatter = function () {
+                //   return moment(this.value).format('YYYY-MM')
+                // };
+                // $scope.chartConfig.options.tooltip.xDateFormat = '%Y.%m';
+                break;
+              case 'year':
+                trueFromDate = Date.UTC((new Date($scope.parentObj.parentObj.fromDate)).getFullYear(), 0);
+                trueUntilDate = Date.UTC((new Date($scope.parentObj.untilDate)).getFullYear() + 1, 0);
+                // $scope.chartConfig.xAxis.tickInterval = 31104000000; //360天
+                // $scope.chartConfig.xAxis.labels.formatter = function () {
+                //   return moment(this.value).format('YYYY')
+                // };
+                // $scope.chartConfig.options.tooltip.xDateFormat = '%Y';
+                break;
+            }
+
+            $http.get('behaviors', {
+              params: {
+                pageId: $scope.selectPage.id,
+                fromDate: +(new Date(trueFromDate)),
+                untilDate: +(new Date(trueUntilDate)),
+                interval: $scope.parentObj.selectInterval.id
+                // browser: $scope.parentObj.selectBrowser.id
+              }
+            }).success(function (result) {
+              PageService.setIdentifier(1);
+              if (result.statisticData.sum > 0) {
+                $scope.$broadcast('chartConfigEvent',{
+                  numData:result.numData,
+                  origin: result.origin,
+                  searchEngine: result.searchEngine,
+                  browser: result.browser
+                });
+                $scope.listData = result.listData;
+                $scope.statisticData = result.statisticData;
+                $scope.showData = true;
+              } else {
+                $scope.showData = false;
+              }
+            });
+
+            $http.get('custom/' + $stateParams.appId)
+              .success(function (data) {
+                $scope.customEvents=[];
+                $scope.customEventsListData=[];
+                for (var i=0;i<data.length;i++) {
+                  $scope.customEvents.push({'_id':data[i]._id,'name':data[i].name});
+                  $scope.customEventsListData.push({
+                    'id':data[i]._id,
+                    'name': data[i].name,
+                    'url':data[i].url,
+                    'cssPath':data[i].cssPath,
+                    'text':data[i].text,
+                  });
+                }
+              })
+          };
+
+          $scope.refrashChart = getBehaviors;
+          getBehaviors();
+
+          /**
+           * 删除用户自定义事件
+           */
+          $scope.deleteCustomEvent = function (e) {
+            SweetAlert.swal({
+                title: '确定删除该事件?',
+                text: '删除后将丢失该事件监控数据!',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#DD6B55',
+                confirmButtonText: '确定，删掉它!',
+                cancelButtonText: '不删，考虑一下!',
+                closeOnConfirm: false,
+                closeOnCancel: false
+              },
+              function (isConfirm) {
+                if (isConfirm) {
+                  //删除应用代码
+                  $http.delete('/customEvent?id='+e.target.id)
+                    .success(function (result) {
+                      if(result._id) {
+                        SweetAlert.swal('删除成功!', '该页面已被成功删除.', 'success');
+                        getBehaviors();
+                      }
+                    })
+                } else {
+                  SweetAlert.swal('删除取消!', '该应用仍然存在 :)', 'error');
+                }
+              });
+
+          }
+        }
+      });
+    };
+
+    $scope.back = function () {
+      window.history.back();
+    };
+  }]);
 
 'use strict';
 
 // Apps controller
-angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps',
+angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Apps', 'Tasks',
     'DTOptionsBuilder', '$http', '$timeout', 'PageService', 'SweetAlert',
-    function ($scope, $stateParams, $location, Authentication, Apps, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert) {
+    function ($scope, $stateParams, $location, Authentication, Apps, Tasks, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert) {
         $scope.authentication = Authentication;
 
         //可从后台动态获取数据，以后有时间完成
         $scope.type = 'java';
         $scope.types = ['java', 'node.js', 'android', 'ios'];
+
+        // 配置panel是否首期
+        $scope.isPanelOpen ={
+            performance: true,
+            exception: true,
+            ui: true,
+            behavior: true
+        };
+        $scope.togglePanelOpen = function (type) {
+            $scope.isPanelOpen[type] = !$scope.isPanelOpen[type];
+        };
+
+        // 配置功能绑定
+        $scope.config = {
+            performance: false,
+            exception: false,
+            ui: false,
+            behavior: false
+        };
+
+        $scope.selectItems = [{
+            label: '关闭',
+            value: false
+        },{
+            label: '开启',
+            value: true
+        }];
 
         $scope.deadLinkInterval = 3600000;
         $scope.deadLinkIntervals = [
@@ -179,7 +1627,15 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             {label: 'DOM结构异常', value: 6, checked: false},
             {label: '内存异常', value: 7, checked: false}
         ];
-
+        $scope.uiInterval = 3600000;
+        $scope.uiIntervals = [
+            {label: '30分钟',value: 1800000},
+            {label: '1个小时', value: 3600000},
+            {label: '半天', value: 43200000},
+            {label: '1天', value: 86400000},
+            {label: '1周', value: 604800000},
+            {label: '1个月', value: 2592000000}
+        ];
         $scope.toggleSelection = function (obj, i) {
             var objValue = parseInt(obj.target.value);
             if(obj.target.checked){
@@ -211,8 +1667,13 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                         's.parentNode.insertBefore(fp, s);</script>';
         */
 
+        // 性能&异常监测脚本
         $scope.script = '<script type="text/javascript" ' + 'id="feException" ' + 'src="http://' + $location.host() + ':' +
                         $location.port() + '/bookie.js/' + $stateParams.appId + '"' + '></script>';
+
+        // 用户行为监测脚本
+        $scope.UBscript = '<script type="text/javascript" ' + 'id="feException" ' + 'src="http://' + $location.host() + ':' +
+                        $location.port() + '/behavior.js/' + $stateParams.appId + '"' + '></script>';
 
         // Create new App
         $scope.create = function () {
@@ -222,9 +1683,11 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 type: this.type,
                 host: this.host,
                 deadLinkInterval: this.deadLinkInterval,
+                uiInterval: this.uiInterval,
                 alarmtype: this.alarmtype,
                 alarmInterval: this.alarmInterval,
-                alarmEmail: this.alarmEmail
+                alarmEmail: this.alarmEmail,
+                config: this.config
             });
 
             // Redirect after save
@@ -237,8 +1700,10 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 $scope.host = '';
                 $scope.alarmtype = [1, 2, 3, 4];
                 $scope.deadLinkInterval = 3600000;
+                $scope.deadLinkInterval = 3600000;
                 $scope.alarmInterval = 900000;
                 $scope.alarmEmail = '';
+                $scope.toggleOpenUB = 0;
             }, function (errorResponse) {
                 $scope.error = errorResponse.data.message;
             });
@@ -307,6 +1772,10 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                     $scope.pages = data;
                 });
 
+            $scope.tasks = Tasks.query({
+                appId: $stateParams.appId
+            });
+
             //修改APP配置初始化报警类型
             $scope.alarmtypes = [
                 {label: 'JavaScript异常', value: 1, checked: false},
@@ -342,6 +1811,15 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             PageService.setCurrentPage({'_id': page._id, 'pathname': page.pathname});
             PageService.setIdentifier(2);
             $location.path('apps/exception/' + $scope.app._id);
+        };
+
+        // 跳转至UI任务添加页面
+        $scope.gotoAddTask= function(){
+            $location.path('apps/' + $stateParams.appId + "/ui/create");
+        };
+        // 跳转至UI任务添加页面
+        $scope.gotoTaskDetail= function(task){
+            $location.path('apps/' + $stateParams.appId + "/ui/" + task._id);
         };
 
         //删除页面
@@ -416,7 +1894,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                     }
                 }
             })
-            .withOption('responsive', true);
+            // .withOption('responsive', true);
 
         //
         //$scope.pt = function () {
@@ -426,6 +1904,7 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
         //        $scope.showProgress = false;
         //    });
         //};
+
     }
 ]);
 
@@ -883,6 +2362,21 @@ angular.module('apps').controller('AppsExceptionController', ['$scope', '$stateP
                 $location.path('apps/performance/' + $scope.app._id);
             }
         };
+
+        /**
+         * 切换至用户行为监控页面
+         */
+        $scope.gotoBehavior = function (){
+            if($scope.selectPage.pathname === '全部'){
+                $location.path('apps/behavior/' + $scope.app._id);
+            } else {
+                PageService.setCurrentPage({'_id': $scope.selectPage._id, 'pathname': $scope.selectPage.pathname});
+                PageService.setIdentifier(2);
+                $location.path('apps/behavior/' + $scope.app._id);
+            }
+        };
+
+
 
         /**
          * 手动报警
@@ -1554,6 +3048,18 @@ angular.module('apps').controller('AppsPerformanceController', ['$scope', '$stat
                 $location.path('apps/exception/' + $scope.app._id);
             }
         };
+        /**
+         * 切换至用户行为监控页面
+         */
+        $scope.gotoBehavior = function (){
+            if($scope.selectPage.pathname === '全部'){
+                $location.path('apps/behavior/' + $scope.app._id);
+            } else {
+                PageService.setCurrentPage({'_id': $scope.selectPage._id, 'pathname': $scope.selectPage.pathname});
+                PageService.setIdentifier(2);
+                $location.path('apps/behavior/' + $scope.app._id);
+            }
+        };
 
         $scope.httpNumTooltip = {
             'title': '包括HTML页面请求，CSS文件、JavaScript文件、图片等资源下载及其它网络请求。'
@@ -1629,6 +3135,213 @@ angular.module('apps').controller('AppsPerformanceController', ['$scope', '$stat
 
 'use strict';
 
+// Apps controller
+angular.module('apps').filter("formatTime", function(){
+    return function(inputData) {
+        var standard = [
+            {label: '30分钟',value: 1800000},
+            {label: '1个小时', value: 3600000},
+            {label: '半天', value: 43200000},
+            {label: '1天', value: 86400000},
+            {label: '1周', value: 604800000},
+            {label: '1个月', value: 2592000000}
+        ];
+        for(var i = 0; i < standard.length; i++) {
+            if(standard[i].value == inputData){
+                return standard[i].label;
+            }
+        }
+        return inputData + "毫秒";
+    }
+})
+angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$window', '$location', 'Authentication', 'Tasks', 'Mons',
+    'DTOptionsBuilder', '$http', '$timeout', 'PageService', 'SweetAlert', 'ModalService',
+    function ($scope, $stateParams, $window, $location, Authentication, Tasks, Mons, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert, ModalService) {
+        $scope.authentication = Authentication;
+        $scope.uiType = {
+            'add': '添加DOM节点',
+            'remove': '删除DOM节点',
+            'style': '样式变化',
+            'text': '文本变化'
+        };
+        $scope.fileName = {
+            'diffPic': '页面对比图片.jpeg',
+            'screenShot': '页面截图.jpeg',
+            'info': '页面信息.json',
+            'tree': 'DOM树信息.json'
+        };
+        $scope.monitoringIntervals = [
+            {label: '30分钟',value: 1800000},
+            {label: '1个小时', value: 3600000},
+            {label: '半天', value: 43200000},
+            {label: '1天', value: 86400000},
+            {label: '1周', value: 604800000},
+            {label: '1个月', value: 2592000000}
+        ];
+        $scope.create = function () {
+            // 创建新的任务
+            var task = new Tasks({
+                url: this.url,
+                app: $stateParams.appId
+            });
+            task.$save(function (response) {
+                $location.path('apps/' + $stateParams.appId + '/ui/' + response._id);
+            }, function (errorResponse) {
+                $scope.error = errorResponse.data.message;
+            });
+        }
+        $scope.remove = function () {
+            SweetAlert.swal({
+                title: '确定删除该应用?',
+                text: '应用删除后不可恢复哟!',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#DD6B55',
+                confirmButtonText: '确定，删掉它!',
+                cancelButtonText: '不删，考虑一下!',
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        //删除应用代码
+                        SweetAlert.swal('删除成功!', '该页面已被成功删除.', 'success');
+                        $scope.task.$remove(function () {
+                            $location.path('apps/' + $stateParams.appId);
+                        });
+                    } else {
+                        SweetAlert.swal('删除取消!', '该应用仍然存在 :)', 'error');
+                    }
+                });
+        }
+        $scope.removeErr = function () {
+            $scope.error = false;
+        };
+
+        $scope.initTask = function () {
+            $scope.task = Tasks.get({
+                taskId: $stateParams.taskId
+            })
+            $scope.mons = Mons.query({
+                taskId: $stateParams.taskId
+            });
+        };
+
+        $scope.initMon = function () {
+            $scope.mon = Mons.get({
+                monId: $stateParams.monId
+            })
+        };
+
+        $scope.back = function () {
+            window.history.back();
+        };
+
+        $scope.addRule = function () {
+            //通过Image对象请求发送数据
+            var img = new Image(1, 1);
+            img.src = '/_ui.gif/send?' + JSON.stringify({isOpenUI: true});
+            img.onload = function(){
+                $window.open($scope.task.url, '_blank');
+            }
+            img.onerror = function(err){
+                SweetAlert.swal('跳转失败!', '服务器开了小差 :)', 'error');
+            }
+        };
+
+        $scope.removeRule = function ($event, index, type) {
+            if (type == 'dom') {
+                $scope.task.domRules.splice(index, 1);
+            } else if (type == 'diff') {
+                $scope.task.diffRules.splice(index, 1);
+            }
+
+            $scope.task.$update(function () {
+                SweetAlert.swal('删除成功!', '该规则已被成功删除.', 'success');
+            }, function (errorResponse) {
+                SweetAlert.swal('删除失败!', '服务器开了小差 :)', 'error');
+            });
+
+        };
+
+        $scope.switchTaskStatus = function (status) {
+            switch (status) {
+                case 'off':
+                    $scope.task.isRunning = false;
+                    break;
+                case 'on':
+                    $scope.task.isRunning = true;
+                    break;
+            }
+            $scope.task.$update(function () {
+            }, function (errorResponse) {
+                SweetAlert.swal('更新!', '服务器开了小差 :)', 'error');
+            });
+        };
+
+
+        $scope.gotoMonDetail = function (mon) {
+            $location.path('apps/' + $stateParams.appId + "/ui/" + $stateParams.taskId + "/mon/" + mon._id);
+        };
+
+        $scope.downloadFile = function (id) {
+            $window.open("/mon/getFile?fileId=" + id, '_blank');
+        }
+
+        $scope.modifyInterval = function(monitoringIntervals, task){
+            ModalService.showModal({
+                templateUrl: 'modules/apps/views/ui/modify-interval.client.view.html',
+                inputs: {
+                    title: '修改监控时间间隔'
+                },
+                controller: ['$scope', 'close', function($scope, close){
+                    var _monitoringInterval = task.monitoringInterval;
+                    $scope.monitoringIntervals = monitoringIntervals;
+                    $scope.task = task;
+                    $scope.ok = function (result){
+                        $scope.task.$update();
+                        close(100);
+                    };
+                    $scope.cancel = function(){
+                        task.monitoringInterval = _monitoringInterval;
+                        close(100);
+                    }
+                }]
+            }).then(function (modal) {
+                modal.element.show();
+            });
+        }
+        //datatble配置
+        $scope.dtPageOptions = DTOptionsBuilder
+            .newOptions()
+            .withLanguage({
+                'sLengthMenu': '每页显示 _MENU_ 条数据',
+                'sInfo': '从 _START_ 到 _END_ /共 _TOTAL_ 条数据',
+                'sInfoEmpty': '没有数据',
+                'sInfoFiltered': '(从 _MAX_ 条数据中检索)',
+                'sZeroRecords': '没有检索到数据',
+                'sSearch': '检索:',
+                'oPaginate': {
+                    'sFirst': '首页',
+                    'sPrevious': '上一页',
+                    'sNext': '下一页',
+                    'sLast': '末页'
+                }
+            })
+            // Add Bootstrap compatibility
+            .withBootstrap()
+            .withBootstrapOptions({
+                pagination: {
+                    classes: {
+                        ul: 'pagination pagination-sm'
+                    }
+                }
+            })
+        // .withOption('responsive', true);
+    }]);
+
+'use strict';
+
 // My Apps directive
 angular.module('apps').directive('myConfirmClick', [
     function () {
@@ -1662,6 +3375,27 @@ angular.module('apps').factory('Apps', ['$resource',
 	}
 ]);
 
+//Apps service used to communicate task REST endpoints
+angular.module('apps').factory('Tasks', ['$resource',
+    function($resource) {
+        return $resource('ui/:taskId/', {
+        	taskId: '@_id',
+        }, {
+            update: {
+                method: 'PUT'
+            }
+        });
+    }
+]);
+
+//Apps service used to communicate task REST endpoints
+angular.module('apps').factory('Mons', ['$resource',
+    function($resource) {
+        return $resource('mon/:monId/', {
+            monId: '@_id',
+        });
+    }
+]);
 //用于APP页面往具体页面跳转用
 angular.module('apps').factory('PageService', [function() {
 
@@ -1935,8 +3669,8 @@ angular.module('mails').config(['$stateProvider',
 'use strict';
 
 // Mails controller
-angular.module('mails').controller('MailsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Mails', 'DTOptionsBuilder', 'ModalService',
-	function($scope, $stateParams, $location, Authentication, Mails, DTOptionsBuilder, ModalService) {
+angular.module('mails').controller('MailsController', ['$scope', '$sce', '$stateParams', '$location', 'Authentication', 'Mails', 'DTOptionsBuilder', 'ModalService',
+	function($scope, $sce,  $stateParams, $location, Authentication, Mails, DTOptionsBuilder, ModalService) {
 		$scope.authentication = Authentication;
 
 
@@ -1992,13 +3726,14 @@ angular.module('mails').controller('MailsController', ['$scope', '$stateParams',
 					title: '邮件详情',
 					mail: mail
 				},
-				controller: function($scope, close, title, mail){
+				controller: ['$scope', 'close', 'title', 'mail', function($scope, close, title, mail){
 					$scope.title = title;
 					$scope.mail = mail;
-					$scope.close = function (result){
+					$scope.explicitlyTrustedEmailDetail = $sce.trustAsHtml(mail.content);
+                    $scope.close = function (result){
 						close(result, 200);
 					};
-				}
+				}]
 			}).then(function (modal) {
 				modal.element.show();
 				modal.close.then(function (result) {

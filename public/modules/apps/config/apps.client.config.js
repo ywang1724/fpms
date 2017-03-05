@@ -12,28 +12,28 @@ angular.module('apps').run(['Menus',
 	}
 ]);
 
-angular.module('apps').config(function($datepickerProvider) {
+angular.module('apps').config(['$datepickerProvider', function($datepickerProvider) {
     angular.extend($datepickerProvider.defaults, {
         animation: 'am-flip-x',
         autoclose: true,
         dateType: 'number'
     });
-});
+}]);
 
-angular.module('apps').config(function($selectProvider) {
+angular.module('apps').config(['$selectProvider', function($selectProvider) {
     angular.extend($selectProvider.defaults, {
         animation: 'am-flip-x'
     });
-});
+}]);
 
-angular.module('apps').config(function($tooltipProvider) {
+angular.module('apps').config(['$tooltipProvider', function($tooltipProvider) {
     angular.extend($tooltipProvider.defaults, {
         animation: 'am-flip-x',
         trigger: 'hover',
         placement: 'bottom',
         type: 'success'
     });
-});
+}]);
 
 angular.module('apps').config(['ngClipProvider', function(ngClipProvider) {
     ngClipProvider.setPath('lib/zeroclipboard/dist/ZeroClipboard.swf');

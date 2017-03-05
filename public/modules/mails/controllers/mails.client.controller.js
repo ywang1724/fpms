@@ -58,14 +58,14 @@ angular.module('mails').controller('MailsController', ['$scope', '$sce', '$state
 					title: '邮件详情',
 					mail: mail
 				},
-				controller: function($scope, close, title, mail){
+				controller: ['$scope', 'close', 'title', 'mail', function($scope, close, title, mail){
 					$scope.title = title;
 					$scope.mail = mail;
 					$scope.explicitlyTrustedEmailDetail = $sce.trustAsHtml(mail.content);
                     $scope.close = function (result){
 						close(result, 200);
 					};
-				}
+				}]
 			}).then(function (modal) {
 				modal.element.show();
 				modal.close.then(function (result) {

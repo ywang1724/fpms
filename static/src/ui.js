@@ -261,7 +261,7 @@ require("./dialog");
 
         window.__cssSelectRule__ = selector; // 将规则暂存，方便上报。
 
-        if($(".fpms-mode-active").data('mode') == 'diff') {
+        if($(".fpms-mode-active").data('mode') == 'diff') { // 页面差异性对比规则
             title = "排除不需进行差异性监测的区域";
 
             var moreOptionsList = '';
@@ -300,7 +300,7 @@ require("./dialog");
                 '<div class="btn-bar"><button class="btn btn-primary btn-block add-diff-rule">添加</button></div>';
 
             
-        } else {
+        } else { // 添加DOM检测规则
             title = "添加DOM检测规则";
 
             var htmlAttrs = '', cssAttrs = '', computedCSS;
@@ -360,16 +360,16 @@ require("./dialog");
                 '<div class="btn-bar"><button class="btn btn-primary btn-block add-dom-rule">添加</button></div>';
         }
         window.__selectDialog__ = dialog({
-            title: title,
-            content: template,
-            width: 400,
-            onshow: function () {
-                $(".ui-popup").on("mouseout mouseover", function (e) {
+            title: title, // 设置弹出层标题
+            content: template, // 设置弹出层内容
+            width: 400, // 弹出层宽度
+            onshow: function () { // 弹出层显示之前的回调函数
+                $(".ui-popup").on("mouseout mouseover", function (e) { //阻止鼠标移动事件在弹出层上传播
                     e.stopPropagation();
                     return false;
                 })
 
-                $('.ui-dialog-content .option input[name="moreOption"]').change(function(){
+                $('.ui-dialog-content .option input[name="moreOption"]').change(function(){ // 展开更多选项
                     var newSelector = selector.trim();
                     $('.ui-dialog-content .option input[name="moreOption"]:checked').each(function(index, elem){
                         if($(this).attr("key")!= "text") {
@@ -380,9 +380,9 @@ require("./dialog");
                         
                     });
                     while (masks.length) {
-                        masks.pop().remove();
+                        masks.pop().remove(); // 移除old selector选中的元素
                     }
-                     $(newSelector).each(function () {
+                     $(newSelector).each(function () { // 为new selector设置选中，添加边框
                         masks.push($("<div>").addClass("outline-shadow").css({
                             "top": $(this).offset().top,
                             "left": $(this).offset().left,
@@ -391,16 +391,15 @@ require("./dialog");
                         }).appendTo($("body")));
                     });
                    window.__cssSelectRule__ = newSelector;
-                   $("#cssSelector").text(newSelector);
+                   $("#cssSelector").text(newSelector); // 显示新的选选择器
                 });
             },
-            onclose: function () {
+            onclose: function () {// 弹出层关闭回掉函数
                 while (masks.length) {
-                    masks.pop().remove();
+                    masks.pop().remove();// 移除selector选中的元素
                 }
                 window.__cssSelectRule__ = null; // 清空暂存的数据
-                window.__cssSelectRule__ = null;
-                init();
+                init(); // 重新初始化
             },
             onremove: function () {
                 $(".ui-popup").off("mouseout mouseover")
@@ -433,8 +432,8 @@ require("./dialog");
     }
 
 
-    var last,
-        masks = [];
+    var last, // 上一次选中的元素
+        masks = []; // 选择器选中的所有元素
 
     createNavBar(); // 创建导航栏
 
@@ -448,9 +447,10 @@ require("./dialog");
         })
     })
 
+    // 添加页面差异性对比规则
     $(document).on("click", ".add-diff-rule", function () {
-        var pageUrl = window.location.href;
-        window.__addRule__(pageUrl, window.__cssSelectRule__, 'diff', function(err){
+        var pageUrl = window.location.href; // 获取当前页面的url
+        window.__addRule__(pageUrl, window.__cssSelectRule__, 'diff', function(err){ // 上报规则
             if(err){ // 上报出错
                 alert("添加失败，目标服务器无响应。");
             } else {
@@ -460,17 +460,18 @@ require("./dialog");
             window.__selectDialog__ = null;
         });
     })
-    
+
+    // 添加DOM 检测规则
     $(document).on("click", ".add-dom-rule", function () {
-       var pageUrl = window.location.href;
-       var rules = [];
-       $(".ui-dialog-content input[name='cssAttr']").each(function(index, elem){
+       var pageUrl = window.location.href;// 获取当前页面的url
+       var rules = []; // 规则集合
+       $(".ui-dialog-content input[name='cssAttr']").each(function(index, elem){ // 获取css规则
             rules.push({
                 selector: "window.getComputedStyle($('" + window.__cssSelectRule__ + "')[0])['" + $(elem).attr("key") + "']",
                 expect: $(elem).val()
             })
        });
-       if($(".ui-dialog-content input[name='isCustomRuleActived']")[0].checked) {
+       if($(".ui-dialog-content input[name='isCustomRuleActived']")[0].checked) { // 获取自定义规则
             var result;
             try {
                 result = eval($(".ui-dialog-content input[name='customCSSRule']").val());
@@ -478,7 +479,7 @@ require("./dialog");
                alert("自定义表达式出错了，请更正。");
                return;
             }
-            if(typeof result =='string' || typeof result == 'number' || typeof result == 'boolean') {
+            if(typeof result =='string' || typeof result == 'number' || typeof result == 'boolean') { // 判断自定义表达式是否合法
                 rules.push({
                     selector: $(".ui-dialog-content input[name='customCSSRule']").val(),
                     expect: result
@@ -489,7 +490,7 @@ require("./dialog");
             }
        }
 
-       window.__addRule__(pageUrl, rules, 'dom', function(err){
+       window.__addRule__(pageUrl, rules, 'dom', function(err){ // 上报规则
             if(err){ // 上报出错
                 alert("添加失败，目标服务器无响应。");
             } else {
@@ -499,7 +500,8 @@ require("./dialog");
             window.__selectDialog__ = null;
         });
     });
-       
+
+    // 添加CSS 规则
     $(document).on("click", ".add-css-rule", function () {
         if(!$('input[name="cssAttr"][key="' + $(".select-css-rule option:selected").text().trim() + '"]').length) { // 防止重复
             var option = 
@@ -508,16 +510,17 @@ require("./dialog");
                 '<span class="more-option-label">' + $(".select-css-rule option:selected").text() + '</span>' + 
                 '<span class="equal"></span><code>' + $(".select-css-rule").val() + '</code> <button class="btn btn-danger btn-sm remove-css-rule" style="float:right">移除</button>' +
             '</div>';
-            $(option).appendTo($(this).parent());
+            $(option).appendTo($(this).parent()); // 将CSS规则选项添加到select中
         }
         
     });
 
+    //移除css规则
     $(document).on("click", ".remove-css-rule", function () {
        $(this).parent().remove();
     });
 
-
+    //  立即反馈编写的自定表达式
     $(document).on("input propertychange", "input[name='customCSSRule']", function () {
         var result;
         try {

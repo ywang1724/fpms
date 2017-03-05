@@ -4,7 +4,7 @@ module.exports = function(grunt) {
 	// Unified Watch Object
 	var watchFiles = {
 		serverViews: ['app/views/**/*.*'],
-		serverJS: ['gruntfile.js', 'server.js', 'config/**/*.js', 'app/**/*.js'],
+		serverJS: ['gruntfile.js', 'server.js', 'config/**/*.js', 'app/**/*.js','!app/service/phantomjs/page-monitor/**/*.*'],
 		clientViews: ['public/modules/**/views/**/*.html'],
 		clientJS: ['public/js/*.js', 'public/modules/**/*.js'],
 		clientCSS: ['public/modules/**/*.css'],
@@ -71,9 +71,12 @@ module.exports = function(grunt) {
 					mangle: true
 				},
 				files: {
-					'public/dist/application.min.js': 'public/dist/application.js',
-					'static/dist/rookie.js': 'static/js/rookie.js',
-					'static/dist/bookie.js': 'static/js/bookie.js'
+                    'public/dist/application.min.js': 'public/dist/application.js',
+					'static/dist/ui.js': 'static/js/ui.js',
+					'static/dist/behavior.js': 'static/js/behavior.js',
+					'static/dist/behavior.custom.js': 'static/js/behavior.custom.js',
+					'static/dist/performance.js': 'static/js/performance.js',
+					'static/dist/exception.js': 'static/js/exception.js'
 				}
 			}
 		},
@@ -110,7 +113,7 @@ module.exports = function(grunt) {
 		ngAnnotate: {
 			production: {
 				files: {
-					'public/dist/application.js': '<%= applicationJavaScriptFiles %>'
+                    'public/dist/application.js': '<%= applicationJavaScriptFiles %>'
 				}
 			}
 		},
@@ -178,7 +181,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('lint', ['jshint', 'csslint']);
 
 	// Build task(s).
-	grunt.registerTask('build', ['lint', 'loadConfig', 'ngAnnotate', 'uglify', 'cssmin']);
+	grunt.registerTask('build', ['loadConfig', 'ngAnnotate', 'uglify', 'cssmin']);
 
 	// Test task.
 	grunt.registerTask('test', ['env:test', 'mochaTest', 'karma:unit']);

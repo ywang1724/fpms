@@ -6,7 +6,7 @@ module.exports = {
 	db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://' + env.DB_USERNAME + ':' + env.DB_PASSWORD +
         '@' + (process.env.DB_1_PORT_27017_TCP_ADDR || 'localhost') + '/fpms',
     adminAccount_init: env.adminAccount_init,
-    rabbitURI: env.rabbitURI,
+    rabbitURI: process.env.rabbitURI || env.rabbitURI,
     dbName: "fpms",
 	assets: {
 		lib: {
@@ -47,9 +47,12 @@ module.exports = {
                 'public/lib/ng-clip/dest/ng-clip.min.js',
                 'public/lib/zeroclipboard/dist/ZeroClipboard.min.js',
 				'public/lib/angular-modal-service/dst/angular-modal-service.min.js',
+				'public/lib/cytoscape/dist/cytoscape.min.js',
+                'public/js/cn-all-sar-taiwan.js',
+				'public/lib/angucomplete-alt/dist/angucomplete-alt.min.js',
 				'public/lib/sweetalert/dist/sweetalert.min.js',
-				'public/lib/angular-sweetalert/SweetAlert.min.js'
-
+				'public/lib/angular-sweetalert/SweetAlert.min.js',
+				'public/lib/moment/min/moment.min.js'
 			]
 		},
 		css: 'public/dist/application.min.css',
