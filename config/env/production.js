@@ -47,6 +47,7 @@ module.exports = {
                 'public/lib/zeroclipboard/dist/ZeroClipboard.min.js',
 				'public/lib/angular-modal-service/dst/angular-modal-service.min.js',
 				'public/lib/cytoscape/dist/cytoscape.min.js',
+                'public/js/cn-all-sar-taiwan.js',
 				'public/lib/angucomplete-alt/dist/angucomplete-alt.min.js',
 				'public/lib/sweetalert/dist/sweetalert.min.js',
 				'public/lib/angular-sweetalert/SweetAlert.min.js',
