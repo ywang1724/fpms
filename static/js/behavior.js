@@ -73,7 +73,7 @@
       //通过Image对象请求发送数据
       var img = new Image(1, 1);
       img.src = serverHost + '/_ub.gif?type=1' + str;
-  }
+  };
 
   /**
    * 设置cookie
@@ -82,9 +82,6 @@
     SetCookie ('GUID', Who(), {expires:exp});
     SetCookie ('WWHCount', Count(), {expires:exp});
     When();
-    window.onbeforeunload = function() {
-      alert('onbeforeunload')
-    }
   }
 
   /**
