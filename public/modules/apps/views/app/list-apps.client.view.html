@@ -21,8 +21,9 @@
             <td>{{ app.name }}</td>
             <td><a data-ng-href="#!/apps/{{app._id}}">查看</a></td>
             <td>
-                <a data-ng-href="#!/apps/performance/{{app._id}}">性能</a>
-                / <a data-ng-href="#!/apps/exception/{{app._id}}">异常</a>
+                <span data-ng-show="app.config.performance"><a data-ng-href="#!/apps/performance/{{app._id}}">性能</a></span>
+                <span data-ng-show="app.config.exception">/ <a data-ng-href="#!/apps/exception/{{app._id}}">异常</a></span>
+                <span data-ng-show="app.config.ui">/ <a data-ng-href="#!/apps/ui/{{app._id}}">页面</a></span>
                 <span data-ng-show="app.config.behavior">/ <a data-ng-href="#!/apps/behavior/{{app._id}}">行为</a></span>
             </td>
             <td data-ng-show="showName">{{ app.user.displayName }}</td>

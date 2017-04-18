@@ -28,9 +28,9 @@ module.exports = function (gridfs, db) {
 
             console.log("等待接受消息", queue);
 
-            var sendMessage = util.sendMessage(ch, response_queue);
+        var sendMessage = util.sendMessage(ch, response_queue);
 
-            ch.consume(queue, function (msg) {
+        ch.consume(queue, function (msg) {
                 console.log("收到新消息", msg.content.toString());
                 var taskId = JSON.parse(msg.content.toString("utf-8")).taskId; // 获取任务ID
 

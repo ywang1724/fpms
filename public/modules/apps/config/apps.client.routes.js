@@ -29,6 +29,10 @@ angular.module('apps').config(['$stateProvider',
 			url: '/apps/exception/:appId',
 			templateUrl: 'modules/apps/views/exception/view-exception.client.view.html'
 		}).
+        state('viewAppUI', {
+            url: '/apps/ui/:appId',
+            templateUrl: 'modules/apps/views/ui/list-task.client.view.html'
+        }).
         state('addUITask', {
             url: '/apps/:appId/ui/create',
             templateUrl: 'modules/apps/views/ui/add-task.client.view.html'

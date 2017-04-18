@@ -19,9 +19,9 @@ angular.module('apps').filter("formatTime", function(){
         return inputData + "毫秒";
     }
 })
-angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$window', '$location', 'Authentication', 'Tasks', 'Mons',
+angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$window', '$location', 'Authentication', 'Apps', 'Tasks', 'Mons',
     'DTOptionsBuilder', '$http', '$timeout', 'PageService', 'SweetAlert', 'ModalService',
-    function ($scope, $stateParams, $window, $location, Authentication, Tasks, Mons, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert, ModalService) {
+    function ($scope, $stateParams, $window, $location, Authentication, Apps, Tasks, Mons, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert, ModalService) {
         $scope.authentication = Authentication;
         $scope.uiType = {
             'add': '添加DOM节点',
@@ -98,6 +98,22 @@ angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$w
             })
         };
 
+        $scope.listTask = function() {
+            $scope.app = Apps.get({
+                appId: $stateParams.appId
+            });
+            $scope.tasks = Tasks.query({
+                appId: $stateParams.appId
+            });
+        }
+        // 跳转至UI任务添加页面
+        $scope.gotoAddTask= function(){
+            $location.path('apps/' + $stateParams.appId + "/ui/create");
+        };
+        // 跳转至UI任务添加页面
+        $scope.gotoTaskDetail= function(task){
+            $location.path('apps/' + $stateParams.appId + "/ui/" + task._id);
+        };
         $scope.back = function () {
             window.history.back();
         };

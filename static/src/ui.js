@@ -60,87 +60,87 @@ require("./dialog");
         return res;
     };
 
-    /**
-     * 获取一个DOM元素的CSS选择路径
-     */
-    function cssPath(el) {
-        var fullPath = 0, // Set to 1 to build ultra-specific full CSS-path, or 0 for optimised selector
-            useNthChild = 0, // Set to 1 to use ":nth-child()" pseudo-selectors to match the given element
-            cssPathStr = '',
-            testPath = '',
-            parents = [],
-            parentSelectors = [],
-            tagName,
-            cssId,
-            cssClass,
-            tagSelector,
-            vagueMatch,
-            nth,
-            i,
-            c;
+/**
+ * 获取一个DOM元素的CSS选择路径
+ */
+function cssPath(el) {
+    var fullPath = 0, // 设置为1表示获取完整路径，0表示获取优化后的路径
+        useNthChild = 0, // 设置为1表示使用:nth-child() 伪类选择器
+        cssPathStr = '',
+        testPath = '',
+        parents = [],
+        parentSelectors = [],
+        tagName,
+        cssId,
+        cssClass,
+        tagSelector,
+        vagueMatch,
+        nth,
+        i,
+        c;
 
-        // Go up the list of parent nodes and build unique identifier for each:
-        while (el) {
-            vagueMatch = 0;
+    // 遍历所有的父元素，并获取其唯一选择符
+    while (el) {
+        vagueMatch = 0;
 
-            // Get the node's HTML tag name in lowercase:
-            tagName = el.nodeName.toLowerCase();
+        // 获取元素的标签名
+        tagName = el.nodeName.toLowerCase();
 
-            // Get node's ID attribute, adding a '#':
-            cssId = (el.id) ? ('#' + el.id) : false;
+        // 获取元素的Id，并加上#:
+        cssId = (el.id) ? ('#' + el.id) : false;
 
-            // Get node's CSS classes, replacing spaces with '.':
-            cssClass = (el.className) ? ('.' + el.className.trim().replace(/\s+/g, ".")) : '';
+        // 获取元素的class，并加上".":
+        cssClass = (el.className) ? ('.' + el.className.trim().replace(/\s+/g, ".")) : '';
 
-            // Build a unique identifier for this parent node:
-            if (cssId) {
-                // Matched by ID:
-                tagSelector = tagName + cssId + cssClass;
-            } else if (cssClass) {
-                // Matched by class (will be checked for multiples afterwards):
-                tagSelector = tagName + cssClass;
-            } else {
-                // Couldn't match by ID or class, so use ":nth-child()" instead:
-                vagueMatch = 1;
-                tagSelector = tagName;
-            }
-
-            // Add this full tag selector to the parentSelectors array:
-            parentSelectors.unshift(tagSelector)
-
-            // If doing short/optimised CSS paths and this element has an ID, stop here:
-            if (cssId && !fullPath)
-                break;
-
-            // Go up to the next parent node:
-            el = el.parentNode !== document ? el.parentNode : false;
-
-        } // endwhile
-
-
-        // Build the CSS path string from the parent tag selectors:
-        for (i = 0; i < parentSelectors.length; i++) {
-            cssPathStr += ' ' + parentSelectors[i]; // + ' ' + cssPathStr;
-
-            // If using ":nth-child()" selectors and this selector has no ID / isn't the html or body tag:
-            if (useNthChild && !parentSelectors[i].match(/#/) && !parentSelectors[i].match(/^(html|body)$/)) {
-
-                // If there's no CSS class, or if the semi-complete CSS selector path matches multiple elements:
-                if (!parentSelectors[i].match(/\./) || $(cssPathStr).length > 1) {
-
-                    // Count element's previous siblings for ":nth-child" pseudo-selector:
-                    for (nth = 1, c = el; c.previousElementSibling; c = c.previousElementSibling, nth++);
-
-                    // Append ":nth-child()" to CSS path:
-                    cssPathStr += ":nth-child(" + nth + ")";
-                }
-            }
-
+        // 构造唯一选择符:
+        if (cssId) {
+            // 用ID匹配
+            tagSelector = tagName + cssId + cssClass;
+        } else if (cssClass) {
+            // 用class匹配:
+            tagSelector = tagName + cssClass;
+        } else {
+            // 对于不能用Id 或class匹配的，用:nth-child()替代
+            vagueMatch = 1;
+            tagSelector = tagName;
         }
 
-        // Return trimmed full CSS path:
-        return cssPathStr.replace(/^[ \t]+|[ \t]+$/, '');
+        // 将选择符添加到栈中
+        parentSelectors.unshift(tagSelector)
+
+        // 如果需要优化选择路径，则代码停止时向下执行:
+        if (cssId && !fullPath)
+            break;
+
+        // 向上遍历:
+        el = el.parentNode !== document ? el.parentNode : false;
+
     }
+
+
+    // 根据栈中的选择符，构造完整CSS选择路径
+    for (i = 0; i < parentSelectors.length; i++) {
+        cssPathStr += ' ' + parentSelectors[i];
+
+        // If using ":nth-child()" selectors and this selector has no ID / isn't the html or body tag:
+        if (useNthChild && !parentSelectors[i].match(/#/) && !parentSelectors[i].match(/^(html|body)$/)) {
+
+            // If there's no CSS class, or if the semi-complete CSS selector path matches multiple elements:
+            if (!parentSelectors[i].match(/\./) || $(cssPathStr).length > 1) {
+
+                // Count element's previous siblings for ":nth-child" pseudo-selector:
+                for (nth = 1, c = el; c.previousElementSibling; c = c.previousElementSibling, nth++);
+
+                // Append ":nth-child()" to CSS path:
+                cssPathStr += ":nth-child(" + nth + ")";
+            }
+        }
+
+    }
+
+    // Return trimmed full CSS path:
+    return cssPathStr.replace(/^[ \t]+|[ \t]+$/, '');
+}
 
     /**
      * 创建导航栏
@@ -207,7 +207,7 @@ require("./dialog");
     }
 
     /**
-     * 上报新增的页面DIFF规则
+     * 上报规则数据
      */
     window.__addRule__ = function (pageUrl, selector, type, callback){
         var elem =  document.getElementById("feException");

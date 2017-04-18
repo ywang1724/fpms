@@ -9,20 +9,18 @@ var schedule = require('node-schedule'),
     _ = require("lodash");
 
 /**
- *
+ * @desc 传送消息给消息队列
  * @param channel 消息队列通道
  * @param queueName 消息队列名称
  * @returns {Function} 返回配置好的函数
  */
 function sendMessageUtil(channel, queueName) {
     return function (message) {
-        console.log('======================= send message ========================');
-        console.log(JSON.stringify(message, null, '\t'));
         channel.sendToQueue(queueName, new Buffer(JSON.stringify(message), "utf-8"), {persistent: true});
     }
 }
 /**
- *
+ *@desc 任务生成
  * @param channel 消息队列通道
  */
 function generateTask(channel) {
@@ -76,7 +74,7 @@ function clean(gridfs) {
     });
 }
 /**
- *
+ * @desc 订阅消息队列监控数据消息，并处理
  * @param channel 消息队列通道
  * @param gridfs 访问gridfs
  */
@@ -84,8 +82,6 @@ function processData(channel, gridfs) {
     var queue = 'phantomjs_response_queue';// 声明消息队列名
     channel.assertQueue(queue, {durable: true}); // 设置消息队列
     channel.prefetch(1); // 设置 RabbitMQ 每次接受的消息不超过1条
-
-    console.log("等待接收消息.....");
     channel.consume(queue, function (msg) {
         console.log("收到新消息", msg.content.toString() + "\n");
         var parsedMsg = JSON.parse(msg.content.toString("utf-8"));
@@ -97,7 +93,7 @@ function processData(channel, gridfs) {
                 else {
                     var mon = parsedMsg.mon;
                     if (parsedMsg.mon.hasException) { // 有异常发生
-                        sendMail(task.app.alarmEmail, '页面监测异常报警', mon, task.app, task.url, 'ui', gridfs);
+                        // sendMail(task.app.alarmEmail, '页面监测异常报警', mon, task.app, task.url, 'ui', gridfs);
                     }
                     task.lastRunTime = parsedMsg.mon.timestamp;
                     task.save(function (err) {
@@ -123,3 +119,4 @@ module.exports = function (gridfs) {
         });
     }
 }
+
