@@ -3,8 +3,8 @@ module.exports = {
     phantomConfig: {
         page: {
             viewportSize: {
-                width: 1024,
-                height: 768
+                width: 1440,
+                height: 900
             },
             settings: {
                 resourceTimeout: 20000,
@@ -16,7 +16,7 @@ module.exports = {
         },
         render: {
             format: 'jpeg',     // @see http://phantomjs.org/api/webpage/method/render.html
-            quality: 70,        // @see http://phantomjs.org/api/webpage/method/render.html
+            quality: 100,        // @see http://phantomjs.org/api/webpage/method/render.html
             ext: 'jpg',         // the same as format, if not specified
         },
         walk: {

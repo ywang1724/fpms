@@ -133,6 +133,10 @@ angular.module('apps').config(['$stateProvider',
 			url: '/apps/exception/:appId',
 			templateUrl: 'modules/apps/views/exception/view-exception.client.view.html'
 		}).
+        state('viewAppUI', {
+            url: '/apps/ui/:appId',
+            templateUrl: 'modules/apps/views/ui/list-task.client.view.html'
+        }).
         state('addUITask', {
             url: '/apps/:appId/ui/create',
             templateUrl: 'modules/apps/views/ui/add-task.client.view.html'
@@ -397,7 +401,6 @@ angular.module('apps').controller('AppsBehaviorEventController', ['$scope', '$st
      * 展示漏斗图
      */
     $scope.showFunnel = function () {
-      console.log($scope.funnelData);
       $scope.funnelConfig.series[0].data = [];
       for (var i in $scope.funnelData) {
         $scope.funnelConfig.series[0].data.push($scope.funnelData[i]);
@@ -1595,6 +1598,15 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             value: true
         }];
 
+        $scope.needLoginItems = [{
+            label: '否',
+            value: false
+        },{
+            label: '是',
+            value: true
+        }];
+
+        $scope.auth = {};
         $scope.deadLinkInterval = 3600000;
         $scope.deadLinkIntervals = [
             {label: '30分钟',value: 1800000},
@@ -1636,6 +1648,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             {label: '1周', value: 604800000},
             {label: '1个月', value: 2592000000}
         ];
+        $scope.needLogin = false;
+        $scope.useCaptcha = false;
         $scope.toggleSelection = function (obj, i) {
             var objValue = parseInt(obj.target.value);
             if(obj.target.checked){
@@ -1687,7 +1701,18 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 alarmtype: this.alarmtype,
                 alarmInterval: this.alarmInterval,
                 alarmEmail: this.alarmEmail,
-                config: this.config
+                config: this.config,
+                needLogin: this.needLogin,
+                auth:{
+                    url: this.auth.url,
+                    username:this.auth.username,
+                    password:this.auth.password,
+                    usernameSelector:this.auth.usernameSelector,
+                    passwordSelector:this.auth.passwordSelector,
+                    useCaptcha: this.useCaptcha,
+                    captchaSelector: this.auth.captchaSelector,
+                    loginFormSelector:this.auth.loginFormSelector
+                }
             });
 
             // Redirect after save
@@ -3154,9 +3179,9 @@ angular.module('apps').filter("formatTime", function(){
         return inputData + "毫秒";
     }
 })
-angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$window', '$location', 'Authentication', 'Tasks', 'Mons',
+angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$window', '$location', 'Authentication', 'Apps', 'Tasks', 'Mons',
     'DTOptionsBuilder', '$http', '$timeout', 'PageService', 'SweetAlert', 'ModalService',
-    function ($scope, $stateParams, $window, $location, Authentication, Tasks, Mons, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert, ModalService) {
+    function ($scope, $stateParams, $window, $location, Authentication, Apps, Tasks, Mons, DTOptionsBuilder, $http, $timeout, PageService, SweetAlert, ModalService) {
         $scope.authentication = Authentication;
         $scope.uiType = {
             'add': '添加DOM节点',
@@ -3233,6 +3258,22 @@ angular.module('apps').controller('UIController', ['$scope', '$stateParams', '$w
             })
         };
 
+        $scope.listTask = function() {
+            $scope.app = Apps.get({
+                appId: $stateParams.appId
+            });
+            $scope.tasks = Tasks.query({
+                appId: $stateParams.appId
+            });
+        }
+        // 跳转至UI任务添加页面
+        $scope.gotoAddTask= function(){
+            $location.path('apps/' + $stateParams.appId + "/ui/create");
+        };
+        // 跳转至UI任务添加页面
+        $scope.gotoTaskDetail= function(task){
+            $location.path('apps/' + $stateParams.appId + "/ui/" + task._id);
+        };
         $scope.back = function () {
             window.history.back();
         };

@@ -4,8 +4,9 @@ var Grid = require('gridfs-stream');
 var config = require("./config");
 var schedule = require('node-schedule');
 var fs = require('fs-extra')
-Grid.mongo = mongoose.mongo; 
+Grid.mongo = mongoose.mongo;
 
+require("./models/app"); // 引入Model
 require("./models/mon"); // 引入Model
 require("./models/task"); // 引入Task
 

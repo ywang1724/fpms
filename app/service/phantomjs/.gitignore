@@ -4,3 +4,4 @@ temp/
 .vscode/
 /npm-debug.log
 test.js
+page-monitor/cookie

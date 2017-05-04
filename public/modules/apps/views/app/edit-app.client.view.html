@@ -145,6 +145,77 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-group" ng-class="{ 'has-error': appForm.needLogin.$dirty && appForm.needLogin.$invalid }">
+                    <label class="col-sm-2 control-label" for="needLogin">监测页面是否要登陆</label>
+                    <div class="col-sm-10 controls">
+                        <select name="needLogin"
+                                ng-model="app.needLogin"
+                                id="needLogin"
+                                ng-options="selectItem.value as selectItem.label for selectItem in needLoginItems"
+                                class="form-control" required>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error': appForm.url.$dirty && appForm.url.$invalid }" ng-show="app.needLogin" >
+                    <label class="col-sm-2 control-label" for="url">登陆页面URL</label>
+                    <div class="col-sm-10 controls">
+                        <input name="url" type="text" data-ng-model="app.auth.url" id="url" class="form-control"
+                               placeholder="请输入登陆页面" data-ng-change="removeErr()" required>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error': appForm.username.$dirty && appForm.username.$invalid }" ng-show="app.needLogin" >
+                    <label class="col-sm-2 control-label" for="username">用户名</label>
+                    <div class="col-sm-10 controls">
+                        <input name="username" type="text" data-ng-model="app.auth.username" id="username" class="form-control"
+                               placeholder="请输入监测页面登录用户名" data-ng-change="removeErr()" required>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error': appForm.password.$dirty && appForm.password.$invalid }"  ng-show="app.needLogin"  >
+                    <label class="col-sm-2 control-label" for="password">密码</label>
+                    <div class="col-sm-10 controls">
+                        <input name="password" type="password" data-ng-model="app.auth.password" id="password" class="form-control"
+                               placeholder="请输入监测页面登录密码" data-ng-change="removeErr()" required>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error': appForm.username_selector.$dirty && appForm.username_selector.$invalid }"  ng-show="app.needLogin"  >
+                    <label class="col-sm-2 control-label" for="password">用户名选择器</label>
+                    <div class="col-sm-10 controls">
+                        <input name="username_selector" type="text" data-ng-model="app.auth.usernameSelector" id="username_selector" class="form-control"
+                               placeholder="请输入用户名选择器" data-ng-change="removeErr()" required>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error': appForm.password_selector.$dirty && appForm.password_selector.$invalid }"  ng-show="app.needLogin"  >
+                    <label class="col-sm-2 control-label" for="password">密码选择器</label>
+                    <div class="col-sm-10 controls">
+                        <input name="password_selector" type="text" data-ng-model="app.auth.passwordSelector" id="password_selector" class="form-control"
+                               placeholder="请输入密码选择器" data-ng-change="removeErr()" required>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error': appForm.useCaptcha.$dirty && appForm.useCaptcha.$invalid }">
+                    <label class="col-sm-2 control-label" for="needLogin">登陆是否需要验证码</label>
+                    <div class="col-sm-10 controls">
+                        <select name="useCaptcha"
+                                ng-model="app.auth.useCaptcha"
+                                id="useCaptcha"
+                                ng-options="selectItem.value as selectItem.label for selectItem in needLoginItems"
+                                class="form-control" required>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error': appForm.captcha_selector.$dirty && appForm.captcha_selector.$invalid }"  ng-show="app.needLogin && app.auth.useCaptcha"  >
+                    <label class="col-sm-2 control-label" for="password">验证码输入框选择器</label>
+                    <div class="col-sm-10 controls">
+                        <input name="captcha_selector" type="text" data-ng-model="app.auth.captchaSelector" id="captcha_selector" class="form-control"
+                               placeholder="请输入验证码输入框选择器" data-ng-change="removeErr()" required>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error': appForm.login_form_selector.$dirty && appForm.login_form_selector.$invalid }"  ng-show="app.needLogin"  >
+                    <label class="col-sm-2 control-label" for="password">登陆表单选择器</label>
+                    <div class="col-sm-10 controls">
+                        <input name="login_form_selector" type="text" data-ng-model="app.auth.loginFormSelector" id="login_form_selector" class="form-control"
+                               placeholder="请输入密码选择器" data-ng-change="removeErr()" required>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -170,7 +241,7 @@
         </div>
 
         <div class="form-group text-center">
-            <input type="submit" value="更新" class="btn btn-primary" ng-disabled="!canUpdate()">
+            <input type="submit" value="更新" class="btn btn-primary">
             <input type="button" value="取消" class="btn btn-default" ng-click="back()">
         </div>
         <div data-ng-show="error" class="text-danger">

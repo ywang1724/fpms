@@ -1,3 +1,6 @@
+/** 启用JavaScript和Cookie **/
+phantom.cookiesEnabled = true;
+phantom.javascriptEnabled = true;
 /**
  * log
  * @param {string} msg
@@ -472,7 +475,18 @@ M.prototype.diff = function(left, right){
 // run mode, see _.mode@../utils.js
 var mode = parseInt(system.args[1]);
 log('mode: ' + mode.toString(2));
-
+var loginConfig = JSON.parse(system.args[3]);
+if(loginConfig.needLogin) {
+    if (fs.isFile(loginConfig.cookie)) {
+        log("cookie 存在，正在处理cookie...");
+        Array.prototype.forEach.call(JSON.parse(fs.read(loginConfig.cookie)), function (x) {
+            phantom.addCookie(x);
+        })
+    } else {
+        log("cookie不存在！");
+        phantom.exit(-1);
+    }
+}
 if(mode & _.mode.CAPTURE){ // capture
     var m = new M(JSON.parse(system.args[3]));
     m.capture(system.args[2], (mode & _.mode.DIFF) > 0);

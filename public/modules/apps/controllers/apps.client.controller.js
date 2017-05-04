@@ -37,6 +37,15 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             value: true
         }];
 
+        $scope.needLoginItems = [{
+            label: '否',
+            value: false
+        },{
+            label: '是',
+            value: true
+        }];
+
+        $scope.auth = {};
         $scope.deadLinkInterval = 3600000;
         $scope.deadLinkIntervals = [
             {label: '30分钟',value: 1800000},
@@ -78,6 +87,8 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
             {label: '1周', value: 604800000},
             {label: '1个月', value: 2592000000}
         ];
+        $scope.needLogin = false;
+        $scope.useCaptcha = false;
         $scope.toggleSelection = function (obj, i) {
             var objValue = parseInt(obj.target.value);
             if(obj.target.checked){
@@ -129,7 +140,18 @@ angular.module('apps').controller('AppsController', ['$scope', '$stateParams', '
                 alarmtype: this.alarmtype,
                 alarmInterval: this.alarmInterval,
                 alarmEmail: this.alarmEmail,
-                config: this.config
+                config: this.config,
+                needLogin: this.needLogin,
+                auth:{
+                    url: this.auth.url,
+                    username:this.auth.username,
+                    password:this.auth.password,
+                    usernameSelector:this.auth.usernameSelector,
+                    passwordSelector:this.auth.passwordSelector,
+                    useCaptcha: this.useCaptcha,
+                    captchaSelector: this.auth.captchaSelector,
+                    loginFormSelector:this.auth.loginFormSelector
+                }
             });
 
             // Redirect after save
