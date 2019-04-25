@@ -1,4 +1,4 @@
 FPMS
 ========
 
-Just for test.
+Front-end Performance Monitoring Platform.
